@@ -1,16 +1,16 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle init" do
-  it "generates a Gemfile", :bundler => "< 2" do
-    bundle! :init
+RSpec.describe "carat init" do
+  it "generates a Gemfile", :carat => "< 2" do
+    carat! :init
     expect(out).to include("Writing new Gemfile")
-    expect(bundled_app("Gemfile")).to be_file
+    expect(carated_app("Gemfile")).to be_file
   end
 
-  it "generates a gems.rb", :bundler => "2" do
-    bundle! :init
+  it "generates a gems.rb", :carat => "2" do
+    carat! :init
     expect(out).to include("Writing new gems.rb")
-    expect(bundled_app("gems.rb")).to be_file
+    expect(carated_app("gems.rb")).to be_file
   end
 
   context "when a Gemfile already exists" do
@@ -21,11 +21,11 @@ RSpec.describe "bundle init" do
     end
 
     it "does not change existing Gemfiles" do
-      expect { bundle :init }.not_to change { File.read(bundled_app("Gemfile")) }
+      expect { carat :init }.not_to change { File.read(carated_app("Gemfile")) }
     end
 
     it "notifies the user that an existing Gemfile already exists" do
-      bundle :init
+      carat :init
       expect(out).to include("Gemfile already exists")
     end
   end
@@ -38,16 +38,16 @@ RSpec.describe "bundle init" do
     end
 
     it "does not change existing gem.rb files" do
-      expect { bundle :init }.not_to change { File.read(bundled_app("gems.rb")) }
+      expect { carat :init }.not_to change { File.read(carated_app("gems.rb")) }
     end
 
     it "notifies the user that an existing gems.rb already exists" do
-      bundle :init
+      carat :init
       expect(out).to include("gems.rb already exists")
     end
   end
 
-  context "given --gemspec option", :bundler => "< 2" do
+  context "given --gemspec option", :carat => "< 2" do
     let(:spec_file) { tmp.join("test.gemspec") }
 
     it "should generate from an existing gemspec" do
@@ -61,12 +61,12 @@ RSpec.describe "bundle init" do
         S
       end
 
-      bundle :init, :gemspec => spec_file
+      carat :init, :gemspec => spec_file
 
-      gemfile = if Bundler::VERSION[0, 2] == "1."
-        bundled_app("Gemfile").read
+      gemfile = if Carat::VERSION[0, 2] == "1."
+        carated_app("Gemfile").read
       else
-        bundled_app("gems.rb").read
+        carated_app("gems.rb").read
       end
       expect(gemfile).to match(%r{source 'https://rubygems.org'})
       expect(gemfile.scan(/gem "rack", "= 1.0.1"/).size).to eq(1)
@@ -85,18 +85,18 @@ RSpec.describe "bundle init" do
           S
         end
 
-        bundle :init, :gemspec => spec_file
-        expect(last_command.bundler_err).to include("There was an error while loading `test.gemspec`")
+        carat :init, :gemspec => spec_file
+        expect(last_command.carat_err).to include("There was an error while loading `test.gemspec`")
       end
     end
   end
 
   context "when init_gems_rb setting is enabled" do
-    before { bundle "config init_gems_rb true" }
+    before { carat "config init_gems_rb true" }
 
     it "generates a gems.rb file" do
-      bundle :init
-      expect(bundled_app("gems.rb")).to exist
+      carat :init
+      expect(carated_app("gems.rb")).to exist
     end
 
     context "when gems.rb already exists" do
@@ -107,16 +107,16 @@ RSpec.describe "bundle init" do
       end
 
       it "does not change existing Gemfiles" do
-        expect { bundle :init }.not_to change { File.read(bundled_app("gems.rb")) }
+        expect { carat :init }.not_to change { File.read(carated_app("gems.rb")) }
       end
 
       it "notifies the user that an existing gems.rb already exists" do
-        bundle :init
+        carat :init
         expect(out).to include("gems.rb already exists")
       end
     end
 
-    context "given --gemspec option", :bundler => "< 2" do
+    context "given --gemspec option", :carat => "< 2" do
       let(:spec_file) { tmp.join("test.gemspec") }
 
       before do
@@ -132,9 +132,9 @@ RSpec.describe "bundle init" do
       end
 
       it "should generate from an existing gemspec" do
-        bundle :init, :gemspec => spec_file
+        carat :init, :gemspec => spec_file
 
-        gemfile = bundled_app("gems.rb").read
+        gemfile = carated_app("gems.rb").read
         expect(gemfile).to match(%r{source 'https://rubygems.org'})
         expect(gemfile.scan(/gem "rack", "= 1.0.1"/).size).to eq(1)
         expect(gemfile.scan(/gem "rspec", "= 1.2"/).size).to eq(1)
@@ -142,7 +142,7 @@ RSpec.describe "bundle init" do
       end
 
       it "prints message to user" do
-        bundle :init, :gemspec => spec_file
+        carat :init, :gemspec => spec_file
 
         expect(out).to include("Writing new gems.rb")
       end

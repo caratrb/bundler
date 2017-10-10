@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "Bundler.setup with multi platform stuff" do
+RSpec.describe "Carat.setup with multi platform stuff" do
   it "raises a friendly error when gems are missing locally" do
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -22,9 +22,9 @@ RSpec.describe "Bundler.setup with multi platform stuff" do
 
     ruby <<-R
       begin
-        require 'bundler'
-        Bundler.setup
-      rescue Bundler::GemNotFound => e
+        require 'carat'
+        Carat.setup
+      rescue Carat::GemNotFound => e
         puts "WIN"
       end
     R
@@ -54,7 +54,7 @@ RSpec.describe "Bundler.setup with multi platform stuff" do
       gem "nokogiri"
     G
 
-    expect(the_bundle).to include_gems "nokogiri 1.4.2"
+    expect(the_carat).to include_gems "nokogiri 1.4.2"
   end
 
   it "will add the resolve for the current platform" do
@@ -81,7 +81,7 @@ RSpec.describe "Bundler.setup with multi platform stuff" do
       gem "platform_specific"
     G
 
-    expect(the_bundle).to include_gems "nokogiri 1.4.2", "platform_specific 1.0 x86-darwin-100"
+    expect(the_carat).to include_gems "nokogiri 1.4.2", "platform_specific 1.0 x86-darwin-100"
   end
 
   it "allows specifying only-ruby-platform" do
@@ -93,11 +93,11 @@ RSpec.describe "Bundler.setup with multi platform stuff" do
       gem "platform_specific"
     G
 
-    bundle! "config force_ruby_platform true"
+    carat! "config force_ruby_platform true"
 
-    bundle! "install"
+    carat! "install"
 
-    expect(the_bundle).to include_gems "nokogiri 1.4.2", "platform_specific 1.0 RUBY"
+    expect(the_carat).to include_gems "nokogiri 1.4.2", "platform_specific 1.0 RUBY"
   end
 
   it "allows specifying only-ruby-platform on windows with dependency platforms" do
@@ -108,11 +108,11 @@ RSpec.describe "Bundler.setup with multi platform stuff" do
         gem "platform_specific"
       G
 
-      bundle! "config force_ruby_platform true"
+      carat! "config force_ruby_platform true"
 
-      bundle! "install"
+      carat! "install"
 
-      expect(the_bundle).to include_gems "platform_specific 1.0 RUBY"
+      expect(the_carat).to include_gems "platform_specific 1.0 RUBY"
     end
   end
 end

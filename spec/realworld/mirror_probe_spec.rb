@@ -22,8 +22,8 @@ RSpec.describe "fetching dependencies with a not available mirror", :realworld =
 
   context "with a specific fallback timeout" do
     before do
-      global_config("BUNDLE_MIRROR__HTTP://127__0__0__1:#{server_port}/__FALLBACK_TIMEOUT/" => "true",
-                    "BUNDLE_MIRROR__HTTP://127__0__0__1:#{server_port}/" => mirror)
+      global_config("CARAT_MIRROR__HTTP://127__0__0__1:#{server_port}/__FALLBACK_TIMEOUT/" => "true",
+                    "CARAT_MIRROR__HTTP://127__0__0__1:#{server_port}/" => mirror)
     end
 
     it "install a gem using the original uri when the mirror is not responding" do
@@ -32,18 +32,18 @@ RSpec.describe "fetching dependencies with a not available mirror", :realworld =
         gem 'weakling'
       G
 
-      bundle :install, :artifice => nil
+      carat :install, :artifice => nil
 
       expect(out).to include("Installing weakling")
-      expect(out).to include("Bundle complete")
-      expect(the_bundle).to include_gems "weakling 0.0.3"
+      expect(out).to include("Carat complete")
+      expect(the_carat).to include_gems "weakling 0.0.3"
     end
   end
 
   context "with a global fallback timeout" do
     before do
-      global_config("BUNDLE_MIRROR__ALL__FALLBACK_TIMEOUT/" => "1",
-                    "BUNDLE_MIRROR__ALL" => mirror)
+      global_config("CARAT_MIRROR__ALL__FALLBACK_TIMEOUT/" => "1",
+                    "CARAT_MIRROR__ALL" => mirror)
     end
 
     it "install a gem using the original uri when the mirror is not responding" do
@@ -52,17 +52,17 @@ RSpec.describe "fetching dependencies with a not available mirror", :realworld =
         gem 'weakling'
       G
 
-      bundle :install, :artifice => nil
+      carat :install, :artifice => nil
 
       expect(out).to include("Installing weakling")
-      expect(out).to include("Bundle complete")
-      expect(the_bundle).to include_gems "weakling 0.0.3"
+      expect(out).to include("Carat complete")
+      expect(the_carat).to include_gems "weakling 0.0.3"
     end
   end
 
   context "with a specific mirror without a fallback timeout" do
     before do
-      global_config("BUNDLE_MIRROR__HTTP://127__0__0__1:#{server_port}/" => mirror)
+      global_config("CARAT_MIRROR__HTTP://127__0__0__1:#{server_port}/" => mirror)
     end
 
     it "fails to install the gem with a timeout error" do
@@ -71,12 +71,12 @@ RSpec.describe "fetching dependencies with a not available mirror", :realworld =
         gem 'weakling'
       G
 
-      bundle :install, :artifice => nil
+      carat :install, :artifice => nil
 
       expect(out).to include("Fetching source index from #{mirror}")
-      expect(out).to include("Retrying fetcher due to error (2/4): Bundler::HTTPError Could not fetch specs from #{mirror}")
-      expect(out).to include("Retrying fetcher due to error (3/4): Bundler::HTTPError Could not fetch specs from #{mirror}")
-      expect(out).to include("Retrying fetcher due to error (4/4): Bundler::HTTPError Could not fetch specs from #{mirror}")
+      expect(out).to include("Retrying fetcher due to error (2/4): Carat::HTTPError Could not fetch specs from #{mirror}")
+      expect(out).to include("Retrying fetcher due to error (3/4): Carat::HTTPError Could not fetch specs from #{mirror}")
+      expect(out).to include("Retrying fetcher due to error (4/4): Carat::HTTPError Could not fetch specs from #{mirror}")
       expect(out).to include("Could not fetch specs from #{mirror}")
     end
 
@@ -86,13 +86,13 @@ RSpec.describe "fetching dependencies with a not available mirror", :realworld =
         gem 'weakling'
       G
 
-      bundle :install, :artifice => nil
+      carat :install, :artifice => nil
 
       expect(last_command.stdout).to include "Fetching source index from #{mirror}/"
-      expect(last_command.bundler_err).to include <<-EOS.strip
-Retrying fetcher due to error (2/4): Bundler::HTTPError Could not fetch specs from #{mirror}/
-Retrying fetcher due to error (3/4): Bundler::HTTPError Could not fetch specs from #{mirror}/
-Retrying fetcher due to error (4/4): Bundler::HTTPError Could not fetch specs from #{mirror}/
+      expect(last_command.carat_err).to include <<-EOS.strip
+Retrying fetcher due to error (2/4): Carat::HTTPError Could not fetch specs from #{mirror}/
+Retrying fetcher due to error (3/4): Carat::HTTPError Could not fetch specs from #{mirror}/
+Retrying fetcher due to error (4/4): Carat::HTTPError Could not fetch specs from #{mirror}/
 Could not fetch specs from #{mirror}/
       EOS
     end
@@ -100,7 +100,7 @@ Could not fetch specs from #{mirror}/
 
   context "with a global mirror without a fallback timeout" do
     before do
-      global_config("BUNDLE_MIRROR__ALL" => mirror)
+      global_config("CARAT_MIRROR__ALL" => mirror)
     end
 
     it "fails to install the gem with a timeout error" do
@@ -109,12 +109,12 @@ Could not fetch specs from #{mirror}/
         gem 'weakling'
       G
 
-      bundle :install, :artifice => nil
+      carat :install, :artifice => nil
 
       expect(out).to include("Fetching source index from #{mirror}")
-      expect(out).to include("Retrying fetcher due to error (2/4): Bundler::HTTPError Could not fetch specs from #{mirror}")
-      expect(out).to include("Retrying fetcher due to error (3/4): Bundler::HTTPError Could not fetch specs from #{mirror}")
-      expect(out).to include("Retrying fetcher due to error (4/4): Bundler::HTTPError Could not fetch specs from #{mirror}")
+      expect(out).to include("Retrying fetcher due to error (2/4): Carat::HTTPError Could not fetch specs from #{mirror}")
+      expect(out).to include("Retrying fetcher due to error (3/4): Carat::HTTPError Could not fetch specs from #{mirror}")
+      expect(out).to include("Retrying fetcher due to error (4/4): Carat::HTTPError Could not fetch specs from #{mirror}")
       expect(out).to include("Could not fetch specs from #{mirror}")
     end
   end

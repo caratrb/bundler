@@ -1,0 +1,15 @@
+carat-list(1) -- List all the gems in the carat
+=========================================================================
+
+## SYNOPSIS
+
+`carat list` [--name-only]
+
+## DESCRIPTION
+
+Prints a list of all the gems in the carat including their version.
+
+## OPTIONS
+
+* `--name-only`:
+  Print only the name of each gem.

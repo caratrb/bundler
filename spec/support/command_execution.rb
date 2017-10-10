@@ -27,8 +27,8 @@ module Spec
       @stdboth ||= [stderr, stdout].join("\n").strip
     end
 
-    def bundler_err
-      if Bundler::VERSION.start_with?("1.")
+    def carat_err
+      if Carat::VERSION.start_with?("1.")
         stdout
       else
         stderr

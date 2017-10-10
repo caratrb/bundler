@@ -1,4 +1,4 @@
-> GET /quick/Marshal.4.8/bundler-1.12.3.gemspec.rz
+> GET /quick/Marshal.4.8/carat-1.12.3.gemspec.rz
 > accept-encoding: gzip;q=1.0,deflate;q=0.6,identity;q=0.3
 > accept: */*
 > user-agent: Ruby

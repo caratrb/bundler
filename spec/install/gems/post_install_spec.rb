@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install" do
+RSpec.describe "carat install" do
   context "with gem sources" do
     context "when gems include post install messages" do
       it "should display the post-install messages after installing" do
@@ -11,7 +11,7 @@ RSpec.describe "bundle install" do
           gem 'rack-obama'
         G
 
-        bundle :install
+        carat :install
         expect(out).to include("Post-install message from rack:")
         expect(out).to include("Rack's post install message")
         expect(out).to include("Post-install message from thin:")
@@ -28,7 +28,7 @@ RSpec.describe "bundle install" do
           gem "activesupport"
         G
 
-        bundle :install
+        carat :install
         expect(out).not_to include("Post-install message")
       end
     end
@@ -40,7 +40,7 @@ RSpec.describe "bundle install" do
           gem 'rack_middleware'
         G
 
-        bundle :install
+        carat :install
         expect(out).to include("Post-install message from rack:")
         expect(out).to include("Rack's post install message")
       end
@@ -58,7 +58,7 @@ RSpec.describe "bundle install" do
           gem 'foo', :git => '#{lib_path("foo-1.0")}'
         G
 
-        bundle :install
+        carat :install
         expect(out).to include("Post-install message from foo:")
         expect(out).to include("Foo's post install message")
       end
@@ -71,7 +71,7 @@ RSpec.describe "bundle install" do
           source "file://#{gem_repo1}"
           gem 'foo', :git => '#{lib_path("foo-1.0")}'
         G
-        bundle :install
+        carat :install
 
         build_git "foo", "1.1" do |s|
           s.post_install_message = "Foo's 1.1 post install message"
@@ -80,7 +80,7 @@ RSpec.describe "bundle install" do
           source "file://#{gem_repo1}"
           gem 'foo', :git => '#{lib_path("foo-1.1")}'
         G
-        bundle :install
+        carat :install
 
         expect(out).to include("Post-install message from foo:")
         expect(out).to include("Foo's 1.1 post install message")
@@ -95,11 +95,11 @@ RSpec.describe "bundle install" do
           gem 'foo', :git => '#{lib_path("foo-1.0")}'
         G
 
-        bundle :install
+        carat :install
         expect(out).to include("Post-install message from foo:")
         expect(out).to include("Foo's post install message")
 
-        bundle :install
+        carat :install
         expect(out).not_to include("Post-install message")
       end
     end
@@ -114,7 +114,7 @@ RSpec.describe "bundle install" do
           gem 'foo', :git => '#{lib_path("foo-1.0")}'
         G
 
-        bundle :install
+        carat :install
         expect(out).not_to include("Post-install message")
       end
     end
@@ -127,9 +127,9 @@ RSpec.describe "bundle install" do
         gem "rack"
       G
 
-      bundle "config ignore_messages.rack true"
+      carat "config ignore_messages.rack true"
 
-      bundle :install
+      carat :install
       expect(out).not_to include("Post-install message")
     end
   end
@@ -141,9 +141,9 @@ RSpec.describe "bundle install" do
         gem "rack"
       G
 
-      bundle "config ignore_messages true"
+      carat "config ignore_messages true"
 
-      bundle :install
+      carat :install
       expect(out).not_to include("Post-install message")
     end
   end

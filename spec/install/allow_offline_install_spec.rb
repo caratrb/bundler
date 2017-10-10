@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install with :allow_offline_install" do
+RSpec.describe "carat install with :allow_offline_install" do
   before do
-    bundle "config allow_offline_install true"
+    carat "config allow_offline_install true"
   end
 
   context "with no cached data locally" do
@@ -11,7 +11,7 @@ RSpec.describe "bundle install with :allow_offline_install" do
         source "http://testgemserver.local"
         gem "rack-obama"
       G
-      expect(the_bundle).to include_gem("rack 1.0")
+      expect(the_carat).to include_gem("rack 1.0")
     end
 
     it "still fails when the network is down" do
@@ -20,32 +20,32 @@ RSpec.describe "bundle install with :allow_offline_install" do
         gem "rack-obama"
       G
       expect(out).to include("Could not reach host testgemserver.local.")
-      expect(the_bundle).to_not be_locked
+      expect(the_carat).to_not be_locked
     end
   end
 
   context "with cached data locally" do
     it "will install from the compact index" do
-      system_gems ["rack-1.0.0"], :path => :bundle_path
+      system_gems ["rack-1.0.0"], :path => :carat_path
 
-      bundle! "config clean false"
+      carat! "config clean false"
       install_gemfile! <<-G, :artifice => "compact_index"
         source "http://testgemserver.local"
         gem "rack-obama"
         gem "rack", "< 1.0"
       G
 
-      expect(the_bundle).to include_gems("rack-obama 1.0", "rack 0.9.1")
+      expect(the_carat).to include_gems("rack-obama 1.0", "rack 0.9.1")
 
       gemfile <<-G
         source "http://testgemserver.local"
         gem "rack-obama"
       G
 
-      bundle! :update, :artifice => "fail", :all => true
+      carat! :update, :artifice => "fail", :all => true
       expect(last_command.stdboth).to include "Using the cached data for the new index because of a network error"
 
-      expect(the_bundle).to include_gems("rack-obama 1.0", "rack 1.0.0")
+      expect(the_carat).to include_gems("rack-obama 1.0", "rack 1.0.0")
     end
 
     def break_git_remote_ops!
@@ -76,9 +76,9 @@ RSpec.describe "bundle install with :allow_offline_install" do
         gem "a", :git => #{git.path.to_s.dump}
       G
 
-      break_git_remote_ops! { bundle! :update, :all => true }
+      break_git_remote_ops! { carat! :update, :all => true }
       expect(out).to include("Using cached git data because of network errors")
-      expect(the_bundle).to be_locked
+      expect(the_carat).to be_locked
 
       break_git_remote_ops! do
         install_gemfile! <<-G
@@ -86,7 +86,7 @@ RSpec.describe "bundle install with :allow_offline_install" do
         G
       end
       expect(out).to include("Using cached git data because of network errors")
-      expect(the_bundle).to be_locked
+      expect(the_carat).to be_locked
     end
   end
 end

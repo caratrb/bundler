@@ -3,8 +3,8 @@
 $:.unshift File.expand_path("..", __FILE__)
 $:.unshift File.expand_path("../../lib", __FILE__)
 
-require "bundler/psyched_yaml"
-require "bundler/vendored_fileutils"
+require "carat/psyched_yaml"
+require "carat/vendored_fileutils"
 require "uri"
 require "digest/sha1"
 require File.expand_path("../support/path.rb", __FILE__)
@@ -21,10 +21,10 @@ rescue LoadError
 end
 
 if File.expand_path(__FILE__) =~ %r{([^\w/\.])}
-  abort "The bundler specs cannot be run from a path that contains special characters (particularly #{$1.inspect})"
+  abort "The carat specs cannot be run from a path that contains special characters (particularly #{$1.inspect})"
 end
 
-require "bundler"
+require "carat"
 
 # Require the correct version of popen for the current platform
 if RbConfig::CONFIG["host_os"] =~ /mingw|mswin/
@@ -48,7 +48,7 @@ Spec::Manpages.setup
 Spec::Rubygems.setup
 FileUtils.rm_rf(Spec::Path.gem_repo1)
 ENV["RUBYOPT"] = "#{ENV["RUBYOPT"]} -r#{Spec::Path.spec_dir}/support/hax.rb"
-ENV["BUNDLE_SPEC_RUN"] = "true"
+ENV["CARAT_SPEC_RUN"] = "true"
 
 # Don't wrap output in tests
 ENV["THOR_COLUMNS"] = "10000"
@@ -73,34 +73,34 @@ RSpec.configure do |config|
 
   # Since failures cause us to keep a bunch of long strings in memory, stop
   # once we have a large number of failures (indicative of core pieces of
-  # bundler being broken) so that running the full test suite doesn't take
+  # carat being broken) so that running the full test suite doesn't take
   # forever due to memory constraints
   config.fail_fast ||= 25 if ENV["CI"]
 
-  if ENV["BUNDLER_SUDO_TESTS"] && Spec::Sudo.present?
+  if ENV["CARATR_SUDO_TESTS"] && Spec::Sudo.present?
     config.filter_run :sudo => true
   else
     config.filter_run_excluding :sudo => true
   end
 
-  if ENV["BUNDLER_REALWORLD_TESTS"]
+  if ENV["CARATR_REALWORLD_TESTS"]
     config.filter_run :realworld => true
   else
     config.filter_run_excluding :realworld => true
   end
 
-  git_version = Bundler::Source::Git::GitProxy.new(nil, nil, nil).version
+  git_version = Carat::Source::Git::GitProxy.new(nil, nil, nil).version
 
   config.filter_run_excluding :ruby => LessThanProc.with(RUBY_VERSION)
   config.filter_run_excluding :rubygems => LessThanProc.with(Gem::VERSION)
   config.filter_run_excluding :git => LessThanProc.with(git_version)
   config.filter_run_excluding :rubygems_master => (ENV["RGV"] != "master")
-  config.filter_run_excluding :bundler => LessThanProc.with(Bundler::VERSION.split(".")[0, 2].join("."))
+  config.filter_run_excluding :carat => LessThanProc.with(Carat::VERSION.split(".")[0, 2].join("."))
 
   config.filter_run_when_matching :focus unless ENV["CI"]
 
   original_wd  = Dir.pwd
-  original_env = ENV.to_hash.delete_if {|k, _v| k.start_with?(Bundler::EnvironmentPreserver::BUNDLER_PREFIX) }
+  original_env = ENV.to_hash.delete_if {|k, _v| k.start_with?(Carat::EnvironmentPreserver::CARATR_PREFIX) }
 
   config.expect_with :rspec do |c|
     c.syntax = :expect

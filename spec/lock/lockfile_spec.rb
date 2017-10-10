@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe "the lockfile format", :bundler => "2" do
-  include Bundler::GemHelpers
+RSpec.describe "the lockfile format", :carat => "2" do
+  include Carat::GemHelpers
 
-  before { ENV["BUNDLER_SPEC_IGNORE_COMPATIBILITY_GUARD"] = "TRUE" }
+  before { ENV["CARATR_SPEC_IGNORE_COMPATIBILITY_GUARD"] = "TRUE" }
 
   it "generates a simple lockfile for a single source, gem" do
     install_gemfile <<-G
@@ -24,12 +24,12 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
-  it "updates the lockfile's bundler version if current ver. is newer" do
+  it "updates the lockfile's carat version if current ver. is newer" do
     lockfile <<-L
       GIT
         remote: git://github.com/nex3/haml.git
@@ -48,7 +48,7 @@ RSpec.describe "the lockfile format", :bundler => "2" do
         omg!
         rack
 
-      BUNDLED WITH
+      CARAT VERSION
          1.8.2
     L
 
@@ -70,13 +70,13 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
-  it "does not update the lockfile's bundler version if nothing changed during bundle install" do
-    version = "#{Bundler::VERSION.split(".").first}.0.0.0.a"
+  it "does not update the lockfile's carat version if nothing changed during carat install" do
+    version = "#{Carat::VERSION.split(".").first}.0.0.0.a"
 
     lockfile <<-L
       GEM
@@ -90,7 +90,7 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
+      CARAT VERSION
          #{version}
     L
 
@@ -112,12 +112,12 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
+      CARAT VERSION
          #{version}
     G
   end
 
-  it "updates the lockfile's bundler version if not present" do
+  it "updates the lockfile's carat version if not present" do
     lockfile <<-L
       GEM
         remote: file:#{gem_repo1}/
@@ -149,12 +149,12 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack (> 0)
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
-  it "outputs a warning if the current is older than lockfile's bundler version" do
+  it "outputs a warning if the current is older than lockfile's carat version" do
     lockfile <<-L
       GEM
         remote: file:#{gem_repo1}/
@@ -167,11 +167,11 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
+      CARAT VERSION
          9999999.1.0
     L
 
-    simulate_bundler_version "9999999.0.0" do
+    simulate_carat_version "9999999.0.0" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
 
@@ -179,9 +179,9 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       G
     end
 
-    warning_message = "the running version of Bundler (9999999.0.0) is older " \
+    warning_message = "the running version of Carat (9999999.0.0) is older " \
                       "than the version that created the lockfile (9999999.1.0)"
-    expect(last_command.bundler_err).to include warning_message
+    expect(last_command.carat_err).to include warning_message
 
     lockfile_should_be <<-G
       GEM
@@ -195,12 +195,12 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
+      CARAT VERSION
          9999999.1.0
     G
   end
 
-  it "errors if the current is a major version older than lockfile's bundler version" do
+  it "errors if the current is a major version older than lockfile's carat version" do
     lockfile <<-L
       GEM
         remote: file:#{gem_repo1}/
@@ -213,7 +213,7 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
+      CARAT VERSION
          9999999.0.0
     L
 
@@ -224,10 +224,10 @@ RSpec.describe "the lockfile format", :bundler => "2" do
     G
 
     expect(last_command).to be_failure
-    expect(last_command.bundler_err).to include("You must use Bundler 9999999 or greater with this lockfile.")
+    expect(last_command.carat_err).to include("You must use Carat 9999999 or greater with this lockfile.")
   end
 
-  it "shows a friendly error when running with a new bundler 2 lockfile" do
+  it "shows a friendly error when running with a new carat 2 lockfile" do
     lockfile <<-L
       GEM
         remote: https://rails-assets.org/
@@ -248,7 +248,7 @@ RSpec.describe "the lockfile format", :bundler => "2" do
         rails-assets-bootstrap!
         rake
 
-      BUNDLED WITH
+      CARAT VERSION
          9999999.0.0
     L
 
@@ -262,10 +262,10 @@ RSpec.describe "the lockfile format", :bundler => "2" do
     G
 
     expect(last_command).to be_failure
-    expect(out).to include("You must use Bundler 9999999 or greater with this lockfile.")
+    expect(out).to include("You must use Carat 9999999 or greater with this lockfile.")
   end
 
-  it "warns when updating bundler major version" do
+  it "warns when updating carat major version" do
     lockfile <<-L
       GEM
         remote: file:#{gem_repo1}/
@@ -278,11 +278,11 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
+      CARAT VERSION
          1.10.0
     L
 
-    simulate_bundler_version "9999999.0.0" do
+    simulate_carat_version "9999999.0.0" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
 
@@ -290,8 +290,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       G
     end
 
-    expect(out).to include("Warning: the lockfile is being updated to Bundler " \
-                          "9999999, after which you will be unable to return to Bundler 1.")
+    expect(out).to include("Warning: the lockfile is being updated to Carat " \
+                          "9999999, after which you will be unable to return to Carat 1.")
 
     lockfile_should_be <<-G
       GEM
@@ -305,7 +305,7 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
+      CARAT VERSION
          9999999.0.0
     G
   end
@@ -331,8 +331,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack-obama
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -357,13 +357,13 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack-obama (>= 1.0)
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
   it "generates a lockfile without credentials for a configured source" do
-    bundle "config http://localgemserver.test/ user:pass"
+    carat "config http://localgemserver.test/ user:pass"
 
     install_gemfile(<<-G, :artifice => "endpoint_strict_basic_authentication", :quiet => true)
       source "http://localgemserver.test/" do
@@ -396,8 +396,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack-obama (>= 1.0)!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -421,14 +421,14 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         net-sftp
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
 
-    expect(the_bundle).to include_gems "net-sftp 1.1.1", "net-ssh 1.0.0"
+    expect(the_carat).to include_gems "net-sftp 1.1.1", "net-ssh 1.0.0"
   end
 
-  it "generates a simple lockfile for a single pinned source, gem with a version requirement", :bundler => "< 2" do
+  it "generates a simple lockfile for a single pinned source, gem with a version requirement", :carat => "< 2" do
     git = build_git "foo"
 
     install_gemfile <<-G
@@ -451,8 +451,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -479,8 +479,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -515,12 +515,12 @@ RSpec.describe "the lockfile format", :bundler => "2" do
         omg!
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     L
 
-    bundle! "install"
-    expect(the_bundle).to include_gems "rack 1.0.0"
+    carat! "install"
+    expect(the_carat).to include_gems "rack 1.0.0"
   end
 
   it "serializes global git sources" do
@@ -548,8 +548,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -578,8 +578,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -608,8 +608,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -635,8 +635,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -647,8 +647,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       gem "foo", :path => "#{lib_path("foo-1.0")}"
     G
 
-    bundle! :package, forgotten_command_line_options([:all, :cache_all] => true)
-    bundle! :install, :local => true
+    carat! :package, forgotten_command_line_options([:all, :cache_all] => true)
+    carat! :install, :local => true
 
     lockfile_should_be <<-G
       GEM
@@ -665,8 +665,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -707,8 +707,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
         foo!
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -742,8 +742,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
         rack-obama
         thin
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -781,8 +781,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rails
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -807,8 +807,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         double_deps
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -833,8 +833,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack-obama (>= 1.0)
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -859,13 +859,13 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack-obama (>= 1.0)
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
   it "stores relative paths when the path is provided in a relative fashion and in Gemfile dir" do
-    build_lib "foo", :path => bundled_app("foo")
+    build_lib "foo", :path => carated_app("foo")
 
     install_gemfile <<-G
       path "foo" do
@@ -888,13 +888,13 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
   it "stores relative paths when the path is provided in a relative fashion and is above Gemfile dir" do
-    build_lib "foo", :path => bundled_app(File.join("..", "foo"))
+    build_lib "foo", :path => carated_app(File.join("..", "foo"))
 
     install_gemfile <<-G
       path "../foo" do
@@ -917,13 +917,13 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
   it "stores relative paths when the path is provided in an absolute fashion but is relative" do
-    build_lib "foo", :path => bundled_app("foo")
+    build_lib "foo", :path => carated_app("foo")
 
     install_gemfile <<-G
       path File.expand_path("../foo", __FILE__) do
@@ -946,8 +946,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -973,8 +973,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         foo!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -991,8 +991,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
 
     install_gemfile <<-G
@@ -1013,8 +1013,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -1046,8 +1046,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         platform_specific
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -1077,8 +1077,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
         activesupport
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -1101,8 +1101,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -1125,8 +1125,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack (= 1.0)
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -1149,8 +1149,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack (= 1.0)
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -1161,7 +1161,7 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       gem "rack", "1.1"
     G
 
-    expect(bundled_app("Gemfile.lock")).not_to exist
+    expect(carated_app("Gemfile.lock")).not_to exist
     expect(out).to include "rack (= 1.0) and rack (= 1.1)"
   end
 
@@ -1172,7 +1172,7 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       gem "rack", :git => "git://hubz.com"
     G
 
-    expect(bundled_app("Gemfile.lock")).not_to exist
+    expect(carated_app("Gemfile.lock")).not_to exist
     expect(out).to include "rack (>= 0) should come from an unspecified source and git://hubz.com (at master)"
   end
 
@@ -1194,8 +1194,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack (> 0.9, < 1.0)
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -1221,12 +1221,12 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       RUBY VERSION
          ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
-  # Some versions of the Bundler 1.1 RC series introduced corrupted
+  # Some versions of the Carat 1.1 RC series introduced corrupted
   # lockfiles. There were two major problems:
   #
   # * multiple copies of the same GIT section appeared in the lockfile
@@ -1241,8 +1241,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       gem "omg", :git => "#{lib_path("omg")}", :branch => 'master'
     G
 
-    bundle! :install, forgotten_command_line_options(:path => "vendor")
-    expect(the_bundle).to include_gems "omg 1.0"
+    carat! :install, forgotten_command_line_options(:path => "vendor")
+    expect(the_carat).to include_gems "omg 1.0"
 
     # Create a Gemfile.lock that has duplicate GIT sections
     lockfile <<-L
@@ -1270,16 +1270,16 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         omg!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     L
 
-    FileUtils.rm_rf(bundled_app("vendor"))
-    bundle "install"
-    expect(the_bundle).to include_gems "omg 1.0"
+    FileUtils.rm_rf(carated_app("vendor"))
+    carat "install"
+    expect(the_carat).to include_gems "omg 1.0"
 
     # Confirm that duplicate specs do not appear
-    expect(File.read(bundled_app("Gemfile.lock"))).to eq(strip_whitespace(<<-L))
+    expect(File.read(carated_app("Gemfile.lock"))).to eq(strip_whitespace(<<-L))
       GEM
         remote: file:#{gem_repo1}/
         specs:
@@ -1297,8 +1297,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         omg!
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     L
   end
 
@@ -1322,13 +1322,13 @@ RSpec.describe "the lockfile format", :bundler => "2" do
     G
 
     expect(out).to include("Downloading rack_middleware-1.0 revealed dependencies not in the API or the lockfile (#{Gem::Dependency.new("rack", "= 0.9.1")}).").
-      and include("Either installing with `--full-index` or running `bundle update rack_middleware` should fix the problem.")
+      and include("Either installing with `--full-index` or running `carat update rack_middleware` should fix the problem.")
   end
 
   describe "a line ending" do
     def set_lockfile_mtime_to_known_value
       time = Time.local(2000, 1, 1, 0, 0, 0)
-      File.utime(time, time, bundled_app("Gemfile.lock"))
+      File.utime(time, time, carated_app("Gemfile.lock"))
     end
     before(:each) do
       build_repo2
@@ -1341,28 +1341,28 @@ RSpec.describe "the lockfile format", :bundler => "2" do
     end
 
     it "generates Gemfile.lock with \\n line endings" do
-      expect(File.read(bundled_app("Gemfile.lock"))).not_to match("\r\n")
-      expect(the_bundle).to include_gems "rack 1.0"
+      expect(File.read(carated_app("Gemfile.lock"))).not_to match("\r\n")
+      expect(the_carat).to include_gems "rack 1.0"
     end
 
     context "during updates" do
       it "preserves Gemfile.lock \\n line endings" do
         update_repo2
 
-        expect { bundle "update", :all => true }.to change { File.mtime(bundled_app("Gemfile.lock")) }
-        expect(File.read(bundled_app("Gemfile.lock"))).not_to match("\r\n")
-        expect(the_bundle).to include_gems "rack 1.2"
+        expect { carat "update", :all => true }.to change { File.mtime(carated_app("Gemfile.lock")) }
+        expect(File.read(carated_app("Gemfile.lock"))).not_to match("\r\n")
+        expect(the_carat).to include_gems "rack 1.2"
       end
 
       it "preserves Gemfile.lock \\n\\r line endings" do
         update_repo2
-        win_lock = File.read(bundled_app("Gemfile.lock")).gsub(/\n/, "\r\n")
-        File.open(bundled_app("Gemfile.lock"), "wb") {|f| f.puts(win_lock) }
+        win_lock = File.read(carated_app("Gemfile.lock")).gsub(/\n/, "\r\n")
+        File.open(carated_app("Gemfile.lock"), "wb") {|f| f.puts(win_lock) }
         set_lockfile_mtime_to_known_value
 
-        expect { bundle "update", :all => true }.to change { File.mtime(bundled_app("Gemfile.lock")) }
-        expect(File.read(bundled_app("Gemfile.lock"))).to match("\r\n")
-        expect(the_bundle).to include_gems "rack 1.2"
+        expect { carat "update", :all => true }.to change { File.mtime(carated_app("Gemfile.lock")) }
+        expect(File.read(carated_app("Gemfile.lock"))).to match("\r\n")
+        expect(the_carat).to include_gems "rack 1.2"
       end
     end
 
@@ -1371,24 +1371,24 @@ RSpec.describe "the lockfile format", :bundler => "2" do
         expect do
           ruby <<-RUBY
                    require 'rubygems'
-                   require 'bundler'
-                   Bundler.setup
+                   require 'carat'
+                   Carat.setup
                  RUBY
-        end.not_to change { File.mtime(bundled_app("Gemfile.lock")) }
+        end.not_to change { File.mtime(carated_app("Gemfile.lock")) }
       end
 
       it "preserves Gemfile.lock \\n\\r line endings" do
-        win_lock = File.read(bundled_app("Gemfile.lock")).gsub(/\n/, "\r\n")
-        File.open(bundled_app("Gemfile.lock"), "wb") {|f| f.puts(win_lock) }
+        win_lock = File.read(carated_app("Gemfile.lock")).gsub(/\n/, "\r\n")
+        File.open(carated_app("Gemfile.lock"), "wb") {|f| f.puts(win_lock) }
         set_lockfile_mtime_to_known_value
 
         expect do
           ruby <<-RUBY
                    require 'rubygems'
-                   require 'bundler'
-                   Bundler.setup
+                   require 'carat'
+                   Carat.setup
                  RUBY
-        end.not_to change { File.mtime(bundled_app("Gemfile.lock")) }
+        end.not_to change { File.mtime(carated_app("Gemfile.lock")) }
       end
     end
   end
@@ -1410,8 +1410,8 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       DEPENDENCIES
         rack
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     L
 
     install_gemfile(<<-G)
@@ -1419,7 +1419,7 @@ RSpec.describe "the lockfile format", :bundler => "2" do
       gem "rack"
     G
 
-    expect(last_command.bundler_err).to match(/your Gemfile.lock contains merge conflicts/i)
-    expect(last_command.bundler_err).to match(/git checkout HEAD -- Gemfile.lock/i)
+    expect(last_command.carat_err).to match(/your Gemfile.lock contains merge conflicts/i)
+    expect(last_command.carat_err).to match(/git checkout HEAD -- Gemfile.lock/i)
   end
 end

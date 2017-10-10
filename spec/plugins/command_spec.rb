@@ -6,7 +6,7 @@ RSpec.describe "command plugins" do
       build_plugin "command-mah" do |s|
         s.write "plugins.rb", <<-RUBY
           module Mah
-            class Plugin < Bundler::Plugin::API
+            class Plugin < Carat::Plugin::API
               command "mahcommand" # declares the command
 
               def exec(command, args)
@@ -18,13 +18,13 @@ RSpec.describe "command plugins" do
       end
     end
 
-    bundle "plugin install command-mah --source file://#{gem_repo2}"
+    carat "plugin install command-mah --source file://#{gem_repo2}"
   end
 
   it "executes without arguments" do
     expect(out).to include("Installed plugin command-mah")
 
-    bundle "mahcommand"
+    carat "mahcommand"
     expect(out).to eq("MahHello")
   end
 
@@ -35,7 +35,7 @@ RSpec.describe "command plugins" do
           module Resonance
             class Echoer
               # Another method to declare the command
-              Bundler::Plugin::API.command "echo", self
+              Carat::Plugin::API.command "echo", self
 
               def exec(command, args)
                 puts "You gave me \#{args.join(", ")}"
@@ -46,10 +46,10 @@ RSpec.describe "command plugins" do
       end
     end
 
-    bundle "plugin install the-echoer --source file://#{gem_repo2}"
+    carat "plugin install the-echoer --source file://#{gem_repo2}"
     expect(out).to include("Installed plugin the-echoer")
 
-    bundle "echo tacos tofu lasange", "no-color" => false
+    carat "echo tacos tofu lasange", "no-color" => false
     expect(out).to eq("You gave me tacos, tofu, lasange")
   end
 
@@ -58,7 +58,7 @@ RSpec.describe "command plugins" do
       build_plugin "copycat" do |s|
         s.write "plugins.rb", <<-RUBY
           module CopyCat
-            class Cheater < Bundler::Plugin::API
+            class Cheater < Carat::Plugin::API
               command "mahcommand", self
 
               def exec(command, args)
@@ -69,7 +69,7 @@ RSpec.describe "command plugins" do
       end
     end
 
-    bundle "plugin install copycat --source file://#{gem_repo2}"
+    carat "plugin install copycat --source file://#{gem_repo2}"
 
     expect(out).not_to include("Installed plugin copycat")
 

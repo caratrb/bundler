@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install with a mirror configured" do
+RSpec.describe "carat install with a mirror configured" do
   describe "when the mirror does not match the gem source" do
     before :each do
       gemfile <<-G
@@ -8,13 +8,13 @@ RSpec.describe "bundle install with a mirror configured" do
 
         gem "rack"
       G
-      bundle "config --local mirror.http://gems.example.org http://gem-mirror.example.org"
+      carat "config --local mirror.http://gems.example.org http://gem-mirror.example.org"
     end
 
     it "installs from the normal location" do
-      bundle :install
+      carat :install
       expect(out).to include("Fetching source index from file:#{gem_repo1}")
-      expect(the_bundle).to include_gems "rack 1.0"
+      expect(the_carat).to include_gems "rack 1.0"
     end
   end
 
@@ -26,14 +26,14 @@ RSpec.describe "bundle install with a mirror configured" do
 
         gem "rack"
       G
-      bundle "config --local mirror.file://#{gem_repo2} file://#{gem_repo1}"
+      carat "config --local mirror.file://#{gem_repo2} file://#{gem_repo1}"
     end
 
     it "installs the gem from the mirror" do
-      bundle :install
+      carat :install
       expect(out).to include("Fetching source index from file:#{gem_repo1}")
       expect(out).not_to include("Fetching source index from file:#{gem_repo2}")
-      expect(the_bundle).to include_gems "rack 1.0"
+      expect(the_carat).to include_gems "rack 1.0"
     end
   end
 end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundler/inline#gemfile" do
+RSpec.describe "carat/inline#gemfile" do
   def script(code, options = {})
-    requires = ["bundler/inline"]
+    requires = ["carat/inline"]
     requires.unshift File.expand_path("../../support/artifice/" + options.delete(:artifice) + ".rb", __FILE__) if options.key?(:artifice)
     requires = requires.map {|r| "require '#{r}'" }.join("\n")
     @out = ruby("#{requires}\n\n" + code, options)
@@ -100,13 +100,13 @@ RSpec.describe "bundler/inline#gemfile" do
 
   it "lets me use my own ui object" do
     script <<-RUBY, :artifice => "endpoint"
-      require 'bundler'
-      class MyBundlerUI < Bundler::UI::Silent
+      require 'carat'
+      class MyCaratUI < Carat::UI::Silent
         def confirm(msg, newline = nil)
           puts "CONFIRMED!"
         end
       end
-      gemfile(true, :ui => MyBundlerUI.new) do
+      gemfile(true, :ui => MyCaratUI.new) do
         source "https://notaserver.com"
         gem "activesupport", :require => true
       end
@@ -131,8 +131,8 @@ RSpec.describe "bundler/inline#gemfile" do
 
   it "does not mutate the option argument" do
     script <<-RUBY
-      require 'bundler'
-      options = { :ui => Bundler::UI::Shell.new }
+      require 'carat'
+      options = { :ui => Carat::UI::Shell.new }
       gemfile(false, options) do
         path "#{lib_path}" do
           gem "two"
@@ -216,7 +216,7 @@ RSpec.describe "bundler/inline#gemfile" do
       DEPENDENCIES
         rake
 
-      BUNDLED WITH
+      CARAT VERSION
          1.13.6
     G
 
@@ -235,8 +235,8 @@ RSpec.describe "bundler/inline#gemfile" do
     expect(exitstatus).to be_zero if exitstatus
   end
 
-  it "installs inline gems when BUNDLE_GEMFILE is set to an empty string" do
-    ENV["BUNDLE_GEMFILE"] = ""
+  it "installs inline gems when CARAT_GEMFILE is set to an empty string" do
+    ENV["CARAT_GEMFILE"] = ""
 
     in_app_root do
       script <<-RUBY
@@ -253,8 +253,8 @@ RSpec.describe "bundler/inline#gemfile" do
     expect(exitstatus).to be_zero if exitstatus
   end
 
-  it "installs inline gems when BUNDLE_BIN is set" do
-    ENV["BUNDLE_BIN"] = "/usr/local/bundle/bin"
+  it "installs inline gems when CARAT_BIN is set" do
+    ENV["CARAT_BIN"] = "/usr/local/carat/bin"
 
     script <<-RUBY
       gemfile do

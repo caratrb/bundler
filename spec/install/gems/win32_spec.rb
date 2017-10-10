@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install with win32-generated lockfile" do
+RSpec.describe "carat install with win32-generated lockfile" do
   it "should read lockfile" do
-    File.open(bundled_app("Gemfile.lock"), "wb") do |f|
+    File.open(carated_app("Gemfile.lock"), "wb") do |f|
       f << "GEM\r\n"
       f << "  remote: file:#{gem_repo1}/\r\n"
       f << "  specs:\r\n"

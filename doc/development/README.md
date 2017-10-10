@@ -1,6 +1,6 @@
 # Development
 
-So, you're ready to start contributing to Bundler! You've come to the right place. Here you'll find an overview of how to work on Bundler locally and a description of the process from code to release.
+So, you're ready to start contributing to Carat! You've come to the right place. Here you'll find an overview of how to work on Carat locally and a description of the process from code to release.
 
 ## [Development setup](SETUP.md)
 
@@ -12,8 +12,8 @@ An overview of our preferred PR process, including how to run the test suite and
 
 ## [Adding new features](NEW_FEATURES.md)
 
-Guidelines for proposing and writing new features for Bundler.
+Guidelines for proposing and writing new features for Carat.
 
-## [Releasing Bundler](RELEASING.md)
+## [Releasing Carat](RELEASING.md)
 
-A broad-strokes overview of the release process adhered to by the Bundler core team.
+A broad-strokes overview of the release process adhered to by the Carat core team.

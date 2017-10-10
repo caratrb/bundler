@@ -22,7 +22,7 @@ RSpec.describe "gemcutter's dependency API", :realworld => true do
       @t.run
 
       wait_for_server("127.0.0.1", port)
-      bundle! "config timeout 1"
+      carat! "config timeout 1"
     end
 
     after do
@@ -38,7 +38,7 @@ RSpec.describe "gemcutter's dependency API", :realworld => true do
       G
 
       expect(out).to include("Fetching source index from #{@server_uri}/")
-      expect(the_bundle).to include_gems "rack 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0"
     end
   end
 end

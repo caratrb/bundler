@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "rubygems"
+carat_gemspec = Gem::Specification.load(File.expand_path("../../carat.gemspec", __FILE__))
+carat_gemspec.instance_variable_set(:@full_gem_path, File.expand_path("../..", __FILE__))
+carat_gemspec.activate if carat_gemspec.respond_to?(:activate)
+load File.expand_path("../../exe/carat", __FILE__)

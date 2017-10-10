@@ -4,12 +4,12 @@ RSpec.describe "real source plugins" do
   context "with a minimal source plugin" do
     before do
       build_repo2 do
-        build_plugin "bundler-source-mpath" do |s|
+        build_plugin "carat-source-mpath" do |s|
           s.write "plugins.rb", <<-RUBY
-            require "bundler/vendored_fileutils"
-            require "bundler-source-mpath"
+            require "carat/vendored_fileutils"
+            require "carat-source-mpath"
 
-            class MPath < Bundler::Plugin::API
+            class MPath < Carat::Plugin::API
               source "mpath"
 
               attr_reader :path
@@ -60,15 +60,15 @@ RSpec.describe "real source plugins" do
     end
 
     it "installs" do
-      bundle "install"
+      carat "install"
 
-      expect(out).to include("Bundle complete!")
+      expect(out).to include("Carat complete!")
 
-      expect(the_bundle).to include_gems("a-path-gem 1.0")
+      expect(the_carat).to include_gems("a-path-gem 1.0")
     end
 
-    it "writes to lock file", :bundler => "< 2" do
-      bundle "install"
+    it "writes to lock file", :carat => "< 2" do
+      carat "install"
 
       lockfile_should_be <<-G
         PLUGIN SOURCE
@@ -87,13 +87,13 @@ RSpec.describe "real source plugins" do
         DEPENDENCIES
           a-path-gem!
 
-        BUNDLED WITH
-           #{Bundler::VERSION}
+        CARAT VERSION
+           #{Carat::VERSION}
       G
     end
 
-    it "writes to lock file", :bundler => "2" do
-      bundle "install"
+    it "writes to lock file", :carat => "2" do
+      carat "install"
 
       lockfile_should_be <<-G
         GEM
@@ -112,17 +112,17 @@ RSpec.describe "real source plugins" do
         DEPENDENCIES
           a-path-gem!
 
-        BUNDLED WITH
-           #{Bundler::VERSION}
+        CARAT VERSION
+           #{Carat::VERSION}
       G
     end
 
     it "provides correct #full_gem_path" do
-      bundle "install"
+      carat "install"
       run <<-RUBY
-        puts Bundler.rubygems.find_name('a-path-gem').first.full_gem_path
+        puts Carat.rubygems.find_name('a-path-gem').first.full_gem_path
       RUBY
-      expect(out).to eq(bundle("info a-path-gem --path"))
+      expect(out).to eq(carat("info a-path-gem --path"))
     end
 
     it "installs the gem executables" do
@@ -137,42 +137,42 @@ RSpec.describe "real source plugins" do
         end
       G
 
-      bundle "exec foo"
+      carat "exec foo"
       expect(out).to eq("1.0")
     end
 
-    describe "bundle cache/package" do
+    describe "carat cache/package" do
       let(:uri_hash) { Digest::SHA1.hexdigest(lib_path("a-path-gem-1.0").to_s) }
       it "copies repository to vendor cache and uses it" do
-        bundle "install"
-        bundle :cache, forgotten_command_line_options([:all, :cache_all] => true)
+        carat "install"
+        carat :cache, forgotten_command_line_options([:all, :cache_all] => true)
 
-        expect(bundled_app("vendor/cache/a-path-gem-1.0-#{uri_hash}")).to exist
-        expect(bundled_app("vendor/cache/a-path-gem-1.0-#{uri_hash}/.git")).not_to exist
-        expect(bundled_app("vendor/cache/a-path-gem-1.0-#{uri_hash}/.bundlecache")).to be_file
+        expect(carated_app("vendor/cache/a-path-gem-1.0-#{uri_hash}")).to exist
+        expect(carated_app("vendor/cache/a-path-gem-1.0-#{uri_hash}/.git")).not_to exist
+        expect(carated_app("vendor/cache/a-path-gem-1.0-#{uri_hash}/.caratcache")).to be_file
 
         FileUtils.rm_rf lib_path("a-path-gem-1.0")
-        expect(the_bundle).to include_gems("a-path-gem 1.0")
+        expect(the_carat).to include_gems("a-path-gem 1.0")
       end
 
-      it "copies repository to vendor cache and uses it even when installed with bundle --path" do
-        bundle! :install, forgotten_command_line_options(:path => "vendor/bundle")
-        bundle! :cache, forgotten_command_line_options([:all, :cache_all] => true)
+      it "copies repository to vendor cache and uses it even when installed with carat --path" do
+        carat! :install, forgotten_command_line_options(:path => "vendor/carat")
+        carat! :cache, forgotten_command_line_options([:all, :cache_all] => true)
 
-        expect(bundled_app("vendor/cache/a-path-gem-1.0-#{uri_hash}")).to exist
+        expect(carated_app("vendor/cache/a-path-gem-1.0-#{uri_hash}")).to exist
 
         FileUtils.rm_rf lib_path("a-path-gem-1.0")
-        expect(the_bundle).to include_gems("a-path-gem 1.0")
+        expect(the_carat).to include_gems("a-path-gem 1.0")
       end
 
-      it "bundler package copies repository to vendor cache" do
-        bundle! :install, forgotten_command_line_options(:path => "vendor/bundle")
-        bundle! :package, forgotten_command_line_options([:all, :cache_all] => true)
+      it "carat package copies repository to vendor cache" do
+        carat! :install, forgotten_command_line_options(:path => "vendor/carat")
+        carat! :package, forgotten_command_line_options([:all, :cache_all] => true)
 
-        expect(bundled_app("vendor/cache/a-path-gem-1.0-#{uri_hash}")).to exist
+        expect(carated_app("vendor/cache/a-path-gem-1.0-#{uri_hash}")).to exist
 
         FileUtils.rm_rf lib_path("a-path-gem-1.0")
-        expect(the_bundle).to include_gems("a-path-gem 1.0")
+        expect(the_carat).to include_gems("a-path-gem 1.0")
       end
     end
 
@@ -195,15 +195,15 @@ RSpec.describe "real source plugins" do
           DEPENDENCIES
             a-path-gem!
 
-          BUNDLED WITH
-             #{Bundler::VERSION}
+          CARAT VERSION
+             #{Carat::VERSION}
         G
       end
 
       it "installs" do
-        bundle! "install"
+        carat! "install"
 
-        expect(the_bundle).to include_gems("a-path-gem 1.0")
+        expect(the_carat).to include_gems("a-path-gem 1.0")
       end
     end
   end
@@ -211,9 +211,9 @@ RSpec.describe "real source plugins" do
   context "with a more elaborate source plugin" do
     before do
       build_repo2 do
-        build_plugin "bundler-source-gitp" do |s|
+        build_plugin "carat-source-gitp" do |s|
           s.write "plugins.rb", <<-RUBY
-            class SPlugin < Bundler::Plugin::API
+            class SPlugin < Carat::Plugin::API
               source "gitp"
 
               attr_reader :ref
@@ -328,7 +328,7 @@ RSpec.describe "real source plugins" do
                   path = gem_install_dir.join(git_scope)
 
                   if !path.exist? && requires_sudo?
-                    user_bundle_path.join(ruby_scope).join(git_scope)
+                    user_carat_path.join(ruby_scope).join(git_scope)
                   else
                     path
                   end
@@ -354,14 +354,14 @@ RSpec.describe "real source plugins" do
     end
 
     it "handles the source option" do
-      bundle "install"
-      expect(out).to include("Bundle complete!")
-      expect(the_bundle).to include_gems("ma-gitp-gem 1.0")
+      carat "install"
+      expect(out).to include("Carat complete!")
+      expect(the_carat).to include_gems("ma-gitp-gem 1.0")
     end
 
-    it "writes to lock file", :bundler => "< 2" do
+    it "writes to lock file", :carat => "< 2" do
       revision = revision_for(lib_path("ma-gitp-gem-1.0"))
-      bundle "install"
+      carat "install"
 
       lockfile_should_be <<-G
         PLUGIN SOURCE
@@ -381,14 +381,14 @@ RSpec.describe "real source plugins" do
         DEPENDENCIES
           ma-gitp-gem!
 
-        BUNDLED WITH
-           #{Bundler::VERSION}
+        CARAT VERSION
+           #{Carat::VERSION}
       G
     end
 
-    it "writes to lock file", :bundler => "2" do
+    it "writes to lock file", :carat => "2" do
       revision = revision_for(lib_path("ma-gitp-gem-1.0"))
-      bundle "install"
+      carat "install"
 
       lockfile_should_be <<-G
         GEM
@@ -408,8 +408,8 @@ RSpec.describe "real source plugins" do
         DEPENDENCIES
           ma-gitp-gem!
 
-        BUNDLED WITH
-           #{Bundler::VERSION}
+        CARAT VERSION
+           #{Carat::VERSION}
       G
     end
 
@@ -434,19 +434,19 @@ RSpec.describe "real source plugins" do
           DEPENDENCIES
             ma-gitp-gem!
 
-          BUNDLED WITH
-             #{Bundler::VERSION}
+          CARAT VERSION
+             #{Carat::VERSION}
         G
       end
 
       it "installs" do
-        bundle "install"
-        expect(the_bundle).to include_gems("ma-gitp-gem 1.0")
+        carat "install"
+        expect(the_carat).to include_gems("ma-gitp-gem 1.0")
       end
 
       it "uses the locked ref" do
         update_git "ma-gitp-gem"
-        bundle "install"
+        carat "install"
 
         run <<-RUBY
           require 'ma-gitp-gem'
@@ -455,9 +455,9 @@ RSpec.describe "real source plugins" do
         expect(out).to eq("WIN")
       end
 
-      it "updates the deps on bundler update" do
+      it "updates the deps on carat update" do
         update_git "ma-gitp-gem"
-        bundle "update ma-gitp-gem"
+        carat "update ma-gitp-gem"
 
         run <<-RUBY
           require 'ma-gitp-gem'
@@ -474,13 +474,13 @@ RSpec.describe "real source plugins" do
             gem "ma-gitp-gem", "1.1"
           end
         G
-        bundle "install"
+        carat "install"
 
-        expect(the_bundle).to include_gems("ma-gitp-gem 1.1")
+        expect(the_carat).to include_gems("ma-gitp-gem 1.1")
       end
     end
 
-    describe "bundle cache with gitp" do
+    describe "carat cache with gitp" do
       it "copies repository to vendor cache and uses it" do
         git = build_git "foo"
         ref = git.ref_for("master", 11)
@@ -492,13 +492,13 @@ RSpec.describe "real source plugins" do
           end
         G
 
-        bundle :cache, forgotten_command_line_options([:all, :cache_all] => true)
-        expect(bundled_app("vendor/cache/foo-1.0-#{ref}")).to exist
-        expect(bundled_app("vendor/cache/foo-1.0-#{ref}/.git")).not_to exist
-        expect(bundled_app("vendor/cache/foo-1.0-#{ref}/.bundlecache")).to be_file
+        carat :cache, forgotten_command_line_options([:all, :cache_all] => true)
+        expect(carated_app("vendor/cache/foo-1.0-#{ref}")).to exist
+        expect(carated_app("vendor/cache/foo-1.0-#{ref}/.git")).not_to exist
+        expect(carated_app("vendor/cache/foo-1.0-#{ref}/.caratcache")).to be_file
 
         FileUtils.rm_rf lib_path("foo-1.0")
-        expect(the_bundle).to include_gems "foo 1.0"
+        expect(the_carat).to include_gems "foo 1.0"
       end
     end
   end

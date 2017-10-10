@@ -10,9 +10,9 @@ if RUBY_VERSION < "1.9"
 end # but only for 1.8
 
 CASSETTE_PATH = File.expand_path("../vcr_cassettes", __FILE__)
-CASSETTE_NAME = ENV.fetch("BUNDLER_SPEC_VCR_CASSETTE_NAME") { "realworld" }
+CASSETTE_NAME = ENV.fetch("CARATR_SPEC_VCR_CASSETTE_NAME") { "realworld" }
 
-class BundlerVCRHTTP < Net::HTTP
+class CaratVCRHTTP < Net::HTTP
   class RequestHandler
     attr_reader :http, :request, :body, :response_block
     def initialize(http, request, body = nil, &response_block)
@@ -36,8 +36,8 @@ class BundlerVCRHTTP < Net::HTTP
     end
 
     def recorded_response?
-      return true if ENV["BUNDLER_SPEC_PRE_RECORDED"]
-      return false if ENV["BUNDLER_SPEC_FORCE_RECORD"]
+      return true if ENV["CARATR_SPEC_PRE_RECORDED"]
+      return false if ENV["CARATR_SPEC_FORCE_RECORD"]
       request_pair_paths.all? {|f| File.exist?(f) }
     end
 
@@ -154,5 +154,5 @@ end
 # Replace Net::HTTP with our VCR subclass
 ::Net.class_eval do
   remove_const(:HTTP)
-  const_set(:HTTP, BundlerVCRHTTP)
+  const_set(:HTTP, CaratVCRHTTP)
 end

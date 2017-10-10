@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle lock" do
+RSpec.describe "carat lock" do
   def strip_lockfile(lockfile)
     strip_whitespace(lockfile).sub(/\n\Z/, "")
   end
 
   def read_lockfile(file = "Gemfile.lock")
-    strip_lockfile bundled_app(file).read
+    strip_lockfile carated_app(file).read
   end
 
   let(:repo) { gem_repo1 }
@@ -50,13 +50,13 @@ RSpec.describe "bundle lock" do
         rails
         with_license
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     L
   end
 
   it "prints a lockfile when there is no existing lockfile with --print" do
-    bundle "lock --print"
+    carat "lock --print"
 
     expect(out).to eq(@lockfile)
   end
@@ -64,13 +64,13 @@ RSpec.describe "bundle lock" do
   it "prints a lockfile when there is an existing lockfile with --print" do
     lockfile @lockfile
 
-    bundle "lock --print"
+    carat "lock --print"
 
     expect(out).to eq(@lockfile)
   end
 
   it "writes a lockfile when there is no existing lockfile" do
-    bundle "lock"
+    carat "lock"
 
     expect(read_lockfile).to eq(@lockfile)
   end
@@ -78,19 +78,19 @@ RSpec.describe "bundle lock" do
   it "writes a lockfile when there is an outdated lockfile using --update" do
     lockfile @lockfile.gsub("2.3.2", "2.3.1")
 
-    bundle! "lock --update"
+    carat! "lock --update"
 
     expect(read_lockfile).to eq(@lockfile)
   end
 
   it "does not fetch remote specs when using the --local option" do
-    bundle "lock --update --local"
+    carat "lock --update --local"
 
     expect(out).to match(/sources listed in your Gemfile|installed locally/)
   end
 
   it "writes to a custom location using --lockfile" do
-    bundle "lock --lockfile=lock"
+    carat "lock --lockfile=lock"
 
     expect(out).to match(/Writing lockfile to.+lock/)
     expect(read_lockfile("lock")).to eq(@lockfile)
@@ -100,7 +100,7 @@ RSpec.describe "bundle lock" do
   it "update specific gems using --update" do
     lockfile @lockfile.gsub("2.3.2", "2.3.1").gsub("10.0.2", "10.0.1")
 
-    bundle "lock --update rails rake"
+    carat "lock --update rails rake"
 
     expect(read_lockfile).to eq(@lockfile)
   end
@@ -108,7 +108,7 @@ RSpec.describe "bundle lock" do
   it "errors when updating a missing specific gems using --update" do
     lockfile @lockfile
 
-    bundle "lock --update blahblah"
+    carat "lock --update blahblah"
     expect(out).to eq("Could not find gem 'blahblah'.")
 
     expect(read_lockfile).to eq(@lockfile)
@@ -150,54 +150,54 @@ RSpec.describe "bundle lock" do
     end
 
     it "single gem updates dependent gem to minor" do
-      bundle "lock --update foo --patch"
+      carat "lock --update foo --patch"
 
-      expect(the_bundle.locked_gems.specs.map(&:full_name)).to eq(%w[foo-1.4.5 bar-2.1.1 qux-1.0.0].sort)
+      expect(the_carat.locked_gems.specs.map(&:full_name)).to eq(%w[foo-1.4.5 bar-2.1.1 qux-1.0.0].sort)
     end
 
     it "minor preferred with strict" do
-      bundle "lock --update --minor --strict"
+      carat "lock --update --minor --strict"
 
-      expect(the_bundle.locked_gems.specs.map(&:full_name)).to eq(%w[foo-1.5.0 bar-2.1.1 qux-1.1.0].sort)
+      expect(the_carat.locked_gems.specs.map(&:full_name)).to eq(%w[foo-1.5.0 bar-2.1.1 qux-1.1.0].sort)
     end
   end
 
   it "supports adding new platforms" do
-    bundle! "lock --add-platform java x86-mingw32"
+    carat! "lock --add-platform java x86-mingw32"
 
-    lockfile = Bundler::LockfileParser.new(read_lockfile)
+    lockfile = Carat::LockfileParser.new(read_lockfile)
     expect(lockfile.platforms).to match_array(local_platforms.unshift(java, mingw).uniq)
   end
 
   it "supports adding the `ruby` platform" do
-    bundle! "lock --add-platform ruby"
-    lockfile = Bundler::LockfileParser.new(read_lockfile)
+    carat! "lock --add-platform ruby"
+    lockfile = Carat::LockfileParser.new(read_lockfile)
     expect(lockfile.platforms).to match_array(local_platforms.unshift("ruby").uniq)
   end
 
   it "warns when adding an unknown platform" do
-    bundle "lock --add-platform foobarbaz"
+    carat "lock --add-platform foobarbaz"
     expect(out).to include("The platform `foobarbaz` is unknown to RubyGems and adding it will likely lead to resolution errors")
   end
 
   it "allows removing platforms" do
-    bundle! "lock --add-platform java x86-mingw32"
+    carat! "lock --add-platform java x86-mingw32"
 
-    lockfile = Bundler::LockfileParser.new(read_lockfile)
+    lockfile = Carat::LockfileParser.new(read_lockfile)
     expect(lockfile.platforms).to match_array(local_platforms.unshift(java, mingw).uniq)
 
-    bundle! "lock --remove-platform java"
+    carat! "lock --remove-platform java"
 
-    lockfile = Bundler::LockfileParser.new(read_lockfile)
+    lockfile = Carat::LockfileParser.new(read_lockfile)
     expect(lockfile.platforms).to match_array(local_platforms.unshift(mingw).uniq)
   end
 
   it "errors when removing all platforms" do
-    bundle "lock --remove-platform #{local_platforms.join(" ")}"
-    expect(last_command.bundler_err).to include("Removing all platforms from the bundle is not allowed")
+    carat "lock --remove-platform #{local_platforms.join(" ")}"
+    expect(last_command.carat_err).to include("Removing all platforms from the carat is not allowed")
   end
 
-  # from https://github.com/bundler/bundler/issues/4896
+  # from https://github.com/caratrb/carat/issues/4896
   it "properly adds platforms when platform requirements come from different dependencies" do
     build_repo4 do
       build_gem "ffi", "1.9.14"
@@ -234,9 +234,9 @@ RSpec.describe "bundle lock" do
       gem "gssapi"
     G
 
-    simulate_platform(mingw) { bundle! :lock }
+    simulate_platform(mingw) { carat! :lock }
 
-    expect(the_bundle.lockfile).to read_as(strip_whitespace(<<-G))
+    expect(the_carat.lockfile).to read_as(strip_whitespace(<<-G))
       GEM
         remote: file:#{gem_repo4}/
         specs:
@@ -255,13 +255,13 @@ RSpec.describe "bundle lock" do
         gssapi
         mixlib-shellout
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
 
-    simulate_platform(rb) { bundle! :lock }
+    simulate_platform(rb) { carat! :lock }
 
-    expect(the_bundle.lockfile).to read_as(strip_whitespace(<<-G))
+    expect(the_carat.lockfile).to read_as(strip_whitespace(<<-G))
       GEM
         remote: file:#{gem_repo4}/
         specs:
@@ -283,8 +283,8 @@ RSpec.describe "bundle lock" do
         gssapi
         mixlib-shellout
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     G
   end
 
@@ -299,14 +299,14 @@ RSpec.describe "bundle lock" do
     end
 
     it "does not implicitly update" do
-      bundle! "lock"
+      carat! "lock"
 
       expect(read_lockfile).to eq(@lockfile)
     end
 
     it "accounts for changes in the gemfile" do
       gemfile gemfile.gsub('"foo"', '"foo", "2.0"')
-      bundle! "lock"
+      carat! "lock"
 
       expect(read_lockfile).to eq(@lockfile.sub("foo (1.0)", "foo (2.0)").sub(/foo$/, "foo (= 2.0)"))
     end

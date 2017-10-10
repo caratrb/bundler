@@ -26,9 +26,9 @@ class Fail < Net::HTTP
   end
 
   def exception(req)
-    name = ENV.fetch("BUNDLER_SPEC_EXCEPTION") { "Errno::ENETUNREACH" }
+    name = ENV.fetch("CARATR_SPEC_EXCEPTION") { "Errno::ENETUNREACH" }
     const = name.split("::").reduce(Object) {|mod, sym| mod.const_get(sym) }
-    const.new("host down: Bundler spec artifice fail! #{req["PATH_INFO"]}")
+    const.new("host down: Carat spec artifice fail! #{req["PATH_INFO"]}")
   end
 end
 

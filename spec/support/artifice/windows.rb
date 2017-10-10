@@ -18,7 +18,7 @@ class Windows < Sinatra::Base
 
   helpers do
     def gem_repo
-      Pathname.new(ENV["BUNDLER_SPEC_GEM_REPO"] || Spec::Path.gem_repo1)
+      Pathname.new(ENV["CARATR_SPEC_GEM_REPO"] || Spec::Path.gem_repo1)
     end
   end
 

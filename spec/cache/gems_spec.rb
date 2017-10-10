@@ -1,40 +1,40 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle cache" do
+RSpec.describe "carat cache" do
   shared_examples_for "when there are only gemsources" do
     before :each do
       gemfile <<-G
         gem 'rack'
       G
 
-      system_gems "rack-1.0.0", :path => :bundle_path
-      bundle! :cache
+      system_gems "rack-1.0.0", :path => :carat_path
+      carat! :cache
     end
 
     it "copies the .gem file to vendor/cache" do
-      expect(bundled_app("vendor/cache/rack-1.0.0.gem")).to exist
+      expect(carated_app("vendor/cache/rack-1.0.0.gem")).to exist
     end
 
     it "uses the cache as a source when installing gems" do
-      build_gem "omg", :path => bundled_app("vendor/cache")
+      build_gem "omg", :path => carated_app("vendor/cache")
 
       install_gemfile <<-G
         source "file://#{gem_repo1}"
         gem "omg"
       G
 
-      expect(the_bundle).to include_gems "omg 1.0.0"
+      expect(the_carat).to include_gems "omg 1.0.0"
     end
 
     it "uses the cache as a source when installing gems with --local" do
-      system_gems [], :path => :bundle_path
-      bundle "install --local"
+      system_gems [], :path => :carat_path
+      carat "install --local"
 
-      expect(the_bundle).to include_gems("rack 1.0.0")
+      expect(the_carat).to include_gems("rack 1.0.0")
     end
 
     it "does not reinstall gems from the cache if they exist on the system" do
-      build_gem "rack", "1.0.0", :path => bundled_app("vendor/cache") do |s|
+      build_gem "rack", "1.0.0", :path => carated_app("vendor/cache") do |s|
         s.write "lib/rack.rb", "RACK = 'FAIL'"
       end
 
@@ -42,22 +42,22 @@ RSpec.describe "bundle cache" do
         gem "rack"
       G
 
-      expect(the_bundle).to include_gems("rack 1.0.0")
+      expect(the_carat).to include_gems("rack 1.0.0")
     end
 
-    it "does not reinstall gems from the cache if they exist in the bundle" do
-      system_gems "rack-1.0.0", :path => :bundle_path
+    it "does not reinstall gems from the cache if they exist in the carat" do
+      system_gems "rack-1.0.0", :path => :carat_path
 
       gemfile <<-G
         gem "rack"
       G
 
-      build_gem "rack", "1.0.0", :path => bundled_app("vendor/cache") do |s|
+      build_gem "rack", "1.0.0", :path => carated_app("vendor/cache") do |s|
         s.write "lib/rack.rb", "RACK = 'FAIL'"
       end
 
-      bundle! :install, :local => true
-      expect(the_bundle).to include_gems("rack 1.0.0")
+      carat! :install, :local => true
+      expect(the_carat).to include_gems("rack 1.0.0")
     end
 
     it "creates a lockfile" do
@@ -67,19 +67,19 @@ RSpec.describe "bundle cache" do
         gem "rack"
       G
 
-      bundle "cache"
+      carat "cache"
 
-      expect(bundled_app("Gemfile.lock")).to exist
+      expect(carated_app("Gemfile.lock")).to exist
     end
   end
 
   context "using system gems" do
-    before { bundle! "config path.system true" }
+    before { carat! "config path.system true" }
     it_behaves_like "when there are only gemsources"
   end
 
   context "installing into a local path" do
-    before { bundle! "config path ./.bundle" }
+    before { carat! "config path ./.carat" }
     it_behaves_like "when there are only gemsources"
   end
 
@@ -90,16 +90,16 @@ RSpec.describe "bundle cache" do
       end
 
       build_gem "builtin_gem", "1.0.2", :to_system => true do |s|
-        s.summary = "This builtin_gem is bundled with Ruby"
+        s.summary = "This builtin_gem is carated with Ruby"
       end
 
       FileUtils.rm("#{system_gem_path}/cache/builtin_gem-1.0.2.gem")
     end
 
     it "uses builtin gems when installing to system gems" do
-      bundle! "config path.system true"
+      carat! "config path.system true"
       install_gemfile %(gem 'builtin_gem', '1.0.2')
-      expect(the_bundle).to include_gems("builtin_gem 1.0.2")
+      expect(the_carat).to include_gems("builtin_gem 1.0.2")
     end
 
     it "caches remote and builtin gems" do
@@ -109,14 +109,14 @@ RSpec.describe "bundle cache" do
         gem 'rack', '1.0.0'
       G
 
-      bundle :cache
-      expect(bundled_app("vendor/cache/rack-1.0.0.gem")).to exist
-      expect(bundled_app("vendor/cache/builtin_gem-1.0.2.gem")).to exist
+      carat :cache
+      expect(carated_app("vendor/cache/rack-1.0.0.gem")).to exist
+      expect(carated_app("vendor/cache/builtin_gem-1.0.2.gem")).to exist
     end
 
     it "doesn't make remote request after caching the gem" do
-      build_gem "builtin_gem_2", "1.0.2", :path => bundled_app("vendor/cache") do |s|
-        s.summary = "This builtin_gem is bundled with Ruby"
+      build_gem "builtin_gem_2", "1.0.2", :path => carated_app("vendor/cache") do |s|
+        s.summary = "This builtin_gem is carated with Ruby"
       end
 
       install_gemfile <<-G
@@ -124,18 +124,18 @@ RSpec.describe "bundle cache" do
         gem 'builtin_gem_2', '1.0.2'
       G
 
-      bundle "install --local"
-      expect(the_bundle).to include_gems("builtin_gem_2 1.0.2")
+      carat "install --local"
+      expect(the_carat).to include_gems("builtin_gem_2 1.0.2")
     end
 
     it "errors if the builtin gem isn't available to cache" do
-      bundle! "config path.system true"
+      carat! "config path.system true"
 
       install_gemfile <<-G
         gem 'builtin_gem', '1.0.2'
       G
 
-      bundle :cache
+      carat :cache
       expect(exitstatus).to_not eq(0) if exitstatus
       expect(out).to include("builtin_gem-1.0.2 is built in to Ruby, and can't be cached")
     end
@@ -156,20 +156,20 @@ RSpec.describe "bundle cache" do
     end
 
     it "still works" do
-      bundle :cache
+      carat :cache
 
       system_gems []
-      bundle "install --local"
+      carat "install --local"
 
-      expect(the_bundle).to include_gems("rack 1.0.0", "foo 1.0")
+      expect(the_carat).to include_gems("rack 1.0.0", "foo 1.0")
     end
 
     it "should not explode if the lockfile is not present" do
-      FileUtils.rm(bundled_app("Gemfile.lock"))
+      FileUtils.rm(carated_app("Gemfile.lock"))
 
-      bundle :cache
+      carat :cache
 
-      expect(bundled_app("Gemfile.lock")).to exist
+      expect(carated_app("Gemfile.lock")).to exist
     end
   end
 
@@ -181,7 +181,7 @@ RSpec.describe "bundle cache" do
         gem "rack"
         gem "actionpack"
       G
-      bundle :cache
+      carat :cache
       expect(cached_gem("rack-1.0.0")).to exist
       expect(cached_gem("actionpack-2.3.2")).to exist
       expect(cached_gem("activesupport-2.3.2")).to exist
@@ -189,14 +189,14 @@ RSpec.describe "bundle cache" do
 
     it "re-caches during install" do
       cached_gem("rack-1.0.0").rmtree
-      bundle :install
+      carat :install
       expect(out).to include("Updating files in vendor/cache")
       expect(cached_gem("rack-1.0.0")).to exist
     end
 
     it "adds and removes when gems are updated" do
       update_repo2
-      bundle "update", :all => bundle_update_requires_all?
+      carat "update", :all => carat_update_requires_all?
       expect(cached_gem("rack-1.2")).to exist
       expect(cached_gem("rack-1.0.0")).not_to exist
     end
@@ -240,7 +240,7 @@ RSpec.describe "bundle cache" do
           gem "platform_specific"
         G
 
-        bundle :cache
+        carat :cache
         expect(cached_gem("platform_specific-1.0-java")).to exist
       end
 
@@ -250,25 +250,25 @@ RSpec.describe "bundle cache" do
         gem "platform_specific"
       G
 
-      expect(cached_gem("platform_specific-1.0-#{Bundler.local_platform}")).to exist
+      expect(cached_gem("platform_specific-1.0-#{Carat.local_platform}")).to exist
       expect(cached_gem("platform_specific-1.0-java")).to exist
     end
 
     it "doesn't remove gems with mismatched :rubygems_version or :date" do
       cached_gem("rack-1.0.0").rmtree
       build_gem "rack", "1.0.0",
-        :path => bundled_app("vendor/cache"),
+        :path => carated_app("vendor/cache"),
         :rubygems_version => "1.3.2"
       simulate_new_machine
 
-      bundle :install
+      carat :install
       expect(cached_gem("rack-1.0.0")).to exist
     end
 
     it "handles directories and non .gem files in the cache" do
-      bundled_app("vendor/cache/foo").mkdir
-      File.open(bundled_app("vendor/cache/bar"), "w") {|f| f.write("not a gem") }
-      bundle :cache
+      carated_app("vendor/cache/foo").mkdir
+      File.open(carated_app("vendor/cache/bar"), "w") {|f| f.write("not a gem") }
+      carat :cache
     end
 
     it "does not say that it is removing gems when it isn't actually doing so" do
@@ -276,8 +276,8 @@ RSpec.describe "bundle cache" do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      bundle "cache"
-      bundle "install"
+      carat "cache"
+      carat "install"
       expect(out).not_to match(/removing/i)
     end
 
@@ -286,19 +286,19 @@ RSpec.describe "bundle cache" do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      bundle "cache"
+      carat "cache"
       expect(out).not_to match(/\-\-all/)
     end
 
-    it "should install gems with the name bundler in them (that aren't bundler)" do
-      build_gem "foo-bundler", "1.0",
-        :path => bundled_app("vendor/cache")
+    it "should install gems with the name carat in them (that aren't carat)" do
+      build_gem "foo-carat", "1.0",
+        :path => carated_app("vendor/cache")
 
       install_gemfile <<-G
-        gem "foo-bundler"
+        gem "foo-carat"
       G
 
-      expect(the_bundle).to include_gems "foo-bundler 1.0"
+      expect(the_carat).to include_gems "foo-carat 1.0"
     end
   end
 end

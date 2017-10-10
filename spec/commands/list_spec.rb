@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle list", :bundler => "2" do
+RSpec.describe "carat list", :carat => "2" do
   before do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
@@ -9,8 +9,8 @@ RSpec.describe "bundle list", :bundler => "2" do
   end
 
   context "with name-only option" do
-    it "prints only the name of the gems in the bundle" do
-      bundle "list --name-only"
+    it "prints only the name of the gems in the carat" do
+      carat "list --name-only"
       expect(out).to eq "rack"
     end
   end
@@ -22,19 +22,19 @@ RSpec.describe "bundle list", :bundler => "2" do
       G
     end
 
-    it "prints message saying no gems are in the bundle" do
-      bundle "list"
+    it "prints message saying no gems are in the carat" do
+      carat "list"
       expect(out).to include("No gems in the Gemfile")
     end
   end
 
-  it "lists gems installed in the bundle" do
-    bundle "list"
+  it "lists gems installed in the carat" do
+    carat "list"
     expect(out).to include("  * rack (1.0.0)")
   end
 
   it "aliases the ls command to list" do
-    bundle "ls"
-    expect(out).to include("Gems included by the bundle")
+    carat "ls"
+    expect(out).to include("Gems included by the carat")
   end
 end

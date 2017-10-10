@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install with gem sources" do
+RSpec.describe "carat install with gem sources" do
   describe "the simple case" do
     it "prints output and returns if no dependencies are specified" do
       gemfile <<-G
         source "file://#{gem_repo1}"
       G
 
-      bundle :install
+      carat :install
       expect(out).to match(/no dependencies/)
     end
 
@@ -16,8 +16,8 @@ RSpec.describe "bundle install with gem sources" do
         raise StandardError, "FAIL"
       G
 
-      expect(last_command.bundler_err).to include('StandardError, "FAIL"')
-      expect(bundled_app("Gemfile.lock")).not_to exist
+      expect(last_command.carat_err).to include('StandardError, "FAIL"')
+      expect(carated_app("Gemfile.lock")).not_to exist
     end
 
     it "creates a Gemfile.lock" do
@@ -26,38 +26,38 @@ RSpec.describe "bundle install with gem sources" do
         gem "rack"
       G
 
-      expect(bundled_app("Gemfile.lock")).to exist
+      expect(carated_app("Gemfile.lock")).to exist
     end
 
-    it "does not create ./.bundle by default", :bundler => "< 2" do
+    it "does not create ./.carat by default", :carat => "< 2" do
       gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack"
       G
 
-      bundle! :install # can't use install_gemfile since it sets retry
-      expect(bundled_app(".bundle")).not_to exist
+      carat! :install # can't use install_gemfile since it sets retry
+      expect(carated_app(".carat")).not_to exist
     end
 
-    it "does not create ./.bundle by default when installing to system gems" do
+    it "does not create ./.carat by default when installing to system gems" do
       gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack"
       G
 
-      bundle! :install, :env => { "BUNDLE_PATH__SYSTEM" => true } # can't use install_gemfile since it sets retry
-      expect(bundled_app(".bundle")).not_to exist
+      carat! :install, :env => { "CARAT_PATH__SYSTEM" => true } # can't use install_gemfile since it sets retry
+      expect(carated_app(".carat")).not_to exist
     end
 
     it "creates lock files based on the Gemfile name" do
-      gemfile bundled_app("OmgFile"), <<-G
+      gemfile carated_app("OmgFile"), <<-G
         source "file://#{gem_repo1}"
         gem "rack", "1.0"
       G
 
-      bundle "install --gemfile OmgFile"
+      carat "install --gemfile OmgFile"
 
-      expect(bundled_app("OmgFile.lock")).to exist
+      expect(carated_app("OmgFile.lock")).to exist
     end
 
     it "doesn't delete the lockfile if one already exists" do
@@ -66,13 +66,13 @@ RSpec.describe "bundle install with gem sources" do
         gem 'rack'
       G
 
-      lockfile = File.read(bundled_app("Gemfile.lock"))
+      lockfile = File.read(carated_app("Gemfile.lock"))
 
       install_gemfile <<-G
         raise StandardError, "FAIL"
       G
 
-      expect(File.read(bundled_app("Gemfile.lock"))).to eq(lockfile)
+      expect(File.read(carated_app("Gemfile.lock"))).to eq(lockfile)
     end
 
     it "does not touch the lockfile if nothing changed" do
@@ -81,7 +81,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "rack"
       G
 
-      expect { run "1" }.not_to change { File.mtime(bundled_app("Gemfile.lock")) }
+      expect { run "1" }.not_to change { File.mtime(carated_app("Gemfile.lock")) }
     end
 
     it "fetches gems" do
@@ -90,8 +90,8 @@ RSpec.describe "bundle install with gem sources" do
         gem 'rack'
       G
 
-      expect(default_bundle_path("gems/rack-1.0.0")).to exist
-      expect(the_bundle).to include_gems("rack 1.0.0")
+      expect(default_carat_path("gems/rack-1.0.0")).to exist
+      expect(the_carat).to include_gems("rack 1.0.0")
     end
 
     it "fetches gems when multiple versions are specified" do
@@ -100,8 +100,8 @@ RSpec.describe "bundle install with gem sources" do
         gem 'rack', "> 0.9", "< 1.0"
       G
 
-      expect(default_bundle_path("gems/rack-0.9.1")).to exist
-      expect(the_bundle).to include_gems("rack 0.9.1")
+      expect(default_carat_path("gems/rack-0.9.1")).to exist
+      expect(the_carat).to include_gems("rack 0.9.1")
     end
 
     it "fetches gems when multiple versions are specified take 2" do
@@ -110,8 +110,8 @@ RSpec.describe "bundle install with gem sources" do
         gem 'rack', "< 1.0", "> 0.9"
       G
 
-      expect(default_bundle_path("gems/rack-0.9.1")).to exist
-      expect(the_bundle).to include_gems("rack 0.9.1")
+      expect(default_carat_path("gems/rack-0.9.1")).to exist
+      expect(the_carat).to include_gems("rack 0.9.1")
     end
 
     it "raises an appropriate error when gems are specified using symbols" do
@@ -128,7 +128,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "rails"
       G
 
-      expect(the_bundle).to include_gems "actionpack 2.3.2", "rails 2.3.2"
+      expect(the_carat).to include_gems "actionpack 2.3.2", "rails 2.3.2"
     end
 
     it "does the right version" do
@@ -137,7 +137,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "rack", "0.9.1"
       G
 
-      expect(the_bundle).to include_gems "rack 0.9.1"
+      expect(the_carat).to include_gems "rack 0.9.1"
     end
 
     it "does not install the development dependency" do
@@ -146,7 +146,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "with_development_dependency"
       G
 
-      expect(the_bundle).to include_gems("with_development_dependency 1.0.0").
+      expect(the_carat).to include_gems("with_development_dependency 1.0.0").
         and not_include_gems("activesupport 2.3.5")
     end
 
@@ -157,7 +157,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "rails"
       G
 
-      expect(the_bundle).to include_gems "activemerchant 1.0", "activesupport 2.3.2", "actionpack 2.3.2"
+      expect(the_carat).to include_gems "activemerchant 1.0", "activesupport 2.3.2", "actionpack 2.3.2"
     end
 
     it "activates gem correctly according to the resolved gems" do
@@ -172,11 +172,11 @@ RSpec.describe "bundle install with gem sources" do
         gem "rails"
       G
 
-      expect(the_bundle).to include_gems "activemerchant 1.0", "activesupport 2.3.2", "actionpack 2.3.2"
+      expect(the_carat).to include_gems "activemerchant 1.0", "activesupport 2.3.2", "actionpack 2.3.2"
     end
 
     it "does not reinstall any gem that is already available locally" do
-      system_gems "activesupport-2.3.2", :path => :bundle_path
+      system_gems "activesupport-2.3.2", :path => :carat_path
 
       build_repo2 do
         build_gem "activesupport", "2.3.2" do |s|
@@ -189,22 +189,22 @@ RSpec.describe "bundle install with gem sources" do
         gem "activerecord", "2.3.2"
       G
 
-      expect(the_bundle).to include_gems "activesupport 2.3.2"
+      expect(the_carat).to include_gems "activesupport 2.3.2"
     end
 
     it "works when the gemfile specifies gems that only exist in the system" do
-      build_gem "foo", :to_bundle => true
+      build_gem "foo", :to_carat => true
       install_gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack"
         gem "foo"
       G
 
-      expect(the_bundle).to include_gems "rack 1.0.0", "foo 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0", "foo 1.0.0"
     end
 
     it "prioritizes local gems over remote gems" do
-      build_gem "rack", "1.0.0", :to_bundle => true do |s|
+      build_gem "rack", "1.0.0", :to_carat => true do |s|
         s.add_dependency "activesupport", "2.3.5"
       end
 
@@ -213,7 +213,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "rack"
       G
 
-      expect(the_bundle).to include_gems "rack 1.0.0", "activesupport 2.3.5"
+      expect(the_carat).to include_gems "rack 1.0.0", "activesupport 2.3.5"
     end
 
     describe "with a gem that installs multiple platforms" do
@@ -224,7 +224,7 @@ RSpec.describe "bundle install with gem sources" do
         G
 
         run "require 'platform_specific' ; puts PLATFORM_SPECIFIC"
-        expect(out).to eq("1.0.0 #{Bundler.local_platform}")
+        expect(out).to eq("1.0.0 #{Carat.local_platform}")
       end
 
       it "falls back on plain ruby" do
@@ -262,7 +262,7 @@ RSpec.describe "bundle install with gem sources" do
       end
     end
 
-    describe "doing bundle install foo" do
+    describe "doing carat install foo" do
       before do
         gemfile <<-G
           source "file://#{gem_repo1}"
@@ -271,26 +271,26 @@ RSpec.describe "bundle install with gem sources" do
       end
 
       it "works" do
-        bundle "install", forgotten_command_line_options(:path => "vendor")
-        expect(the_bundle).to include_gems "rack 1.0"
+        carat "install", forgotten_command_line_options(:path => "vendor")
+        expect(the_carat).to include_gems "rack 1.0"
       end
 
-      it "allows running bundle install --system without deleting foo", :bundler => "< 2" do
-        bundle "install", forgotten_command_line_options(:path => "vendor")
-        bundle "install", forgotten_command_line_options(:system => true)
-        FileUtils.rm_rf(bundled_app("vendor"))
-        expect(the_bundle).to include_gems "rack 1.0"
+      it "allows running carat install --system without deleting foo", :carat => "< 2" do
+        carat "install", forgotten_command_line_options(:path => "vendor")
+        carat "install", forgotten_command_line_options(:system => true)
+        FileUtils.rm_rf(carated_app("vendor"))
+        expect(the_carat).to include_gems "rack 1.0"
       end
 
-      it "allows running bundle install --system after deleting foo", :bundler => "< 2" do
-        bundle "install", forgotten_command_line_options(:path => "vendor")
-        FileUtils.rm_rf(bundled_app("vendor"))
-        bundle "install", forgotten_command_line_options(:system => true)
-        expect(the_bundle).to include_gems "rack 1.0"
+      it "allows running carat install --system after deleting foo", :carat => "< 2" do
+        carat "install", forgotten_command_line_options(:path => "vendor")
+        FileUtils.rm_rf(carated_app("vendor"))
+        carat "install", forgotten_command_line_options(:system => true)
+        expect(the_carat).to include_gems "rack 1.0"
       end
     end
 
-    it "finds gems in multiple sources", :bundler => "< 2" do
+    it "finds gems in multiple sources", :carat => "< 2" do
       build_repo2
       update_repo2
 
@@ -302,7 +302,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "rack", "1.2"
       G
 
-      expect(the_bundle).to include_gems "rack 1.2", "activesupport 1.2.3"
+      expect(the_carat).to include_gems "rack 1.2", "activesupport 1.2.3"
     end
 
     it "gives a useful error if no sources are set" do
@@ -310,7 +310,7 @@ RSpec.describe "bundle install with gem sources" do
         gem "rack"
       G
 
-      bundle :install
+      carat :install
       expect(out).to include("Your Gemfile has no gem server sources")
     end
 
@@ -318,7 +318,7 @@ RSpec.describe "bundle install with gem sources" do
       install_gemfile <<-G
       G
 
-      expect(File.exist?(bundled_app("Gemfile.lock"))).to eq(true)
+      expect(File.exist?(carated_app("Gemfile.lock"))).to eq(true)
     end
 
     it "gracefully handles error when rubygems server is unavailable" do
@@ -329,7 +329,7 @@ RSpec.describe "bundle install with gem sources" do
         end
       G
 
-      bundle :install, :artifice => nil
+      carat :install, :artifice => nil
       expect(out).to include("Could not fetch specs from http://localhost:9384/")
       expect(out).not_to include("file://")
     end
@@ -354,13 +354,13 @@ RSpec.describe "bundle install with gem sources" do
       G
 
       expect(last_command.stdboth).not_to match(/Error Report/i)
-      expect(last_command.bundler_err).to include("An error occurred while installing ajp-rails (0.0.0), and Bundler cannot continue.").
+      expect(last_command.carat_err).to include("An error occurred while installing ajp-rails (0.0.0), and Carat cannot continue.").
         and include("Make sure that `gem install ajp-rails -v '0.0.0'` succeeds before bundling.")
     end
 
-    it "doesn't blow up when the local .bundle/config is empty" do
-      FileUtils.mkdir_p(bundled_app(".bundle"))
-      FileUtils.touch(bundled_app(".bundle/config"))
+    it "doesn't blow up when the local .carat/config is empty" do
+      FileUtils.mkdir_p(carated_app(".carat"))
+      FileUtils.touch(carated_app(".carat/config"))
 
       install_gemfile(<<-G)
         source "file://#{gem_repo1}"
@@ -370,9 +370,9 @@ RSpec.describe "bundle install with gem sources" do
       expect(exitstatus).to eq(0) if exitstatus
     end
 
-    it "doesn't blow up when the global .bundle/config is empty" do
-      FileUtils.mkdir_p("#{Bundler.rubygems.user_home}/.bundle")
-      FileUtils.touch("#{Bundler.rubygems.user_home}/.bundle/config")
+    it "doesn't blow up when the global .carat/config is empty" do
+      FileUtils.mkdir_p("#{Carat.rubygems.user_home}/.carat")
+      FileUtils.touch("#{Carat.rubygems.user_home}/.carat/config")
 
       install_gemfile(<<-G)
         source "file://#{gem_repo1}"
@@ -384,7 +384,7 @@ RSpec.describe "bundle install with gem sources" do
   end
 
   describe "Ruby version in Gemfile.lock" do
-    include Bundler::GemHelpers
+    include Carat::GemHelpers
 
     context "and using an unsupported Ruby version" do
       it "prints an error" do
@@ -418,8 +418,8 @@ RSpec.describe "bundle install with gem sources" do
          RUBY VERSION
             ruby 2.1.3p100
 
-         BUNDLED WITH
-            #{Bundler::VERSION}
+         CARAT VERSION
+            #{Carat::VERSION}
         L
       end
 
@@ -442,14 +442,14 @@ RSpec.describe "bundle install with gem sources" do
          RUBY VERSION
             ruby 2.2.3p100
 
-         BUNDLED WITH
-            #{Bundler::VERSION}
+         CARAT VERSION
+            #{Carat::VERSION}
         L
       end
     end
   end
 
-  describe "when Bundler root contains regex chars" do
+  describe "when Carat root contains regex chars" do
     before do
       root_dir = tmp("foo[]bar")
 
@@ -466,7 +466,7 @@ RSpec.describe "bundle install with gem sources" do
         file.puts gemfile
       end
 
-      bundle :install
+      carat :install
 
       expect(exitstatus).to eq(0) if exitstatus
     end
@@ -478,15 +478,15 @@ RSpec.describe "bundle install with gem sources" do
         gem 'rack'
       G
 
-      bundle :install, :quiet => true
+      carat :install, :quiet => true
       expect(out).to include("Could not find gem 'rack'")
       expect(out).to_not include("Your Gemfile has no gem server sources")
     end
   end
 
-  describe "when bundle path does not have write access" do
+  describe "when carat path does not have write access" do
     before do
-      FileUtils.mkdir_p(bundled_app("vendor"))
+      FileUtils.mkdir_p(carated_app("vendor"))
       gemfile <<-G
         source "file://#{gem_repo1}"
         gem 'rack'
@@ -494,10 +494,10 @@ RSpec.describe "bundle install with gem sources" do
     end
 
     it "should display a proper message to explain the problem" do
-      FileUtils.chmod(0o500, bundled_app("vendor"))
+      FileUtils.chmod(0o500, carated_app("vendor"))
 
-      bundle :install, forgotten_command_line_options(:path => "vendor")
-      expect(out).to include(bundled_app("vendor").to_s)
+      carat :install, forgotten_command_line_options(:path => "vendor")
+      expect(out).to include(carated_app("vendor").to_s)
       expect(out).to include("grant write permissions")
     end
   end
@@ -508,18 +508,18 @@ RSpec.describe "bundle install with gem sources" do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      forgotten_command_line_options(:path => "bundle")
-      bundle! "install", :standalone => true
+      forgotten_command_line_options(:path => "carat")
+      carat! "install", :standalone => true
     end
 
     it "includes the standalone path" do
-      bundle! "binstubs rack", :standalone => true
-      standalone_line = File.read(bundled_app("bin/rackup")).each_line.find {|line| line.include? "$:.unshift" }.strip
-      expect(standalone_line).to eq %($:.unshift File.expand_path "../../bundle", path.realpath)
+      carat! "binstubs rack", :standalone => true
+      standalone_line = File.read(carated_app("bin/rackup")).each_line.find {|line| line.include? "$:.unshift" }.strip
+      expect(standalone_line).to eq %($:.unshift File.expand_path "../../carat", path.realpath)
     end
   end
 
-  describe "when bundle install is executed with unencoded authentication" do
+  describe "when carat install is executed with unencoded authentication" do
     before do
       gemfile <<-G
         source 'https://rubygems.org/'
@@ -528,7 +528,7 @@ RSpec.describe "bundle install with gem sources" do
     end
 
     it "should display a helpful messag explaining how to fix it" do
-      bundle :install, :env => { "BUNDLE_RUBYGEMS__ORG" => "user:pass{word" }
+      carat :install, :env => { "CARAT_RUBYGEMS__ORG" => "user:pass{word" }
       expect(exitstatus).to eq(17) if exitstatus
       expect(out).to eq("Please CGI escape your usernames and passwords before " \
                         "setting them for authentication.")

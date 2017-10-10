@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle platform" do
+RSpec.describe "carat platform" do
   context "without flags" do
-    let(:bundle_platform_platforms_string) do
+    let(:carat_platform_platforms_string) do
       platforms = [rb]
-      platforms.unshift(specific_local_platform) if Bundler.feature_flag.bundler_2_mode?
+      platforms.unshift(specific_local_platform) if Carat.feature_flag.carat_2_mode?
       platforms.map {|pl| "* #{pl}" }.join("\n")
     end
 
@@ -17,12 +17,12 @@ RSpec.describe "bundle platform" do
         gem "foo"
       G
 
-      bundle "platform"
+      carat "platform"
       expect(out).to eq(<<-G.chomp)
 Your platform is: #{RUBY_PLATFORM}
 
 Your app has gems that work on these platforms:
-#{bundle_platform_platforms_string}
+#{carat_platform_platforms_string}
 
 Your Gemfile specifies a Ruby version requirement:
 * ruby #{RUBY_VERSION}
@@ -40,12 +40,12 @@ G
         gem "foo"
       G
 
-      bundle "platform"
+      carat "platform"
       expect(out).to eq(<<-G.chomp)
 Your platform is: #{RUBY_PLATFORM}
 
 Your app has gems that work on these platforms:
-#{bundle_platform_platforms_string}
+#{carat_platform_platforms_string}
 
 Your Gemfile specifies a Ruby version requirement:
 * ruby #{RUBY_VERSION}p#{RUBY_PATCHLEVEL}
@@ -61,12 +61,12 @@ G
         gem "foo"
       G
 
-      bundle "platform"
+      carat "platform"
       expect(out).to eq(<<-G.chomp)
 Your platform is: #{RUBY_PLATFORM}
 
 Your app has gems that work on these platforms:
-#{bundle_platform_platforms_string}
+#{carat_platform_platforms_string}
 
 Your Gemfile does not specify a Ruby version requirement.
 G
@@ -81,12 +81,12 @@ G
         gem "foo"
       G
 
-      bundle "platform"
+      carat "platform"
       expect(out).to eq(<<-G.chomp)
 Your platform is: #{RUBY_PLATFORM}
 
 Your app has gems that work on these platforms:
-#{bundle_platform_platforms_string}
+#{carat_platform_platforms_string}
 
 Your Gemfile specifies a Ruby version requirement:
 * ruby #{not_local_ruby_version}
@@ -105,7 +105,7 @@ G
         gem "foo"
       G
 
-      bundle "platform --ruby"
+      carat "platform --ruby"
 
       expect(out).to eq("ruby 1.9.3")
     end
@@ -118,7 +118,7 @@ G
         gem "foo"
       G
 
-      bundle "platform --ruby"
+      carat "platform --ruby"
 
       expect(out).to eq("ruby 1.9.3")
     end
@@ -131,7 +131,7 @@ G
         gem "foo"
       G
 
-      bundle "platform --ruby"
+      carat "platform --ruby"
 
       expect(out).to eq("ruby 1.8.7 (jruby 1.6.5)")
     end
@@ -144,7 +144,7 @@ G
         gem "foo"
       G
 
-      bundle "platform --ruby"
+      carat "platform --ruby"
 
       expect(out).to eq("ruby 1.8.7 (rbx 1.2.4)")
     end
@@ -157,7 +157,7 @@ G
         gem "foo"
       G
 
-      bundle "platform"
+      carat "platform"
 
       expect(exitstatus).not_to eq(0) if exitstatus
     end
@@ -170,7 +170,7 @@ G
         gem "foo"
       G
 
-      bundle "platform"
+      carat "platform"
 
       expect(exitstatus).not_to eq(0) if exitstatus
     end
@@ -183,7 +183,7 @@ G
         gem "foo"
       G
 
-      bundle "platform"
+      carat "platform"
 
       expect(exitstatus).not_to eq(0) if exitstatus
     end
@@ -195,7 +195,7 @@ G
         gem "foo"
       G
 
-      bundle "platform --ruby"
+      carat "platform --ruby"
 
       expect(out).to eq("No ruby version specified")
     end
@@ -217,11 +217,11 @@ G
         RUBY VERSION
            ruby 1.0.0p127
 
-        BUNDLED WITH
-           #{Bundler::VERSION}
+        CARAT VERSION
+           #{Carat::VERSION}
       L
 
-      bundle! "platform --ruby"
+      carat! "platform --ruby"
       expect(out).to eq("ruby 1.0.0p127")
     end
 
@@ -230,7 +230,7 @@ G
         ruby ">= 1.8.7"
       G
 
-      bundle! "platform --ruby"
+      carat! "platform --ruby"
       expect(out).to eq("ruby 1.8.7")
     end
 
@@ -239,7 +239,7 @@ G
         ruby ">= 1.8.7", "< 2.0.0"
       G
 
-      bundle! "platform --ruby"
+      carat! "platform --ruby"
       expect(out).to eq("ruby 1.8.7")
     end
   end
@@ -278,7 +278,7 @@ G
     expect(out).to be_include("The Ruby patchlevel in your Gemfile must be a string")
   end
 
-  context "bundle install" do
+  context "carat install" do
     it "installs fine when the ruby version matches" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
@@ -287,7 +287,7 @@ G
         #{ruby_version_correct}
       G
 
-      expect(bundled_app("Gemfile.lock")).to exist
+      expect(carated_app("Gemfile.lock")).to exist
     end
 
     it "installs fine with any engine" do
@@ -299,7 +299,7 @@ G
           #{ruby_version_correct_engineless}
         G
 
-        expect(bundled_app("Gemfile.lock")).to exist
+        expect(carated_app("Gemfile.lock")).to exist
       end
     end
 
@@ -311,7 +311,7 @@ G
         #{ruby_version_correct_patchlevel}
       G
 
-      expect(bundled_app("Gemfile.lock")).to exist
+      expect(carated_app("Gemfile.lock")).to exist
     end
 
     it "doesn't install when the ruby version doesn't match" do
@@ -322,7 +322,7 @@ G
         #{ruby_version_incorrect}
       G
 
-      expect(bundled_app("Gemfile.lock")).not_to exist
+      expect(carated_app("Gemfile.lock")).not_to exist
       should_be_ruby_version_incorrect
     end
 
@@ -334,7 +334,7 @@ G
         #{engine_incorrect}
       G
 
-      expect(bundled_app("Gemfile.lock")).not_to exist
+      expect(carated_app("Gemfile.lock")).not_to exist
       should_be_engine_incorrect
     end
 
@@ -347,7 +347,7 @@ G
           #{engine_version_incorrect}
         G
 
-        expect(bundled_app("Gemfile.lock")).not_to exist
+        expect(carated_app("Gemfile.lock")).not_to exist
         should_be_engine_version_incorrect
       end
     end
@@ -360,12 +360,12 @@ G
         #{patchlevel_incorrect}
       G
 
-      expect(bundled_app("Gemfile.lock")).not_to exist
+      expect(carated_app("Gemfile.lock")).not_to exist
       should_be_patchlevel_incorrect
     end
   end
 
-  context "bundle check" do
+  context "carat check" do
     it "checks fine when the ruby version matches" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
@@ -379,7 +379,7 @@ G
         #{ruby_version_correct}
       G
 
-      bundle :check
+      carat :check
       expect(exitstatus).to eq(0) if exitstatus
       expect(out).to eq("Resolving dependencies...\nThe Gemfile's dependencies are satisfied")
     end
@@ -398,7 +398,7 @@ G
           #{ruby_version_correct_engineless}
         G
 
-        bundle :check
+        carat :check
         expect(exitstatus).to eq(0) if exitstatus
         expect(out).to eq("Resolving dependencies...\nThe Gemfile's dependencies are satisfied")
       end
@@ -417,7 +417,7 @@ G
         #{ruby_version_incorrect}
       G
 
-      bundle :check
+      carat :check
       should_be_ruby_version_incorrect
     end
 
@@ -434,7 +434,7 @@ G
         #{engine_incorrect}
       G
 
-      bundle :check
+      carat :check
       should_be_engine_incorrect
     end
 
@@ -452,7 +452,7 @@ G
           #{engine_version_incorrect}
         G
 
-        bundle :check
+        carat :check
         should_be_engine_version_incorrect
       end
     end
@@ -470,12 +470,12 @@ G
         #{patchlevel_incorrect}
       G
 
-      bundle :check
+      carat :check
       should_be_patchlevel_incorrect
     end
   end
 
-  context "bundle update" do
+  context "carat update" do
     before do
       build_repo2
 
@@ -498,8 +498,8 @@ G
         build_gem "activesupport", "3.0"
       end
 
-      bundle "update", :all => bundle_update_requires_all?
-      expect(the_bundle).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
+      carat "update", :all => carat_update_requires_all?
+      expect(the_carat).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
     end
 
     it "updates fine with any engine" do
@@ -515,8 +515,8 @@ G
           build_gem "activesupport", "3.0"
         end
 
-        bundle "update", :all => bundle_update_requires_all?
-        expect(the_bundle).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
+        carat "update", :all => carat_update_requires_all?
+        expect(the_carat).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
       end
     end
 
@@ -532,7 +532,7 @@ G
         build_gem "activesupport", "3.0"
       end
 
-      bundle :update, :all => bundle_update_requires_all?
+      carat :update, :all => carat_update_requires_all?
       should_be_ruby_version_incorrect
     end
 
@@ -548,7 +548,7 @@ G
         build_gem "activesupport", "3.0"
       end
 
-      bundle :update, :all => bundle_update_requires_all?
+      carat :update, :all => carat_update_requires_all?
       should_be_engine_incorrect
     end
 
@@ -565,7 +565,7 @@ G
           build_gem "activesupport", "3.0"
         end
 
-        bundle :update, :all => bundle_update_requires_all?
+        carat :update, :all => carat_update_requires_all?
         should_be_engine_version_incorrect
       end
     end
@@ -581,12 +581,12 @@ G
         build_gem "activesupport", "3.0"
       end
 
-      bundle :update, :all => bundle_update_requires_all?
+      carat :update, :all => carat_update_requires_all?
       should_be_patchlevel_incorrect
     end
   end
 
-  context "bundle info" do
+  context "carat info" do
     before do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
@@ -602,8 +602,8 @@ G
         #{ruby_version_correct}
       G
 
-      bundle "info rails --path"
-      expect(out).to eq(default_bundle_path("gems", "rails-2.3.2").to_s)
+      carat "info rails --path"
+      expect(out).to eq(default_carat_path("gems", "rails-2.3.2").to_s)
     end
 
     it "prints path if ruby version is correct for any engine" do
@@ -615,12 +615,12 @@ G
           #{ruby_version_correct_engineless}
         G
 
-        bundle "info rails --path"
-        expect(out).to eq(default_bundle_path("gems", "rails-2.3.2").to_s)
+        carat "info rails --path"
+        expect(out).to eq(default_carat_path("gems", "rails-2.3.2").to_s)
       end
     end
 
-    it "fails if ruby version doesn't match", :bundler => "< 2" do
+    it "fails if ruby version doesn't match", :carat => "< 2" do
       gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rails"
@@ -628,11 +628,11 @@ G
         #{ruby_version_incorrect}
       G
 
-      bundle "show rails"
+      carat "show rails"
       should_be_ruby_version_incorrect
     end
 
-    it "fails if engine doesn't match", :bundler => "< 2" do
+    it "fails if engine doesn't match", :carat => "< 2" do
       gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rails"
@@ -640,11 +640,11 @@ G
         #{engine_incorrect}
       G
 
-      bundle "show rails"
+      carat "show rails"
       should_be_engine_incorrect
     end
 
-    it "fails if engine version doesn't match", :bundler => "< 2" do
+    it "fails if engine version doesn't match", :carat => "< 2" do
       simulate_ruby_engine "jruby" do
         gemfile <<-G
           source "file://#{gem_repo1}"
@@ -653,12 +653,12 @@ G
           #{engine_version_incorrect}
         G
 
-        bundle "show rails"
+        carat "show rails"
         should_be_engine_version_incorrect
       end
     end
 
-    it "fails when patchlevel doesn't match", :bundler => "< 2" do
+    it "fails when patchlevel doesn't match", :carat => "< 2" do
       gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack"
@@ -669,12 +669,12 @@ G
         build_gem "activesupport", "3.0"
       end
 
-      bundle "show rails"
+      carat "show rails"
       should_be_patchlevel_incorrect
     end
   end
 
-  context "bundle cache" do
+  context "carat cache" do
     before do
       install_gemfile <<-G
         source "file:#{gem_repo1}"
@@ -689,8 +689,8 @@ G
         #{ruby_version_correct}
       G
 
-      bundle :cache
-      expect(bundled_app("vendor/cache/rack-1.0.0.gem")).to exist
+      carat :cache
+      expect(carated_app("vendor/cache/rack-1.0.0.gem")).to exist
     end
 
     it "copies the .gem file to vendor/cache when ruby version matches for any engine" do
@@ -702,8 +702,8 @@ G
           #{ruby_version_correct_engineless}
         G
 
-        bundle! :cache
-        expect(bundled_app("vendor/cache/rack-1.0.0.gem")).to exist
+        carat! :cache
+        expect(carated_app("vendor/cache/rack-1.0.0.gem")).to exist
       end
     end
 
@@ -714,7 +714,7 @@ G
         #{ruby_version_incorrect}
       G
 
-      bundle :cache
+      carat :cache
       should_be_ruby_version_incorrect
     end
 
@@ -725,7 +725,7 @@ G
         #{engine_incorrect}
       G
 
-      bundle :cache
+      carat :cache
       should_be_engine_incorrect
     end
 
@@ -737,7 +737,7 @@ G
           #{engine_version_incorrect}
         G
 
-        bundle :cache
+        carat :cache
         should_be_engine_version_incorrect
       end
     end
@@ -750,12 +750,12 @@ G
         #{patchlevel_incorrect}
       G
 
-      bundle :cache
+      carat :cache
       should_be_patchlevel_incorrect
     end
   end
 
-  context "bundle pack" do
+  context "carat pack" do
     before do
       install_gemfile! <<-G
         source "file:#{gem_repo1}"
@@ -770,8 +770,8 @@ G
         #{ruby_version_correct}
       G
 
-      bundle :pack
-      expect(bundled_app("vendor/cache/rack-1.0.0.gem")).to exist
+      carat :pack
+      expect(carated_app("vendor/cache/rack-1.0.0.gem")).to exist
     end
 
     it "copies the .gem file to vendor/cache when ruby version matches any engine" do
@@ -783,8 +783,8 @@ G
           #{ruby_version_correct_engineless}
         G
 
-        bundle :pack
-        expect(bundled_app("vendor/cache/rack-1.0.0.gem")).to exist
+        carat :pack
+        expect(carated_app("vendor/cache/rack-1.0.0.gem")).to exist
       end
     end
 
@@ -795,7 +795,7 @@ G
         #{ruby_version_incorrect}
       G
 
-      bundle :pack
+      carat :pack
       should_be_ruby_version_incorrect
     end
 
@@ -806,7 +806,7 @@ G
         #{engine_incorrect}
       G
 
-      bundle :pack
+      carat :pack
       should_be_engine_incorrect
     end
 
@@ -818,7 +818,7 @@ G
           #{engine_version_incorrect}
         G
 
-        bundle :pack
+        carat :pack
         should_be_engine_version_incorrect
       end
     end
@@ -831,15 +831,15 @@ G
         #{patchlevel_incorrect}
       G
 
-      bundle :pack
+      carat :pack
       should_be_patchlevel_incorrect
     end
   end
 
-  context "bundle exec" do
+  context "carat exec" do
     before do
-      ENV["BUNDLER_FORCE_TTY"] = "true"
-      system_gems "rack-1.0.0", "rack-0.9.1", :path => :bundle_path
+      ENV["CARATR_FORCE_TTY"] = "true"
+      system_gems "rack-1.0.0", "rack-0.9.1", :path => :carat_path
     end
 
     it "activates the correct gem when ruby version matches" do
@@ -849,20 +849,20 @@ G
         #{ruby_version_correct}
       G
 
-      bundle "exec rackup"
+      carat "exec rackup"
       expect(out).to eq("0.9.1")
     end
 
     it "activates the correct gem when ruby version matches any engine" do
       simulate_ruby_engine "jruby" do
-        system_gems "rack-1.0.0", "rack-0.9.1", :path => :bundle_path
+        system_gems "rack-1.0.0", "rack-0.9.1", :path => :carat_path
         gemfile <<-G
           gem "rack", "0.9.1"
 
           #{ruby_version_correct_engineless}
         G
 
-        bundle "exec rackup"
+        carat "exec rackup"
         expect(out).to eq("0.9.1")
       end
     end
@@ -874,7 +874,7 @@ G
         #{ruby_version_incorrect}
       G
 
-      bundle "exec rackup"
+      carat "exec rackup"
       should_be_ruby_version_incorrect
     end
 
@@ -885,7 +885,7 @@ G
         #{engine_incorrect}
       G
 
-      bundle "exec rackup"
+      carat "exec rackup"
       should_be_engine_incorrect
     end
 
@@ -897,7 +897,7 @@ G
     #       #{engine_version_incorrect}
     #     G
     #
-    #     bundle "exec rackup"
+    #     carat "exec rackup"
     #     should_be_engine_version_incorrect
     #   end
     # end
@@ -910,12 +910,12 @@ G
         #{patchlevel_incorrect}
       G
 
-      bundle "exec rackup"
+      carat "exec rackup"
       should_be_patchlevel_incorrect
     end
   end
 
-  context "bundle console", :bundler => "< 2" do
+  context "carat console", :carat => "< 2" do
     before do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
@@ -935,7 +935,7 @@ G
         #{ruby_version_correct}
       G
 
-      bundle "console" do |input, _, _|
+      carat "console" do |input, _, _|
         input.puts("puts RACK")
         input.puts("exit")
       end
@@ -953,7 +953,7 @@ G
           #{ruby_version_correct_engineless}
         G
 
-        bundle "console" do |input, _, _|
+        carat "console" do |input, _, _|
           input.puts("puts RACK")
           input.puts("exit")
         end
@@ -971,7 +971,7 @@ G
         #{ruby_version_incorrect}
       G
 
-      bundle "console"
+      carat "console"
       should_be_ruby_version_incorrect
     end
 
@@ -985,7 +985,7 @@ G
         #{engine_incorrect}
       G
 
-      bundle "console"
+      carat "console"
       should_be_engine_incorrect
     end
 
@@ -1000,7 +1000,7 @@ G
           #{engine_version_incorrect}
         G
 
-        bundle "console"
+        carat "console"
         should_be_engine_version_incorrect
       end
     end
@@ -1015,12 +1015,12 @@ G
         #{patchlevel_incorrect}
       G
 
-      bundle "console"
+      carat "console"
       should_be_patchlevel_incorrect
     end
   end
 
-  context "Bundler.setup" do
+  context "Carat.setup" do
     before do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
@@ -1028,7 +1028,7 @@ G
         gem "rack", :group => :test
       G
 
-      ENV["BUNDLER_FORCE_TTY"] = "true"
+      ENV["CARATR_FORCE_TTY"] = "true"
     end
 
     it "makes a Gemfile.lock if setup succeeds" do
@@ -1040,10 +1040,10 @@ G
         #{ruby_version_correct}
       G
 
-      FileUtils.rm(bundled_app("Gemfile.lock"))
+      FileUtils.rm(carated_app("Gemfile.lock"))
 
       run "1"
-      expect(bundled_app("Gemfile.lock")).to exist
+      expect(carated_app("Gemfile.lock")).to exist
     end
 
     it "makes a Gemfile.lock if setup succeeds for any engine" do
@@ -1056,10 +1056,10 @@ G
           #{ruby_version_correct_engineless}
         G
 
-        FileUtils.rm(bundled_app("Gemfile.lock"))
+        FileUtils.rm(carated_app("Gemfile.lock"))
 
         run "1"
-        expect(bundled_app("Gemfile.lock")).to exist
+        expect(carated_app("Gemfile.lock")).to exist
       end
     end
 
@@ -1072,14 +1072,14 @@ G
         #{ruby_version_incorrect}
       G
 
-      FileUtils.rm(bundled_app("Gemfile.lock"))
+      FileUtils.rm(carated_app("Gemfile.lock"))
 
       ruby <<-R
         require 'rubygems'
-        require 'bundler/setup'
+        require 'carat/setup'
       R
 
-      expect(bundled_app("Gemfile.lock")).not_to exist
+      expect(carated_app("Gemfile.lock")).not_to exist
       should_be_ruby_version_incorrect
     end
 
@@ -1092,14 +1092,14 @@ G
         #{engine_incorrect}
       G
 
-      FileUtils.rm(bundled_app("Gemfile.lock"))
+      FileUtils.rm(carated_app("Gemfile.lock"))
 
       ruby <<-R
         require 'rubygems'
-        require 'bundler/setup'
+        require 'carat/setup'
       R
 
-      expect(bundled_app("Gemfile.lock")).not_to exist
+      expect(carated_app("Gemfile.lock")).not_to exist
       should_be_engine_incorrect
     end
 
@@ -1113,14 +1113,14 @@ G
           #{engine_version_incorrect}
         G
 
-        FileUtils.rm(bundled_app("Gemfile.lock"))
+        FileUtils.rm(carated_app("Gemfile.lock"))
 
         ruby <<-R
           require 'rubygems'
-          require 'bundler/setup'
+          require 'carat/setup'
         R
 
-        expect(bundled_app("Gemfile.lock")).not_to exist
+        expect(carated_app("Gemfile.lock")).not_to exist
         should_be_engine_version_incorrect
       end
     end
@@ -1134,19 +1134,19 @@ G
         #{patchlevel_incorrect}
       G
 
-      FileUtils.rm(bundled_app("Gemfile.lock"))
+      FileUtils.rm(carated_app("Gemfile.lock"))
 
       ruby <<-R
         require 'rubygems'
-        require 'bundler/setup'
+        require 'carat/setup'
       R
 
-      expect(bundled_app("Gemfile.lock")).not_to exist
+      expect(carated_app("Gemfile.lock")).not_to exist
       should_be_patchlevel_incorrect
     end
   end
 
-  context "bundle outdated" do
+  context "carat outdated" do
     before do
       build_repo2 do
         build_git "foo", :path => lib_path("foo")
@@ -1173,14 +1173,14 @@ G
         #{ruby_version_correct}
       G
 
-      bundle "outdated"
+      carat "outdated"
       expect(out).to include("activesupport (newest 3.0, installed 2.3.5, requested = 2.3.5")
       expect(out).to include("foo (newest 1.0")
     end
 
     it "returns list of outdated gems when the ruby version matches for any engine" do
       simulate_ruby_engine "jruby" do
-        bundle! :install
+        carat! :install
         update_repo2 do
           build_gem "activesupport", "3.0"
           update_git "foo", :path => lib_path("foo")
@@ -1194,7 +1194,7 @@ G
           #{ruby_version_correct_engineless}
         G
 
-        bundle "outdated"
+        carat "outdated"
         expect(out).to include("activesupport (newest 3.0, installed 2.3.5, requested = 2.3.5)")
         expect(out).to include("foo (newest 1.0")
       end
@@ -1214,7 +1214,7 @@ G
         #{ruby_version_incorrect}
       G
 
-      bundle "outdated"
+      carat "outdated"
       should_be_ruby_version_incorrect
     end
 
@@ -1232,7 +1232,7 @@ G
         #{engine_incorrect}
       G
 
-      bundle "outdated"
+      carat "outdated"
       should_be_engine_incorrect
     end
 
@@ -1251,7 +1251,7 @@ G
           #{engine_version_incorrect}
         G
 
-        bundle "outdated"
+        carat "outdated"
         should_be_engine_version_incorrect
       end
     end
@@ -1271,7 +1271,7 @@ G
           #{patchlevel_incorrect}
         G
 
-        bundle "outdated"
+        carat "outdated"
         should_be_patchlevel_incorrect
       end
     end
@@ -1291,7 +1291,7 @@ G
           #{patchlevel_fixnum}
         G
 
-        bundle "outdated"
+        carat "outdated"
         should_be_patchlevel_fixnum
       end
     end

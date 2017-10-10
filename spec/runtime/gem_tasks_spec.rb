@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
-RSpec.describe "require 'bundler/gem_tasks'" do
+RSpec.describe "require 'carat/gem_tasks'" do
   before :each do
-    bundled_app("foo.gemspec").open("w") do |f|
+    carated_app("foo.gemspec").open("w") do |f|
       f.write <<-GEMSPEC
         Gem::Specification.new do |s|
           s.name = "foo"
         end
       GEMSPEC
     end
-    bundled_app("Rakefile").open("w") do |f|
+    carated_app("Rakefile").open("w") do |f|
       f.write <<-RAKEFILE
-        $:.unshift("#{bundler_path}")
-        require "bundler/gem_tasks"
+        $:.unshift("#{carat_path}")
+        require "carat/gem_tasks"
       RAKEFILE
     end
   end
@@ -36,7 +36,7 @@ RSpec.describe "require 'bundler/gem_tasks'" do
   end
 
   it "adds 'pkg' to rake/clean's CLOBBER" do
-    require "bundler/gem_tasks"
+    require "carat/gem_tasks"
     expect(CLOBBER).to include("pkg")
   end
 end

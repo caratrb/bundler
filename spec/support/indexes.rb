@@ -4,7 +4,7 @@ module Spec
   module Indexes
     def dep(name, reqs = nil)
       @deps ||= []
-      @deps << Bundler::Dependency.new(name, reqs)
+      @deps << Carat::Dependency.new(name, reqs)
     end
 
     def platform(*args)
@@ -17,16 +17,16 @@ module Spec
     def resolve(args = [])
       @platforms ||= ["ruby"]
       deps = []
-      default_source = instance_double("Bundler::Source::Rubygems", :specs => @index)
+      default_source = instance_double("Carat::Source::Rubygems", :specs => @index)
       source_requirements = { :default => default_source }
       @deps.each do |d|
         @platforms.each do |p|
           source_requirements[d.name] = d.source = default_source
-          deps << Bundler::DepProxy.new(d, p)
+          deps << Carat::DepProxy.new(d, p)
         end
       end
       source_requirements ||= {}
-      Bundler::Resolver.resolve(deps, @index, source_requirements, *args)
+      Carat::Resolver.resolve(deps, @index, source_requirements, *args)
     end
 
     def should_resolve_as(specs)
@@ -46,7 +46,7 @@ module Spec
     def should_conflict_on(names)
       got = resolve
       flunk "The resolve succeeded with: #{got.map(&:full_name).sort.inspect}"
-    rescue Bundler::VersionConflict => e
+    rescue Carat::VersionConflict => e
       expect(Array(names).sort).to eq(e.conflicts.sort)
     end
 
@@ -55,7 +55,7 @@ module Spec
     end
 
     def locked(*args)
-      Bundler::SpecSet.new(args.map do |name, version|
+      Carat::SpecSet.new(args.map do |name, version|
         gem(name, version)
       end)
     end
@@ -63,7 +63,7 @@ module Spec
     def should_conservative_resolve_and_include(opts, unlock, specs)
       # empty unlock means unlock all
       opts = Array(opts)
-      search = Bundler::GemVersionPromoter.new(@locked, unlock).tap do |s|
+      search = Carat::GemVersionPromoter.new(@locked, unlock).tap do |s|
         s.level = opts.first
         s.strict = opts.include?(:strict)
       end

@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle check" do
+RSpec.describe "carat check" do
   it "returns success when the Gemfile is satisfied" do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rails"
     G
 
-    bundle :check
+    carat :check
     expect(exitstatus).to eq(0) if exitstatus
     expect(out).to include("The Gemfile's dependencies are satisfied")
   end
@@ -19,7 +19,7 @@ RSpec.describe "bundle check" do
     G
 
     Dir.chdir tmp
-    bundle "check --gemfile bundled_app/Gemfile"
+    carat "check --gemfile carated_app/Gemfile"
     expect(out).to include("The Gemfile's dependencies are satisfied")
   end
 
@@ -31,9 +31,9 @@ RSpec.describe "bundle check" do
 
     FileUtils.rm("Gemfile.lock")
 
-    bundle "check"
+    carat "check"
 
-    expect(bundled_app("Gemfile.lock")).to exist
+    expect(carated_app("Gemfile.lock")).to exist
   end
 
   it "does not create a Gemfile.lock if --dry-run was passed" do
@@ -44,9 +44,9 @@ RSpec.describe "bundle check" do
 
     FileUtils.rm("Gemfile.lock")
 
-    bundle "check --dry-run"
+    carat "check --dry-run"
 
-    expect(bundled_app("Gemfile.lock")).not_to exist
+    expect(carated_app("Gemfile.lock")).not_to exist
   end
 
   it "prints a generic error if the missing gems are unresolvable" do
@@ -57,8 +57,8 @@ RSpec.describe "bundle check" do
       gem "rails"
     G
 
-    bundle :check
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    carat :check
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
   it "prints a generic error if a Gemfile.lock does not exist and a toplevel dependency does not exist" do
@@ -67,9 +67,9 @@ RSpec.describe "bundle check" do
       gem "rails"
     G
 
-    bundle :check
+    carat :check
     expect(exitstatus).to be > 0 if exitstatus
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
   it "prints a generic message if you changed your lockfile" do
@@ -88,11 +88,11 @@ RSpec.describe "bundle check" do
       gem "rails_fail"
     G
 
-    bundle :check
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    carat :check
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
-  it "remembers --without option from install", :bundler => "< 2" do
+  it "remembers --without option from install", :carat => "< 2" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       group :foo do
@@ -100,13 +100,13 @@ RSpec.describe "bundle check" do
       end
     G
 
-    bundle! "install --without foo"
-    bundle! "check"
+    carat! "install --without foo"
+    carat! "check"
     expect(out).to include("The Gemfile's dependencies are satisfied")
   end
 
   it "uses the without setting" do
-    bundle! "config without foo"
+    carat! "config without foo"
     install_gemfile! <<-G
       source "file://#{gem_repo1}"
       group :foo do
@@ -114,7 +114,7 @@ RSpec.describe "bundle check" do
       end
     G
 
-    bundle! "check"
+    carat! "check"
     expect(out).to include("The Gemfile's dependencies are satisfied")
   end
 
@@ -124,14 +124,14 @@ RSpec.describe "bundle check" do
       gem "rack", :group => :foo
     G
 
-    bundle :install, forgotten_command_line_options(:without => "foo")
+    carat :install, forgotten_command_line_options(:without => "foo")
 
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack"
     G
 
-    bundle "check"
+    carat "check"
     expect(out).to include("* rack (1.0.0)")
     expect(exitstatus).to eq(1) if exitstatus
   end
@@ -145,7 +145,7 @@ RSpec.describe "bundle check" do
       end
     G
 
-    system_gems "rack-1.0.0", :path => :bundle_path
+    system_gems "rack-1.0.0", :path => :carat_path
 
     lockfile <<-G
       GEM
@@ -163,7 +163,7 @@ RSpec.describe "bundle check" do
         activesupport
     G
 
-    bundle :check
+    carat :check
     expect(out).to include("The Gemfile's dependencies are satisfied")
   end
 
@@ -176,7 +176,7 @@ RSpec.describe "bundle check" do
       end
     G
 
-    system_gems "rack-1.0.0", :path => :bundle_path
+    system_gems "rack-1.0.0", :path => :carat_path
 
     lockfile <<-G
       GEM
@@ -194,18 +194,18 @@ RSpec.describe "bundle check" do
         activesupport
     G
 
-    bundle :check
+    carat :check
     expect(out).to include("The Gemfile's dependencies are satisfied")
   end
 
   it "outputs an error when the default Gemfile is not found" do
-    bundle :check
+    carat :check
     expect(exitstatus).to eq(10) if exitstatus
     expect(out).to include("Could not locate Gemfile")
   end
 
   it "does not output fatal error message" do
-    bundle :check
+    carat :check
     expect(exitstatus).to eq(10) if exitstatus
     expect(out).not_to include("Unfortunately, a fatal error has occurred. ")
   end
@@ -217,10 +217,10 @@ RSpec.describe "bundle check" do
     G
 
     simulate_new_machine
-    bundle "check"
+    carat "check"
     last_out = out
     3.times do
-      bundle :check
+      carat :check
       expect(out).to eq(last_out)
     end
   end
@@ -231,43 +231,43 @@ RSpec.describe "bundle check" do
       gem "foo"
     G
 
-    bundle! "install", forgotten_command_line_options(:deployment => true)
-    FileUtils.rm(bundled_app("Gemfile.lock"))
+    carat! "install", forgotten_command_line_options(:deployment => true)
+    FileUtils.rm(carated_app("Gemfile.lock"))
 
-    bundle :check
+    carat :check
     expect(last_command).to be_failure
   end
 
-  context "--path", :bundler => "< 2" do
+  context "--path", :carat => "< 2" do
     before do
       gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rails"
       G
-      bundle "install --path vendor/bundle"
+      carat "install --path vendor/carat"
 
-      FileUtils.rm_rf(bundled_app(".bundle"))
+      FileUtils.rm_rf(carated_app(".carat"))
     end
 
     it "returns success" do
-      bundle! "check --path vendor/bundle"
+      carat! "check --path vendor/carat"
       expect(out).to include("The Gemfile's dependencies are satisfied")
     end
 
-    it "should write to .bundle/config", :bundler => "< 2" do
-      bundle "check --path vendor/bundle"
-      bundle! "check"
+    it "should write to .carat/config", :carat => "< 2" do
+      carat "check --path vendor/carat"
+      carat! "check"
     end
   end
 
-  context "--path vendor/bundle after installing gems in the default directory" do
+  context "--path vendor/carat after installing gems in the default directory" do
     it "returns false" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rails"
       G
 
-      bundle "check --path vendor/bundle"
+      carat "check --path vendor/carat"
       expect(exitstatus).to eq(1) if exitstatus
       expect(out).to match(/The following gems are missing/)
     end
@@ -283,22 +283,22 @@ RSpec.describe "bundle check" do
     end
 
     it "returns success when the Gemfile is satisfied" do
-      bundle :install
-      bundle :check
+      carat :install
+      carat :check
       expect(exitstatus).to eq(0) if exitstatus
       expect(out).to include("The Gemfile's dependencies are satisfied")
     end
 
     it "shows what is missing with the current Gemfile if it is not satisfied" do
       simulate_new_machine
-      bundle :check
+      carat :check
       expect(out).to match(/The following gems are missing/)
       expect(out).to include("* rack (1.0")
     end
   end
 
-  describe "BUNDLED WITH" do
-    def lock_with(bundler_version = nil)
+  describe "CARAT VERSION" do
+    def lock_with(carat_version = nil)
       lock = <<-L
         GEM
           remote: file:#{gem_repo1}/
@@ -312,8 +312,8 @@ RSpec.describe "bundle check" do
           rack
       L
 
-      if bundler_version
-        lock += "\n        BUNDLED WITH\n           #{bundler_version}\n"
+      if carat_version
+        lock += "\n        CARAT VERSION\n           #{carat_version}\n"
       end
 
       lock
@@ -329,24 +329,24 @@ RSpec.describe "bundle check" do
     context "is not present" do
       it "does not change the lock" do
         lockfile lock_with(nil)
-        bundle :check
+        carat :check
         lockfile_should_be lock_with(nil)
       end
     end
 
     context "is newer" do
       it "does not change the lock but warns" do
-        lockfile lock_with(Bundler::VERSION.succ)
-        bundle! :check
-        expect(last_command.bundler_err).to include("the running version of Bundler (#{Bundler::VERSION}) is older than the version that created the lockfile (#{Bundler::VERSION.succ})")
-        lockfile_should_be lock_with(Bundler::VERSION.succ)
+        lockfile lock_with(Carat::VERSION.succ)
+        carat! :check
+        expect(last_command.carat_err).to include("the running version of Carat (#{Carat::VERSION}) is older than the version that created the lockfile (#{Carat::VERSION.succ})")
+        lockfile_should_be lock_with(Carat::VERSION.succ)
       end
     end
 
     context "is older" do
       it "does not change the lock" do
         lockfile lock_with("1.10.1")
-        bundle :check
+        carat :check
         lockfile_should_be lock_with("1.10.1")
       end
     end

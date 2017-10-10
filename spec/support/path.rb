@@ -9,7 +9,7 @@ module Spec
     end
 
     def gemspec
-      @gemspec ||= Pathname.new(File.expand_path(root.join("bundler.gemspec"), __FILE__))
+      @gemspec ||= Pathname.new(File.expand_path(root.join("carat.gemspec"), __FILE__))
     end
 
     def bindir
@@ -28,34 +28,34 @@ module Spec
       tmp.join("home", *path)
     end
 
-    def default_bundle_path(*path)
-      if Bundler::VERSION.split(".").first.to_i < 2
+    def default_carat_path(*path)
+      if Carat::VERSION.split(".").first.to_i < 2
         system_gem_path(*path)
       else
-        bundled_app(*[".bundle", ENV.fetch("BUNDLER_SPEC_RUBY_ENGINE", Gem.ruby_engine), Gem::ConfigMap[:ruby_version], *path].compact)
+        carated_app(*[".carat", ENV.fetch("CARATR_SPEC_RUBY_ENGINE", Gem.ruby_engine), Gem::ConfigMap[:ruby_version], *path].compact)
       end
     end
 
-    def bundled_app(*path)
-      root = tmp.join("bundled_app")
+    def carated_app(*path)
+      root = tmp.join("carated_app")
       FileUtils.mkdir_p(root)
       root.join(*path)
     end
 
-    alias_method :bundled_app1, :bundled_app
+    alias_method :carated_app1, :carated_app
 
-    def bundled_app2(*path)
-      root = tmp.join("bundled_app2")
+    def carated_app2(*path)
+      root = tmp.join("carated_app2")
       FileUtils.mkdir_p(root)
       root.join(*path)
     end
 
     def vendored_gems(path = nil)
-      bundled_app(*["vendor/bundle", Gem.ruby_engine, Gem::ConfigMap[:ruby_version], path].compact)
+      carated_app(*["vendor/carat", Gem.ruby_engine, Gem::ConfigMap[:ruby_version], path].compact)
     end
 
     def cached_gem(path)
-      bundled_app("vendor/cache/#{path}.gem")
+      carated_app("vendor/cache/#{path}.gem")
     end
 
     def base_system_gems
@@ -94,16 +94,16 @@ module Spec
       tmp("libs", *args)
     end
 
-    def bundler_path
+    def carat_path
       Pathname.new(File.expand_path(root.join("lib"), __FILE__))
     end
 
     def global_plugin_gem(*args)
-      home ".bundle", "plugin", "gems", *args
+      home ".carat", "plugin", "gems", *args
     end
 
     def local_plugin_gem(*args)
-      bundled_app ".bundle", "plugin", "gems", *args
+      carated_app ".carat", "plugin", "gems", *args
     end
 
     def tmpdir(*args)

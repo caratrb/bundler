@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install with install-time dependencies" do
+RSpec.describe "carat install with install-time dependencies" do
   it "installs gems with implicit rake dependencies" do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
@@ -35,7 +35,7 @@ RSpec.describe "bundle install with install-time dependencies" do
       gem "actionpack", "2.3.2"
     G
 
-    expect(the_bundle).to include_gems "actionpack 2.3.2", "activesupport 2.3.2"
+    expect(the_carat).to include_gems "actionpack 2.3.2", "activesupport 2.3.2"
   end
 
   describe "with crazy rubygem plugin stuff" do
@@ -45,7 +45,7 @@ RSpec.describe "bundle install with install-time dependencies" do
         gem "net_b"
       G
 
-      expect(the_bundle).to include_gems "net_b 1.0"
+      expect(the_carat).to include_gems "net_b 1.0"
     end
 
     it "installs plugins depended on by other plugins" do
@@ -54,7 +54,7 @@ RSpec.describe "bundle install with install-time dependencies" do
         gem "net_a"
       G
 
-      expect(the_bundle).to include_gems "net_a 1.0", "net_b 1.0"
+      expect(the_carat).to include_gems "net_a 1.0", "net_b 1.0"
     end
 
     it "installs multiple levels of dependencies" do
@@ -64,7 +64,7 @@ RSpec.describe "bundle install with install-time dependencies" do
         gem "net_e"
       G
 
-      expect(the_bundle).to include_gems "net_a 1.0", "net_b 1.0", "net_c 1.0", "net_d 1.0", "net_e 1.0"
+      expect(the_carat).to include_gems "net_a 1.0", "net_b 1.0", "net_c 1.0", "net_d 1.0", "net_e 1.0"
     end
 
     context "with ENV['DEBUG_RESOLVER'] set" do
@@ -75,7 +75,7 @@ RSpec.describe "bundle install with install-time dependencies" do
           gem "net_e"
         G
 
-        bundle :install, :env => { "DEBUG_RESOLVER" => "1" }
+        carat :install, :env => { "DEBUG_RESOLVER" => "1" }
 
         expect(err).to include("Creating possibility state for net_c")
       end
@@ -89,7 +89,7 @@ RSpec.describe "bundle install with install-time dependencies" do
           gem "net_e"
         G
 
-        bundle :install, :env => { "DEBUG_RESOLVER_TREE" => "1" }
+        carat :install, :env => { "DEBUG_RESOLVER_TREE" => "1" }
 
         expect(err).to include(" net_b").
           and include("Starting resolution").
@@ -108,14 +108,14 @@ RSpec.describe "bundle install with install-time dependencies" do
           end
         end
 
-        install_gemfile <<-G, :artifice => "compact_index", :env => { "BUNDLER_SPEC_GEM_REPO" => gem_repo2 }
+        install_gemfile <<-G, :artifice => "compact_index", :env => { "CARATR_SPEC_GEM_REPO" => gem_repo2 }
           ruby "#{RUBY_VERSION}"
           source "http://localgemserver.test/"
           gem 'rack'
         G
 
         expect(out).to_not include("rack-9001.0.0 requires ruby version > 9000")
-        expect(the_bundle).to include_gems("rack 1.2")
+        expect(the_carat).to include_gems("rack 1.2")
       end
     end
 
@@ -133,7 +133,7 @@ RSpec.describe "bundle install with install-time dependencies" do
 
       shared_examples_for "ruby version conflicts" do
         it "raises an error during resolution" do
-          install_gemfile <<-G, :artifice => "compact_index", :env => { "BUNDLER_SPEC_GEM_REPO" => gem_repo2 }
+          install_gemfile <<-G, :artifice => "compact_index", :env => { "CARATR_SPEC_GEM_REPO" => gem_repo2 }
             source "http://localgemserver.test/"
             ruby #{ruby_requirement}
             gem 'require_ruby'
@@ -142,7 +142,7 @@ RSpec.describe "bundle install with install-time dependencies" do
           expect(out).to_not include("Gem::InstallError: require_ruby requires Ruby version > 9000")
 
           nice_error = strip_whitespace(<<-E).strip
-            Bundler could not find compatible versions for gem "ruby\0":
+            Carat could not find compatible versions for gem "ruby\0":
               In Gemfile:
                 ruby\0 (#{error_message_requirement})
 
@@ -152,7 +152,7 @@ RSpec.describe "bundle install with install-time dependencies" do
             Could not find gem 'ruby\0 (> 9000)', which is required by gem 'require_ruby', in any of the relevant sources:
               the local ruby installation
           E
-          expect(last_command.bundler_err).to end_with(nice_error)
+          expect(last_command.carat_err).to end_with(nice_error)
         end
       end
 

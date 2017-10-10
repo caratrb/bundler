@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle lock with git gems" do
+RSpec.describe "carat lock with git gems" do
   before :each do
     build_git "foo"
 
@@ -10,12 +10,12 @@ RSpec.describe "bundle lock with git gems" do
   end
 
   it "doesn't break right after running lock" do
-    expect(the_bundle).to include_gems "foo 1.0.0"
+    expect(the_carat).to include_gems "foo 1.0.0"
   end
 
   it "locks a git source to the current ref" do
     update_git "foo"
-    bundle :install
+    carat :install
 
     run <<-RUBY
       require 'foo'
@@ -27,8 +27,8 @@ RSpec.describe "bundle lock with git gems" do
 
   it "provides correct #full_gem_path" do
     run <<-RUBY
-      puts Bundler.rubygems.find_name('foo').first.full_gem_path
+      puts Carat.rubygems.find_name('foo').first.full_gem_path
     RUBY
-    expect(out).to eq(bundle("info foo --path"))
+    expect(out).to eq(carat("info foo --path"))
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install" do
+RSpec.describe "carat install" do
   context "installing a gem fails" do
     it "prints out why that gem was being installed" do
       build_repo2 do
@@ -18,8 +18,8 @@ RSpec.describe "bundle install" do
         source "file:#{gem_repo2}"
         gem "rails"
       G
-      expect(last_command.bundler_err).to end_with(<<-M.strip)
-An error occurred while installing activesupport (2.3.2), and Bundler cannot continue.
+      expect(last_command.carat_err).to end_with(<<-M.strip)
+An error occurred while installing activesupport (2.3.2), and Carat cannot continue.
 Make sure that `gem install activesupport -v '2.3.2'` succeeds before bundling.
 
 In Gemfile:
@@ -44,7 +44,7 @@ In Gemfile:
           gem "a"
         G
 
-        expect(default_bundle_path("cache", "a-1.0.gem")).not_to exist
+        expect(default_carat_path("cache", "a-1.0.gem")).not_to exist
       end
     end
   end

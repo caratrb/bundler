@@ -15,11 +15,11 @@ ratings:
   - "bin/*"
   - "exe/*"
 exclude_paths:
-- bundler.gemspec
+- carat.gemspec
 - "*.md"
-- lib/bundler/ssl_certs/*.pem
-- lib/bundler/vendor/**/*
-- lib/bundler/templates/**/*.tt
+- lib/carat/ssl_certs/*.pem
+- lib/carat/vendor/**/*
+- lib/carat/templates/**/*.tt
 - man/*
 - spec/**/*
 - Rakefile

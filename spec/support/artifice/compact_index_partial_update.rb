@@ -13,7 +13,7 @@ class CompactIndexPartialUpdate < CompactIndexAPI
 
   get "/versions" do
     cached_versions_path = File.join(
-      Bundler.rubygems.user_home, ".bundle", "cache", "compact_index",
+      Carat.rubygems.user_home, ".carat", "cache", "compact_index",
       "localgemserver.test.80.dd34752a738ee965a2a4298dc16db6c5", "versions"
     )
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "bundler/gem_tasks"
+require "carat/gem_tasks"
 task :build => ["build_metadata", "man:build", "generate_files"] do
   Rake::Task["build_metadata:clean"].tap(&:reenable).real_invoke
 end
@@ -105,7 +105,7 @@ namespace :release do
     version = Gem::Version.new(args.version)
     tag = "v#{version}"
 
-    gh_api_post :path => "/repos/bundler/bundler/releases",
+    gh_api_post :path => "/repos/caratrb/carat/releases",
                 :body => {
                   :tag_name => tag,
                   :name => tag,
@@ -123,7 +123,7 @@ namespace :release do
     version = args.version
 
     version ||= begin
-      version = bundler_spec.version
+      version = carat_spec.version
       segments = version.segments
       if segments.last.is_a?(String)
         segments << "1"
@@ -133,13 +133,13 @@ namespace :release do
       segments.join(".")
     end
 
-    confirm "You are about to release #{version}, currently #{bundler_spec.version}"
+    confirm "You are about to release #{version}, currently #{carat_spec.version}"
 
-    milestones = gh_api_request(:path => "repos/bundler/bundler/milestones?state=open")
+    milestones = gh_api_request(:path => "repos/caratrb/carat/milestones?state=open")
     unless patch_milestone = milestones.find {|m| m["title"] == version }
       abort "failed to find #{version} milestone on GitHub"
     end
-    prs = gh_api_request(:path => "repos/bundler/bundler/issues?milestone=#{patch_milestone["number"]}&state=all")
+    prs = gh_api_request(:path => "repos/caratrb/carat/issues?milestone=#{patch_milestone["number"]}&state=all")
     prs.map! do |pr|
       abort "#{pr["html_url"]} hasn't been closed yet!" unless pr["state"] == "closed"
       next unless pr["pull_request"]
@@ -147,12 +147,12 @@ namespace :release do
     end
     prs.compact!
 
-    bundler_spec.version = version
+    carat_spec.version = version
 
     branch = version.split(".", 3)[0, 2].push("stable").join("-")
     sh("git", "checkout", branch)
 
-    version_file = "lib/bundler/version.rb"
+    version_file = "lib/carat/version.rb"
     version_contents = File.read(version_file)
     unless version_contents.sub!(/^(\s*VERSION = )"#{Gem::Version::VERSION_PATTERN}"/, "\\1#{version.to_s.dump}")
       abort "failed to update #{version_file}, is it in the expected format?"
@@ -170,7 +170,7 @@ namespace :release do
     end
 
     prs.each do |pr|
-      system("open", "https://github.com/bundler/bundler/pull/#{pr}")
+      system("open", "https://github.com/caratrb/carat/pull/#{pr}")
       confirm "Add to the changelog"
     end
 
@@ -196,7 +196,7 @@ namespace :release do
     in_release = prs("HEAD") - prs(last_stable)
 
     in_release.each do |pr|
-      system("open", "https://github.com/bundler/bundler/pull/#{pr}")
+      system("open", "https://github.com/caratrb/carat/pull/#{pr}")
       confirm
     end
   end

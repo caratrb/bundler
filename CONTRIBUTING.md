@@ -1,8 +1,8 @@
-# Contributing to Bundler
+# Contributing to Carat
 
-Welcome to Bundler! We are so happy that you're here. We know joining a new open source project can be daunting, so here's a quick overview of what you can expect from this documentation.
+Welcome to Carat! We are so happy that you're here. We know joining a new open source project can be daunting, so here's a quick overview of what you can expect from this documentation.
 
-Bundler welcomes contributions from *everyone*. While contributing, please follow the project [code of conduct](http://bundler.io/conduct.html), so that everyone can be included.
+Carat welcomes contributions from *everyone*. While contributing, please follow the project [code of conduct](http://carat.io/conduct.html), so that everyone can be included.
 
 ## Quick start
 

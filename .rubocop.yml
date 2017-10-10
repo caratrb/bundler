@@ -5,7 +5,7 @@ AllCops:
   TargetRubyVersion: 1.9
   Exclude:
     - tmp/**/*
-    - lib/bundler/vendor/**/*
+    - lib/carat/vendor/**/*
   DisplayCopNames: true
 
 # Lint

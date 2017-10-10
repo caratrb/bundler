@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundler source plugin" do
+RSpec.describe "carat source plugin" do
   describe "plugins dsl eval for #source with :type option" do
     before do
       update_repo2 do
-        build_plugin "bundler-source-psource" do |s|
+        build_plugin "carat-source-psource" do |s|
           s.write "plugins.rb", <<-RUBY
-              class OPSource < Bundler::Plugin::API
+              class OPSource < Carat::Plugin::API
                 source "psource"
               end
           RUBY
@@ -14,22 +14,22 @@ RSpec.describe "bundler source plugin" do
       end
     end
 
-    it "installs bundler-source-* gem when no handler for source is present" do
+    it "installs carat-source-* gem when no handler for source is present" do
       install_gemfile <<-G
         source "file://#{gem_repo2}"
         source "file://#{lib_path("gitp")}", :type => :psource do
         end
       G
 
-      plugin_should_be_installed("bundler-source-psource")
+      plugin_should_be_installed("carat-source-psource")
     end
 
     it "enables the plugin to require a lib path" do
       update_repo2 do
-        build_plugin "bundler-source-psource" do |s|
+        build_plugin "carat-source-psource" do |s|
           s.write "plugins.rb", <<-RUBY
-            require "bundler-source-psource"
-            class PSource < Bundler::Plugin::API
+            require "carat-source-psource"
+            class PSource < Carat::Plugin::API
               source "psource"
             end
           RUBY
@@ -42,7 +42,7 @@ RSpec.describe "bundler source plugin" do
         end
       G
 
-      expect(out).to include("Bundle complete!")
+      expect(out).to include("Carat complete!")
     end
 
     context "with an explicit handler" do
@@ -50,7 +50,7 @@ RSpec.describe "bundler source plugin" do
         update_repo2 do
           build_plugin "another-psource" do |s|
             s.write "plugins.rb", <<-RUBY
-                class Cheater < Bundler::Plugin::API
+                class Cheater < Carat::Plugin::API
                   source "psource"
                 end
             RUBY
@@ -71,7 +71,7 @@ RSpec.describe "bundler source plugin" do
         end
 
         it "completes successfully" do
-          expect(out).to include("Bundle complete!")
+          expect(out).to include("Carat complete!")
         end
 
         it "installs the explicit one" do
@@ -79,7 +79,7 @@ RSpec.describe "bundler source plugin" do
         end
 
         it "doesn't install the default one" do
-          plugin_should_not_be_installed("bundler-source-psource")
+          plugin_should_not_be_installed("carat-source-psource")
         end
       end
 
@@ -88,7 +88,7 @@ RSpec.describe "bundler source plugin" do
           install_gemfile <<-G
             source "file://#{gem_repo2}"
 
-            plugin "bundler-source-psource"
+            plugin "carat-source-psource"
 
             source "file://#{lib_path("gitp")}", :type => :psource do
             end
@@ -96,11 +96,11 @@ RSpec.describe "bundler source plugin" do
         end
 
         it "completes successfully" do
-          expect(out).to include("Bundle complete!")
+          expect(out).to include("Carat complete!")
         end
 
         it "installs the default one" do
-          plugin_should_be_installed("bundler-source-psource")
+          plugin_should_be_installed("carat-source-psource")
         end
       end
     end

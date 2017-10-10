@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle outdated" do
+RSpec.describe "carat outdated" do
   before :each do
     build_repo2 do
       build_git "foo", :path => lib_path("foo")
@@ -27,7 +27,7 @@ RSpec.describe "bundle outdated" do
         update_git "zebra", :path => lib_path("zebra")
       end
 
-      bundle "outdated"
+      carat "outdated"
 
       expect(out).to include("activesupport (newest 3.0, installed 2.3.5, requested = 2.3.5)")
       expect(out).to include("weakling (newest 0.2, installed 0.0.3, requested ~> 0.0.1)")
@@ -44,13 +44,13 @@ RSpec.describe "bundle outdated" do
         update_git "foo", :path => lib_path("foo")
       end
 
-      bundle "outdated"
+      carat "outdated"
 
       expect(exitstatus).to_not be_zero if exitstatus
     end
 
     it "returns success exit status if no outdated gems present" do
-      bundle "outdated"
+      carat "outdated"
 
       expect(exitstatus).to be_zero if exitstatus
     end
@@ -66,7 +66,7 @@ RSpec.describe "bundle outdated" do
 
       update_repo2 { build_gem "activesupport", "3.0" }
 
-      bundle "outdated --verbose"
+      carat "outdated --verbose"
       expect(out).to include("activesupport (newest 3.0, installed 2.3.5, requested = 2.3.5) in groups \"development, test\"")
     end
   end
@@ -90,7 +90,7 @@ RSpec.describe "bundle outdated" do
         build_gem "duradura", "8.0"
       end
 
-      bundle "outdated --group #{group}"
+      carat "outdated --group #{group}"
 
       # Gem names are one per-line, between "*" and their parenthesized version.
       gem_list = out.split("\n").map {|g| g[/\* (.*) \(/, 1] }.compact
@@ -110,8 +110,8 @@ RSpec.describe "bundle outdated" do
         end
       G
 
-      bundle "outdated --group"
-      expect(out).to include("Bundle up to date!")
+      carat "outdated --group"
+      expect(out).to include("Gems up to date!")
     end
 
     it "returns a sorted list of outdated gems from one group => 'default'" do
@@ -150,8 +150,8 @@ RSpec.describe "bundle outdated" do
         end
       G
 
-      bundle "outdated --groups"
-      expect(out).to include("Bundle up to date!")
+      carat "outdated --groups"
+      expect(out).to include("Gems up to date!")
     end
 
     it "returns a sorted list of outdated gems by groups" do
@@ -172,7 +172,7 @@ RSpec.describe "bundle outdated" do
         build_gem "duradura", "8.0"
       end
 
-      bundle "outdated --groups"
+      carat "outdated --groups"
       expect(out).to include("===== Group default =====")
       expect(out).to include("terranova (newest 9, installed 8, requested = 8)")
       expect(out).to include("===== Group development, test =====")
@@ -191,14 +191,14 @@ RSpec.describe "bundle outdated" do
         build_gem "activesupport", "2.3.4"
       end
 
-      bundle! "config clean false"
+      carat! "config clean false"
 
       install_gemfile <<-G
         source "file://#{gem_repo2}"
         gem "activesupport", "2.3.4"
       G
 
-      bundle "outdated --local"
+      carat "outdated --local"
 
       expect(out).to include("activesupport (newest 2.3.5, installed 2.3.4, requested = 2.3.4)")
     end
@@ -206,7 +206,7 @@ RSpec.describe "bundle outdated" do
     it "doesn't hit repo2" do
       FileUtils.rm_rf(gem_repo2)
 
-      bundle "outdated --local"
+      carat "outdated --local"
       expect(out).not_to match(/Fetching (gem|version|dependency) metadata from/)
     end
   end
@@ -237,13 +237,13 @@ RSpec.describe "bundle outdated" do
   end
 
   describe "with --parseable option" do
-    subject { bundle "outdated --parseable" }
+    subject { carat "outdated --parseable" }
 
     it_behaves_like "a minimal output is desired"
   end
 
   describe "with aliased --porcelain option" do
-    subject { bundle "outdated --porcelain" }
+    subject { carat "outdated --porcelain" }
 
     it_behaves_like "a minimal output is desired"
   end
@@ -255,7 +255,7 @@ RSpec.describe "bundle outdated" do
         update_git "foo", :path => lib_path("foo")
       end
 
-      bundle "outdated foo"
+      carat "outdated foo"
       expect(out).not_to include("activesupport (newest")
       expect(out).to include("foo (newest 1.0")
     end
@@ -268,7 +268,7 @@ RSpec.describe "bundle outdated" do
           build_gem "activesupport", "3.0.0.beta"
         end
 
-        bundle "outdated"
+        carat "outdated"
         expect(out).not_to include("activesupport (3.0.0.beta > 2.3.5)")
       end
     end
@@ -279,7 +279,7 @@ RSpec.describe "bundle outdated" do
           build_gem "activesupport", "3.0.0.beta"
         end
 
-        bundle "outdated --pre"
+        carat "outdated --pre"
         expect(out).to include("activesupport (newest 3.0.0.beta, installed 2.3.5, requested = 2.3.5)")
       end
     end
@@ -296,13 +296,13 @@ RSpec.describe "bundle outdated" do
           gem "activesupport", "3.0.0.beta.1"
         G
 
-        bundle "outdated"
+        carat "outdated"
         expect(out).to include("(newest 3.0.0.beta.2, installed 3.0.0.beta.1, requested = 3.0.0.beta.1)")
       end
     end
   end
 
-  filter_strict_option = Bundler.feature_flag.bundler_2_mode? ? :"filter-strict" : :strict
+  filter_strict_option = Carat.feature_flag.carat_2_mode? ? :"filter-strict" : :strict
   describe "with --#{filter_strict_option} option" do
     it "only reports gems that have a newer version that matches the specified dependency version requirements" do
       update_repo2 do
@@ -310,7 +310,7 @@ RSpec.describe "bundle outdated" do
         build_gem "weakling", "0.0.5"
       end
 
-      bundle :outdated, filter_strict_option => true
+      carat :outdated, filter_strict_option => true
 
       expect(out).to_not include("activesupport (newest")
       expect(out).to include("(newest 0.0.5, installed 0.0.3, requested ~> 0.0.1)")
@@ -322,7 +322,7 @@ RSpec.describe "bundle outdated" do
         gem "rack_middleware", "1.0"
       G
 
-      bundle :outdated, filter_strict_option => true
+      carat :outdated, filter_strict_option => true
 
       expect(out).to_not include("rack (1.2")
     end
@@ -340,7 +340,7 @@ RSpec.describe "bundle outdated" do
           build_gem "weakling", "0.0.5"
         end
 
-        bundle :outdated, filter_strict_option => true, "filter-patch" => true
+        carat :outdated, filter_strict_option => true, "filter-patch" => true
 
         expect(out).to_not include("activesupport (newest")
         expect(out).to include("(newest 0.0.5, installed 0.0.3")
@@ -358,7 +358,7 @@ RSpec.describe "bundle outdated" do
           build_gem "weakling", "0.1.5"
         end
 
-        bundle :outdated, filter_strict_option => true, "filter-minor" => true
+        carat :outdated, filter_strict_option => true, "filter-minor" => true
 
         expect(out).to_not include("activesupport (newest")
         expect(out).to include("(newest 0.1.5, installed 0.0.3")
@@ -376,7 +376,7 @@ RSpec.describe "bundle outdated" do
           build_gem "weakling", "1.1.5"
         end
 
-        bundle :outdated, filter_strict_option => true, "filter-major" => true
+        carat :outdated, filter_strict_option => true, "filter-major" => true
 
         expect(out).to_not include("activesupport (newest")
         expect(out).to include("(newest 1.1.5, installed 0.0.3")
@@ -386,29 +386,29 @@ RSpec.describe "bundle outdated" do
 
   describe "with invalid gem name" do
     it "returns could not find gem name" do
-      bundle "outdated invalid_gem_name"
+      carat "outdated invalid_gem_name"
       expect(out).to include("Could not find gem 'invalid_gem_name'.")
     end
 
     it "returns non-zero exit code" do
-      bundle "outdated invalid_gem_name"
+      carat "outdated invalid_gem_name"
       expect(exitstatus).to_not be_zero if exitstatus
     end
   end
 
-  it "performs an automatic bundle install" do
+  it "performs an automatic carat install" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack", "0.9.1"
       gem "foo"
     G
 
-    bundle "config auto_install 1"
-    bundle :outdated
+    carat "config auto_install 1"
+    carat :outdated
     expect(out).to include("Installing foo 1.0")
   end
 
-  context "after bundle install --deployment", :bundler => "< 2" do
+  context "after carat install --deployment", :carat => "< 2" do
     before do
       install_gemfile <<-G, forgotten_command_line_options(:deployment => true)
         source "file://#{gem_repo2}"
@@ -421,16 +421,16 @@ RSpec.describe "bundle outdated" do
     it "outputs a helpful message about being in deployment mode" do
       update_repo2 { build_gem "activesupport", "3.0" }
 
-      bundle "outdated"
+      carat "outdated"
       expect(last_command).to be_failure
       expect(out).to include("You are trying to check outdated gems in deployment mode.")
-      expect(out).to include("Run `bundle outdated` elsewhere.")
+      expect(out).to include("Run `carat outdated` elsewhere.")
       expect(out).to include("If this is a development machine, remove the ")
-      expect(out).to include("Gemfile freeze\nby running `bundle install --no-deployment`.")
+      expect(out).to include("Gemfile freeze\nby running `carat install --no-deployment`.")
     end
   end
 
-  context "after bundle config deployment true" do
+  context "after carat config deployment true" do
     before do
       install_gemfile <<-G
         source "file://#{gem_repo2}"
@@ -438,18 +438,18 @@ RSpec.describe "bundle outdated" do
         gem "rack"
         gem "foo"
       G
-      bundle! "config deployment true"
+      carat! "config deployment true"
     end
 
     it "outputs a helpful message about being in deployment mode" do
       update_repo2 { build_gem "activesupport", "3.0" }
 
-      bundle "outdated"
+      carat "outdated"
       expect(last_command).to be_failure
       expect(out).to include("You are trying to check outdated gems in deployment mode.")
-      expect(out).to include("Run `bundle outdated` elsewhere.")
+      expect(out).to include("Run `carat outdated` elsewhere.")
       expect(out).to include("If this is a development machine, remove the ")
-      expect(out).to include("Gemfile freeze\nby running `bundle config --delete deployment`.")
+      expect(out).to include("Gemfile freeze\nby running `carat config --delete deployment`.")
     end
   end
 
@@ -462,8 +462,8 @@ RSpec.describe "bundle outdated" do
     end
 
     it "reports that no updates are available" do
-      bundle "outdated"
-      expect(out).to include("Bundle up to date!")
+      carat "outdated"
+      expect(out).to include("Gems up to date!")
     end
   end
 
@@ -474,8 +474,8 @@ RSpec.describe "bundle outdated" do
         gem "laduradura", '= 5.15.2', :platforms => [:ruby, :jruby]
       G
 
-      bundle "outdated"
-      expect(out).to include("Bundle up to date!")
+      carat "outdated"
+      expect(out).to include("Gems up to date!")
     end
 
     it "reports that updates are available if the JRuby platform is used" do
@@ -486,8 +486,8 @@ RSpec.describe "bundle outdated" do
             gem "laduradura", '= 5.15.2', :platforms => [:ruby, :jruby]
           G
 
-          bundle "outdated"
-          expect(out).to include("Outdated gems included in the bundle:")
+          carat "outdated"
+          expect(out).to include("Outdated gems included in the carat:")
           expect(out).to include("laduradura (newest 5.15.3, installed 5.15.2, requested = 5.15.2)")
         end
       end
@@ -497,7 +497,7 @@ RSpec.describe "bundle outdated" do
   shared_examples_for "version update is detected" do
     it "reports that a gem has a newer version" do
       subject
-      expect(out).to include("Outdated gems included in the bundle:")
+      expect(out).to include("Outdated gems included in the carat:")
       expect(out).to include("activesupport (newest")
       expect(out).to_not include("ERROR REPORT TEMPLATE")
     end
@@ -525,7 +525,7 @@ RSpec.describe "bundle outdated" do
       end
     end
 
-    subject { bundle "outdated" }
+    subject { carat "outdated" }
     it_behaves_like "version update is detected"
   end
 
@@ -595,7 +595,7 @@ RSpec.describe "bundle outdated" do
   end
 
   describe "with --filter-major option" do
-    subject { bundle "outdated --filter-major" }
+    subject { carat "outdated --filter-major" }
 
     it_behaves_like "major version updates are detected"
     it_behaves_like "minor version is ignored"
@@ -603,7 +603,7 @@ RSpec.describe "bundle outdated" do
   end
 
   describe "with --filter-minor option" do
-    subject { bundle "outdated --filter-minor" }
+    subject { carat "outdated --filter-minor" }
 
     it_behaves_like "minor version updates are detected"
     it_behaves_like "major version is ignored"
@@ -611,7 +611,7 @@ RSpec.describe "bundle outdated" do
   end
 
   describe "with --filter-patch option" do
-    subject { bundle "outdated --filter-patch" }
+    subject { carat "outdated --filter-patch" }
 
     it_behaves_like "patch version updates are detected"
     it_behaves_like "major version is ignored"
@@ -619,7 +619,7 @@ RSpec.describe "bundle outdated" do
   end
 
   describe "with --filter-minor --filter-patch options" do
-    subject { bundle "outdated --filter-minor --filter-patch" }
+    subject { carat "outdated --filter-minor --filter-patch" }
 
     it_behaves_like "minor version updates are detected"
     it_behaves_like "patch version updates are detected"
@@ -627,7 +627,7 @@ RSpec.describe "bundle outdated" do
   end
 
   describe "with --filter-major --filter-minor options" do
-    subject { bundle "outdated --filter-major --filter-minor" }
+    subject { carat "outdated --filter-major --filter-minor" }
 
     it_behaves_like "major version updates are detected"
     it_behaves_like "minor version updates are detected"
@@ -635,7 +635,7 @@ RSpec.describe "bundle outdated" do
   end
 
   describe "with --filter-major --filter-patch options" do
-    subject { bundle "outdated --filter-major --filter-patch" }
+    subject { carat "outdated --filter-major --filter-patch" }
 
     it_behaves_like "major version updates are detected"
     it_behaves_like "patch version updates are detected"
@@ -643,7 +643,7 @@ RSpec.describe "bundle outdated" do
   end
 
   describe "with --filter-major --filter-minor --filter-patch options" do
-    subject { bundle "outdated --filter-major --filter-minor --filter-patch" }
+    subject { carat "outdated --filter-major --filter-minor --filter-patch" }
 
     it_behaves_like "major version updates are detected"
     it_behaves_like "minor version updates are detected"
@@ -678,7 +678,7 @@ RSpec.describe "bundle outdated" do
       end
 
       it "shows nothing when patching and filtering to minor" do
-        bundle "outdated --patch --filter-minor"
+        carat "outdated --patch --filter-minor"
 
         expect(out).to include("No minor updates to display.")
         expect(out).not_to include("patch (newest")
@@ -687,7 +687,7 @@ RSpec.describe "bundle outdated" do
       end
 
       it "shows all gems when patching and filtering to patch" do
-        bundle "outdated --patch --filter-patch"
+        carat "outdated --patch --filter-patch"
 
         expect(out).to include("patch (newest 1.0.1")
         expect(out).to include("minor (newest 1.0.1")
@@ -695,7 +695,7 @@ RSpec.describe "bundle outdated" do
       end
 
       it "shows minor and major when updating to minor and filtering to patch and minor" do
-        bundle "outdated --minor --filter-minor"
+        carat "outdated --minor --filter-minor"
 
         expect(out).not_to include("patch (newest")
         expect(out).to include("minor (newest 1.1.0")
@@ -703,7 +703,7 @@ RSpec.describe "bundle outdated" do
       end
 
       it "shows minor when updating to major and filtering to minor with parseable" do
-        bundle "outdated --major --filter-minor --parseable"
+        carat "outdated --major --filter-minor --parseable"
 
         expect(out).not_to include("patch (newest")
         expect(out).to include("minor (newest")
@@ -745,7 +745,7 @@ RSpec.describe "bundle outdated" do
       end
 
       it "shows gems with update-strict updating to patch and filtering to patch" do
-        bundle "outdated --patch --update-strict --filter-patch"
+        carat "outdated --patch --update-strict --filter-patch"
 
         expect(out).to include("foo (newest 1.4.4")
         expect(out).to include("bar (newest 2.0.5")

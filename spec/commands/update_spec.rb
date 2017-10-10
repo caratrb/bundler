@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle update" do
+RSpec.describe "carat update" do
   before :each do
     build_repo2
 
@@ -11,15 +11,15 @@ RSpec.describe "bundle update" do
     G
   end
 
-  describe "with no arguments", :bundler => "< 2" do
-    it "updates the entire bundle" do
+  describe "with no arguments", :carat => "< 2" do
+    it "updates the entire carat" do
       update_repo2 do
         build_gem "activesupport", "3.0"
       end
 
-      bundle "update"
-      expect(out).to include("Bundle updated!")
-      expect(the_bundle).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
+      carat "update"
+      expect(out).to include("Gems updated!")
+      expect(the_carat).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
     end
 
     it "doesn't delete the Gemfile.lock file if something goes wrong" do
@@ -29,20 +29,20 @@ RSpec.describe "bundle update" do
         gem "rack-obama"
         exit!
       G
-      bundle "update"
-      expect(bundled_app("Gemfile.lock")).to exist
+      carat "update"
+      expect(carated_app("Gemfile.lock")).to exist
     end
   end
 
-  describe "with --all", :bundler => "2" do
-    it "updates the entire bundle" do
+  describe "with --all", :carat => "2" do
+    it "updates the entire carat" do
       update_repo2 do
         build_gem "activesupport", "3.0"
       end
 
-      bundle! "update", :all => true
-      expect(out).to include("Bundle updated!")
-      expect(the_bundle).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
+      carat! "update", :all => true
+      expect(out).to include("Gems updated!")
+      expect(the_carat).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
     end
 
     it "doesn't delete the Gemfile.lock file if something goes wrong" do
@@ -52,37 +52,37 @@ RSpec.describe "bundle update" do
         gem "rack-obama"
         exit!
       G
-      bundle "update", :all => true
-      expect(bundled_app("Gemfile.lock")).to exist
+      carat "update", :all => true
+      expect(carated_app("Gemfile.lock")).to exist
     end
   end
 
   context "when update_requires_all_flag is set" do
-    before { bundle! "config update_requires_all_flag true" }
+    before { carat! "config update_requires_all_flag true" }
 
     it "errors when passed nothing" do
       install_gemfile! ""
-      bundle :update
+      carat :update
       expect(out).to eq("To update everything, pass the `--all` flag.")
     end
 
     it "errors when passed --all and another option" do
       install_gemfile! ""
-      bundle "update --all foo"
+      carat "update --all foo"
       expect(out).to eq("Cannot specify --all along with specific options.")
     end
 
     it "updates everything when passed --all" do
       install_gemfile! ""
-      bundle "update --all"
-      expect(out).to include("Bundle updated!")
+      carat "update --all"
+      expect(out).to include("Gems updated!")
     end
   end
 
   describe "--quiet argument" do
     it "hides UI messages" do
-      bundle "update --quiet"
-      expect(out).not_to include("Bundle updated!")
+      carat "update --quiet"
+      expect(out).not_to include("Gems updated!")
     end
   end
 
@@ -92,18 +92,18 @@ RSpec.describe "bundle update" do
         build_gem "activesupport", "3.0"
       end
 
-      bundle "update rack-obama"
-      expect(the_bundle).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 2.3.5"
+      carat "update rack-obama"
+      expect(the_carat).to include_gems "rack 1.2", "rack-obama 1.0", "activesupport 2.3.5"
     end
   end
 
   describe "with an unknown dependency" do
     it "should inform the user" do
-      bundle "update halting-problem-solver"
+      carat "update halting-problem-solver"
       expect(out).to include "Could not find gem 'halting-problem-solver'"
     end
     it "should suggest alternatives" do
-      bundle "update active-support"
+      carat "update active-support"
       expect(out).to include "Did you mean activesupport?"
     end
   end
@@ -111,15 +111,15 @@ RSpec.describe "bundle update" do
   describe "with a child dependency" do
     it "should update the child dependency" do
       update_repo2
-      bundle "update rack"
-      expect(the_bundle).to include_gems "rack 1.2"
+      carat "update rack"
+      expect(the_carat).to include_gems "rack 1.2"
     end
   end
 
   describe "when a possible resolve requires an older version of a locked gem" do
     context "and only_update_to_newer_versions is set" do
       before do
-        bundle! "config only_update_to_newer_versions true"
+        carat! "config only_update_to_newer_versions true"
       end
       it "does not go to an older version" do
         build_repo4 do
@@ -137,7 +137,7 @@ RSpec.describe "bundle update" do
           gem "a"
         G
 
-        expect(the_bundle).to include_gems("a 1.0", "b 1.0", "c 2.0")
+        expect(the_carat).to include_gems("a 1.0", "b 1.0", "c 2.0")
 
         update_repo4 do
           build_gem "b", "2.0" do |s|
@@ -145,9 +145,9 @@ RSpec.describe "bundle update" do
           end
         end
 
-        bundle! "update", :all => bundle_update_requires_all?
+        carat! "update", :all => carat_update_requires_all?
 
-        expect(the_bundle).to include_gems("a 1.0", "b 1.0", "c 2.0")
+        expect(the_carat).to include_gems("a 1.0", "b 1.0", "c 2.0")
       end
     end
   end
@@ -156,7 +156,7 @@ RSpec.describe "bundle update" do
     it "doesn't hit repo2" do
       FileUtils.rm_rf(gem_repo2)
 
-      bundle "update --local --all"
+      carat "update --local --all"
       expect(out).not_to include("Fetching source index")
     end
   end
@@ -171,9 +171,9 @@ RSpec.describe "bundle update" do
       update_repo2 do
         build_gem "activesupport", "3.0"
       end
-      bundle "update --group development"
-      expect(the_bundle).to include_gems "activesupport 3.0"
-      expect(the_bundle).not_to include_gems "rack 1.2"
+      carat "update --group development"
+      expect(the_carat).to include_gems "activesupport 3.0"
+      expect(the_carat).not_to include_gems "rack 1.2"
     end
 
     context "when there is a source with the same name as a gem in a group" do
@@ -190,63 +190,63 @@ RSpec.describe "bundle update" do
         update_repo2 { build_gem "activesupport", "3.0" }
         update_git "foo", "2.0", :path => lib_path("activesupport")
 
-        bundle "update --group development"
-        expect(the_bundle).to include_gems "activesupport 3.0"
-        expect(the_bundle).not_to include_gems "foo 2.0"
+        carat "update --group development"
+        expect(the_carat).to include_gems "activesupport 3.0"
+        expect(the_carat).not_to include_gems "foo 2.0"
       end
     end
   end
 
-  describe "in a frozen bundle" do
-    it "should fail loudly", :bundler => "< 2" do
-      bundle! "install --deployment"
-      bundle "update", :all => bundle_update_requires_all?
+  describe "in a frozen carat" do
+    it "should fail loudly", :carat => "< 2" do
+      carat! "install --deployment"
+      carat "update", :all => carat_update_requires_all?
 
       expect(last_command).to be_failure
       expect(out).to match(/You are trying to install in deployment mode after changing.your Gemfile/m)
-      expect(out).to match(/freeze \nby running `bundle install --no-deployment`./m)
+      expect(out).to match(/freeze \nby running `carat install --no-deployment`./m)
     end
 
-    it "should suggest different command when frozen is set globally", :bundler => "< 2" do
-      bundle! "config --global frozen 1"
-      bundle "update", :all => bundle_update_requires_all?
+    it "should suggest different command when frozen is set globally", :carat => "< 2" do
+      carat! "config --global frozen 1"
+      carat "update", :all => carat_update_requires_all?
       expect(out).to match(/You are trying to install in deployment mode after changing.your Gemfile/m).
-        and match(/freeze \nby running `bundle config --delete frozen`./m)
+        and match(/freeze \nby running `carat config --delete frozen`./m)
     end
 
-    it "should suggest different command when frozen is set globally", :bundler => "2" do
-      bundle! "config --global deployment true"
-      bundle "update", :all => bundle_update_requires_all?
+    it "should suggest different command when frozen is set globally", :carat => "2" do
+      carat! "config --global deployment true"
+      carat "update", :all => carat_update_requires_all?
       expect(out).to match(/You are trying to install in deployment mode after changing.your Gemfile/m).
-        and match(/freeze \nby running `bundle config --delete deployment`./m)
+        and match(/freeze \nby running `carat config --delete deployment`./m)
     end
   end
 
   describe "with --source option" do
-    it "should not update gems not included in the source that happen to have the same name", :bundler => "< 2" do
+    it "should not update gems not included in the source that happen to have the same name", :carat => "< 2" do
       install_gemfile! <<-G
         source "file://#{gem_repo2}"
         gem "activesupport"
       G
       update_repo2 { build_gem "activesupport", "3.0" }
 
-      bundle! "update --source activesupport"
-      expect(the_bundle).to include_gem "activesupport 3.0"
+      carat! "update --source activesupport"
+      expect(the_carat).to include_gem "activesupport 3.0"
     end
 
-    it "should not update gems not included in the source that happen to have the same name", :bundler => "2" do
+    it "should not update gems not included in the source that happen to have the same name", :carat => "2" do
       install_gemfile! <<-G
         source "file://#{gem_repo2}"
         gem "activesupport"
       G
       update_repo2 { build_gem "activesupport", "3.0" }
 
-      bundle! "update --source activesupport"
-      expect(the_bundle).not_to include_gem "activesupport 3.0"
+      carat! "update --source activesupport"
+      expect(the_carat).not_to include_gem "activesupport 3.0"
     end
 
     context "with unlock_source_unlocks_spec set to false" do
-      before { bundle! "config unlock_source_unlocks_spec false" }
+      before { carat! "config unlock_source_unlocks_spec false" }
 
       it "should not update gems not included in the source that happen to have the same name" do
         install_gemfile <<-G
@@ -255,8 +255,8 @@ RSpec.describe "bundle update" do
         G
         update_repo2 { build_gem "activesupport", "3.0" }
 
-        bundle "update --source activesupport"
-        expect(the_bundle).not_to include_gems "activesupport 3.0"
+        carat "update --source activesupport"
+        expect(the_carat).not_to include_gems "activesupport 3.0"
       end
     end
   end
@@ -277,7 +277,7 @@ RSpec.describe "bundle update" do
       G
     end
 
-    it "should not update the child dependencies of a gem that has the same name as the source", :bundler => "< 2" do
+    it "should not update the child dependencies of a gem that has the same name as the source", :carat => "< 2" do
       update_repo2 do
         build_gem "fred", "2.0"
         build_gem "harry", "2.0" do |s|
@@ -285,12 +285,12 @@ RSpec.describe "bundle update" do
         end
       end
 
-      bundle "update --source harry"
-      expect(the_bundle).to include_gems "harry 2.0"
-      expect(the_bundle).to include_gems "fred 1.0"
+      carat "update --source harry"
+      expect(the_carat).to include_gems "harry 2.0"
+      expect(the_carat).to include_gems "fred 1.0"
     end
 
-    it "should not update the child dependencies of a gem that has the same name as the source", :bundler => "2" do
+    it "should not update the child dependencies of a gem that has the same name as the source", :carat => "2" do
       update_repo2 do
         build_gem "fred", "2.0"
         build_gem "harry", "2.0" do |s|
@@ -298,8 +298,8 @@ RSpec.describe "bundle update" do
         end
       end
 
-      bundle "update --source harry"
-      expect(the_bundle).to include_gems "harry 1.0", "fred 1.0"
+      carat "update --source harry"
+      expect(the_carat).to include_gems "harry 1.0", "fred 1.0"
     end
   end
 
@@ -322,7 +322,7 @@ RSpec.describe "bundle update" do
       G
     end
 
-    it "should not update the child dependencies of a gem that has the same name as the source", :bundler => "< 2" do
+    it "should not update the child dependencies of a gem that has the same name as the source", :carat => "< 2" do
       update_repo2 do
         build_gem "george", "2.0"
         build_gem "harry", "2.0" do |s|
@@ -330,13 +330,13 @@ RSpec.describe "bundle update" do
         end
       end
 
-      bundle "update --source harry"
-      expect(the_bundle).to include_gems "harry 2.0"
-      expect(the_bundle).to include_gems "fred 1.0"
-      expect(the_bundle).to include_gems "george 1.0"
+      carat "update --source harry"
+      expect(the_carat).to include_gems "harry 2.0"
+      expect(the_carat).to include_gems "fred 1.0"
+      expect(the_carat).to include_gems "george 1.0"
     end
 
-    it "should not update the child dependencies of a gem that has the same name as the source", :bundler => "2" do
+    it "should not update the child dependencies of a gem that has the same name as the source", :carat => "2" do
       update_repo2 do
         build_gem "george", "2.0"
         build_gem "harry", "2.0" do |s|
@@ -344,13 +344,13 @@ RSpec.describe "bundle update" do
         end
       end
 
-      bundle "update --source harry"
-      expect(the_bundle).to include_gems "harry 1.0", "fred 1.0", "george 1.0"
+      carat "update --source harry"
+      expect(the_carat).to include_gems "harry 1.0", "fred 1.0", "george 1.0"
     end
   end
 end
 
-RSpec.describe "bundle update in more complicated situations" do
+RSpec.describe "carat update in more complicated situations" do
   before :each do
     build_repo2
   end
@@ -369,8 +369,8 @@ RSpec.describe "bundle update in more complicated situations" do
       end
     end
 
-    bundle "update thin"
-    expect(the_bundle).to include_gems "thin 2.0", "rack 1.2", "rack-obama 1.0"
+    carat "update thin"
+    expect(the_carat).to include_gems "thin 2.0", "rack 1.2", "rack-obama 1.0"
   end
 
   it "will warn when some explicitly updated gems are not updated" do
@@ -386,9 +386,9 @@ RSpec.describe "bundle update in more complicated situations" do
       build_gem "rack", "10.0"
     end
 
-    bundle! "update thin rack-obama"
-    expect(last_command.stdboth).to include "Bundler attempted to update rack-obama but its version stayed the same"
-    expect(the_bundle).to include_gems "thin 2.0", "rack 10.0", "rack-obama 1.0"
+    carat! "update thin rack-obama"
+    expect(last_command.stdboth).to include "Carat attempted to update rack-obama but its version stayed the same"
+    expect(the_carat).to include_gems "thin 2.0", "rack 10.0", "rack-obama 1.0"
   end
 
   it "will update only from pinned source" do
@@ -404,12 +404,12 @@ RSpec.describe "bundle update in more complicated situations" do
       build_gem "thin", "2.0"
     end
 
-    bundle "update"
-    expect(the_bundle).to include_gems "thin 1.0"
+    carat "update"
+    expect(the_carat).to include_gems "thin 1.0"
   end
 end
 
-RSpec.describe "bundle update without a Gemfile.lock" do
+RSpec.describe "carat update without a Gemfile.lock" do
   it "should not explode" do
     build_repo2
 
@@ -419,17 +419,17 @@ RSpec.describe "bundle update without a Gemfile.lock" do
       gem "rack", "1.0"
     G
 
-    bundle "update", :all => bundle_update_requires_all?
+    carat "update", :all => carat_update_requires_all?
 
-    expect(the_bundle).to include_gems "rack 1.0.0"
+    expect(the_carat).to include_gems "rack 1.0.0"
   end
 end
 
-RSpec.describe "bundle update when a gem depends on a newer version of bundler" do
+RSpec.describe "carat update when a gem depends on a newer version of carat" do
   before(:each) do
     build_repo2 do
       build_gem "rails", "3.0.1" do |s|
-        s.add_dependency "bundler", Bundler::VERSION.succ
+        s.add_dependency "carat", Carat::VERSION.succ
       end
     end
 
@@ -439,23 +439,23 @@ RSpec.describe "bundle update when a gem depends on a newer version of bundler" 
     G
   end
 
-  it "should explain that bundler conflicted", :bundler => "< 2" do
-    bundle "update", :all => bundle_update_requires_all?
+  it "should explain that carat conflicted", :carat => "< 2" do
+    carat "update", :all => carat_update_requires_all?
     expect(last_command.stdboth).not_to match(/in snapshot/i)
-    expect(last_command.bundler_err).to match(/current Bundler version/i).
-      and match(/perhaps you need to update bundler/i)
+    expect(last_command.carat_err).to match(/current Carat version/i).
+      and match(/perhaps you need to update carat/i)
   end
 
-  it "should warn that the newer version of Bundler would conflict", :bundler => "2" do
-    bundle! "update", :all => true
-    expect(last_command.bundler_err).to include("rails (3.0.1) has dependency bundler").
+  it "should warn that the newer version of Carat would conflict", :carat => "2" do
+    carat! "update", :all => true
+    expect(last_command.carat_err).to include("rails (3.0.1) has dependency carat").
       and include("so the dependency is being ignored")
-    expect(the_bundle).to include_gem "rails 3.0.1"
+    expect(the_carat).to include_gem "rails 3.0.1"
   end
 end
 
-RSpec.describe "bundle update" do
-  it "shows the previous version of the gem when updated from rubygems source", :bundler => "< 2" do
+RSpec.describe "carat update" do
+  it "shows the previous version of the gem when updated from rubygems source", :carat => "< 2" do
     build_repo2
 
     install_gemfile <<-G
@@ -463,19 +463,19 @@ RSpec.describe "bundle update" do
       gem "activesupport"
     G
 
-    bundle "update", :all => bundle_update_requires_all?
+    carat "update", :all => carat_update_requires_all?
     expect(out).to include("Using activesupport 2.3.5")
 
     update_repo2 do
       build_gem "activesupport", "3.0"
     end
 
-    bundle "update", :all => bundle_update_requires_all?
+    carat "update", :all => carat_update_requires_all?
     expect(out).to include("Installing activesupport 3.0 (was 2.3.5)")
   end
 
   context "with suppress_install_using_messages set" do
-    before { bundle! "config suppress_install_using_messages true" }
+    before { carat! "config suppress_install_using_messages true" }
 
     it "only prints `Using` for versions that have changed" do
       build_repo4 do
@@ -489,22 +489,22 @@ RSpec.describe "bundle update" do
         gem "foo"
       G
 
-      bundle! "update", :all => bundle_update_requires_all?
+      carat! "update", :all => carat_update_requires_all?
       out.gsub!(/RubyGems [\d\.]+ is not threadsafe.*\n?/, "")
-      expect(out).to include "Resolving dependencies...\nBundle updated!"
+      expect(out).to include "Resolving dependencies...\nGems updated!"
 
       update_repo4 do
         build_gem "foo", "2.0"
       end
 
-      bundle! "update", :all => bundle_update_requires_all?
+      carat! "update", :all => carat_update_requires_all?
       out.sub!("Removing foo (1.0)\n", "")
       out.gsub!(/RubyGems [\d\.]+ is not threadsafe.*\n?/, "")
       expect(out).to include strip_whitespace(<<-EOS).strip
         Resolving dependencies...
         Fetching foo 2.0 (was 1.0)
         Installing foo 2.0 (was 1.0)
-        Bundle updated
+        Gems updated
       EOS
     end
   end
@@ -515,20 +515,20 @@ RSpec.describe "bundle update" do
       gem "activesupport"
     G
 
-    bundle "update nonexisting"
-    expect(out).to include("This Bundle hasn't been installed yet. Run `bundle install` to update and install the bundled gems.")
+    carat "update nonexisting"
+    expect(out).to include("These gems haven't been installed yet. Run `carat install` to update and install the carated gems.")
     expect(exitstatus).to eq(22) if exitstatus
   end
 end
 
-RSpec.describe "bundle update --ruby" do
+RSpec.describe "carat update --ruby" do
   before do
     install_gemfile <<-G
         ::RUBY_VERSION = '2.1.3'
         ::RUBY_PATCHLEVEL = 100
         ruby '~> 2.1.0'
     G
-    bundle "update --ruby"
+    carat "update --ruby"
   end
 
   context "when the Gemfile removes the ruby" do
@@ -539,7 +539,7 @@ RSpec.describe "bundle update --ruby" do
       G
     end
     it "removes the Ruby from the Gemfile.lock" do
-      bundle "update --ruby"
+      carat "update --ruby"
 
       lockfile_should_be <<-L
        GEM
@@ -550,8 +550,8 @@ RSpec.describe "bundle update --ruby" do
 
        DEPENDENCIES
 
-       BUNDLED WITH
-          #{Bundler::VERSION}
+       CARAT VERSION
+          #{Carat::VERSION}
       L
     end
   end
@@ -565,7 +565,7 @@ RSpec.describe "bundle update --ruby" do
       G
     end
     it "updates the Gemfile.lock with the latest version" do
-      bundle "update --ruby"
+      carat "update --ruby"
 
       lockfile_should_be <<-L
        GEM
@@ -579,8 +579,8 @@ RSpec.describe "bundle update --ruby" do
        RUBY VERSION
           ruby 2.1.4p222
 
-       BUNDLED WITH
-          #{Bundler::VERSION}
+       CARAT VERSION
+          #{Carat::VERSION}
       L
     end
   end
@@ -594,7 +594,7 @@ RSpec.describe "bundle update --ruby" do
       G
     end
     it "shows a helpful error message" do
-      bundle "update --ruby"
+      carat "update --ruby"
 
       expect(out).to include("Your Ruby version is 2.2.2, but your Gemfile specified ~> 2.1.0")
     end
@@ -609,7 +609,7 @@ RSpec.describe "bundle update --ruby" do
       G
     end
     it "updates the Gemfile.lock with the latest version" do
-      bundle "update --ruby"
+      carat "update --ruby"
 
       lockfile_should_be <<-L
        GEM
@@ -623,15 +623,15 @@ RSpec.describe "bundle update --ruby" do
        RUBY VERSION
           ruby 1.8.3p55
 
-       BUNDLED WITH
-          #{Bundler::VERSION}
+       CARAT VERSION
+          #{Carat::VERSION}
       L
     end
   end
 end
 
-RSpec.describe "bundle update --bundler" do
-  it "updates the bundler version in the lockfile without re-resolving" do
+RSpec.describe "carat update --carat" do
+  it "updates the carat version in the lockfile without re-resolving" do
     build_repo4 do
       build_gem "rack", "1.0"
     end
@@ -640,19 +640,19 @@ RSpec.describe "bundle update --bundler" do
       source "file:#{gem_repo4}"
       gem "rack"
     G
-    lockfile lockfile.sub(Bundler::VERSION, "1.0.0")
+    lockfile lockfile.sub(Carat::VERSION, "1.0.0")
 
     FileUtils.rm_r gem_repo4
 
-    bundle! :update, :bundler => true, :verbose => true
-    expect(the_bundle).to include_gem "rack 1.0"
+    carat! :update, :carat => true, :verbose => true
+    expect(the_carat).to include_gem "rack 1.0"
 
-    expect(the_bundle.locked_gems.bundler_version).to eq v(Bundler::VERSION)
+    expect(the_carat.locked_gems.carat_version).to eq v(Carat::VERSION)
   end
 end
 
 # these specs are slow and focus on integration and therefore are not exhaustive. unit specs elsewhere handle that.
-RSpec.describe "bundle update conservative" do
+RSpec.describe "carat update conservative" do
   context "patch and minor options" do
     before do
       build_repo4 do
@@ -688,37 +688,37 @@ RSpec.describe "bundle update conservative" do
 
     context "patch preferred" do
       it "single gem updates dependent gem to minor" do
-        bundle! "update --patch foo"
+        carat! "update --patch foo"
 
-        expect(the_bundle).to include_gems "foo 1.4.5", "bar 2.1.1", "qux 1.0.0"
+        expect(the_carat).to include_gems "foo 1.4.5", "bar 2.1.1", "qux 1.0.0"
       end
 
       it "update all" do
-        bundle! "update --patch", :all => bundle_update_requires_all?
+        carat! "update --patch", :all => carat_update_requires_all?
 
-        expect(the_bundle).to include_gems "foo 1.4.5", "bar 2.1.1", "qux 1.0.1"
+        expect(the_carat).to include_gems "foo 1.4.5", "bar 2.1.1", "qux 1.0.1"
       end
     end
 
     context "minor preferred" do
       it "single gem updates dependent gem to major" do
-        bundle! "update --minor foo"
+        carat! "update --minor foo"
 
-        expect(the_bundle).to include_gems "foo 1.5.1", "bar 3.0.0", "qux 1.0.0"
+        expect(the_carat).to include_gems "foo 1.5.1", "bar 3.0.0", "qux 1.0.0"
       end
     end
 
     context "strict" do
       it "patch preferred" do
-        bundle! "update --patch foo bar --strict"
+        carat! "update --patch foo bar --strict"
 
-        expect(the_bundle).to include_gems "foo 1.4.4", "bar 2.0.5", "qux 1.0.0"
+        expect(the_carat).to include_gems "foo 1.4.4", "bar 2.0.5", "qux 1.0.0"
       end
 
       it "minor preferred" do
-        bundle! "update --minor --strict", :all => bundle_update_requires_all?
+        carat! "update --minor --strict", :all => carat_update_requires_all?
 
-        expect(the_bundle).to include_gems "foo 1.5.0", "bar 2.1.1", "qux 1.1.0"
+        expect(the_carat).to include_gems "foo 1.5.0", "bar 2.1.1", "qux 1.1.0"
       end
     end
   end
@@ -769,30 +769,30 @@ RSpec.describe "bundle update conservative" do
           shared_owner_b
           isolated_owner
 
-        BUNDLED WITH
+        CARAT VERSION
            1.13.0
       L
     end
 
     it "should eagerly unlock isolated dependency" do
-      bundle "update isolated_owner"
+      carat "update isolated_owner"
 
-      expect(the_bundle).to include_gems "isolated_owner 1.0.2", "isolated_dep 2.0.2", "shared_dep 5.0.1", "shared_owner_a 3.0.1", "shared_owner_b 4.0.1"
+      expect(the_carat).to include_gems "isolated_owner 1.0.2", "isolated_dep 2.0.2", "shared_dep 5.0.1", "shared_owner_a 3.0.1", "shared_owner_b 4.0.1"
     end
 
     it "should eagerly unlock shared dependency" do
-      bundle "update shared_owner_a"
+      carat "update shared_owner_a"
 
-      expect(the_bundle).to include_gems "isolated_owner 1.0.1", "isolated_dep 2.0.1", "shared_dep 5.0.2", "shared_owner_a 3.0.2", "shared_owner_b 4.0.1"
+      expect(the_carat).to include_gems "isolated_owner 1.0.1", "isolated_dep 2.0.1", "shared_dep 5.0.2", "shared_owner_a 3.0.2", "shared_owner_b 4.0.1"
     end
 
     it "should not eagerly unlock with --conservative" do
-      bundle "update --conservative shared_owner_a isolated_owner"
+      carat "update --conservative shared_owner_a isolated_owner"
 
-      expect(the_bundle).to include_gems "isolated_owner 1.0.2", "isolated_dep 2.0.2", "shared_dep 5.0.1", "shared_owner_a 3.0.2", "shared_owner_b 4.0.1"
+      expect(the_carat).to include_gems "isolated_owner 1.0.2", "isolated_dep 2.0.2", "shared_dep 5.0.1", "shared_owner_a 3.0.2", "shared_owner_b 4.0.1"
     end
 
-    it "should match bundle install conservative update behavior when not eagerly unlocking" do
+    it "should match carat install conservative update behavior when not eagerly unlocking" do
       gemfile <<-G
         source "file://#{gem_repo4}"
         gem 'isolated_owner', '1.0.2'
@@ -801,9 +801,9 @@ RSpec.describe "bundle update conservative" do
         gem 'shared_owner_b'
       G
 
-      bundle "install"
+      carat "install"
 
-      expect(the_bundle).to include_gems "isolated_owner 1.0.2", "isolated_dep 2.0.2", "shared_dep 5.0.1", "shared_owner_a 3.0.2", "shared_owner_b 4.0.1"
+      expect(the_carat).to include_gems "isolated_owner 1.0.2", "isolated_dep 2.0.2", "shared_dep 5.0.1", "shared_owner_a 3.0.2", "shared_owner_b 4.0.1"
     end
   end
 
@@ -813,9 +813,9 @@ RSpec.describe "bundle update conservative" do
     end
 
     it "raises if too many flags are provided" do
-      bundle "update --patch --minor", :all => bundle_update_requires_all?
+      carat "update --patch --minor", :all => carat_update_requires_all?
 
-      expect(last_command.bundler_err).to eq "Provide only one of the following options: minor, patch"
+      expect(last_command.carat_err).to eq "Provide only one of the following options: minor, patch"
     end
   end
 end

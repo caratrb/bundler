@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle show", :bundler => "< 2" do
+RSpec.describe "carat show", :carat => "< 2" do
   context "with a standard Gemfile" do
     before :each do
       install_gemfile <<-G
@@ -12,48 +12,48 @@ RSpec.describe "bundle show", :bundler => "< 2" do
     it "creates a Gemfile.lock if one did not exist" do
       FileUtils.rm("Gemfile.lock")
 
-      bundle "show"
+      carat "show"
 
-      expect(bundled_app("Gemfile.lock")).to exist
+      expect(carated_app("Gemfile.lock")).to exist
     end
 
     it "creates a Gemfile.lock when invoked with a gem name" do
       FileUtils.rm("Gemfile.lock")
 
-      bundle "show rails"
+      carat "show rails"
 
-      expect(bundled_app("Gemfile.lock")).to exist
+      expect(carated_app("Gemfile.lock")).to exist
     end
 
-    it "prints path if gem exists in bundle" do
-      bundle "show rails"
-      expect(out).to eq(default_bundle_path("gems", "rails-2.3.2").to_s)
+    it "prints path if gem exists in carat" do
+      carat "show rails"
+      expect(out).to eq(default_carat_path("gems", "rails-2.3.2").to_s)
     end
 
     it "warns if path no longer exists on disk" do
-      FileUtils.rm_rf(default_bundle_path("gems", "rails-2.3.2"))
+      FileUtils.rm_rf(default_carat_path("gems", "rails-2.3.2"))
 
-      bundle "show rails"
+      carat "show rails"
 
       expect(out).to match(/has been deleted/i).
-        and include(default_bundle_path("gems", "rails-2.3.2").to_s)
+        and include(default_carat_path("gems", "rails-2.3.2").to_s)
     end
 
-    it "prints the path to the running bundler" do
-      bundle "show bundler"
+    it "prints the path to the running carat" do
+      carat "show carat"
       expect(out).to eq(root.to_s)
     end
 
-    it "complains if gem not in bundle" do
-      bundle "show missing"
+    it "complains if gem not in carat" do
+      carat "show missing"
       expect(out).to match(/could not find gem 'missing'/i)
     end
 
-    it "prints path of all gems in bundle sorted by name" do
-      bundle "show --paths"
+    it "prints path of all gems in carat sorted by name" do
+      carat "show --paths"
 
-      expect(out).to include(default_bundle_path("gems", "rake-10.0.2").to_s)
-      expect(out).to include(default_bundle_path("gems", "rails-2.3.2").to_s)
+      expect(out).to include(default_carat_path("gems", "rake-10.0.2").to_s)
+      expect(out).to include(default_carat_path("gems", "rails-2.3.2").to_s)
 
       # Gem names are the last component of their path.
       gem_list = out.split.map {|p| p.split("/").last }
@@ -61,7 +61,7 @@ RSpec.describe "bundle show", :bundler => "< 2" do
     end
 
     it "prints summary of gems" do
-      bundle "show --verbose"
+      carat "show --verbose"
 
       expect(out).to include("* actionmailer (2.3.2)")
       expect(out).to include("\tSummary:  This is just a fake gem for testing")
@@ -79,9 +79,9 @@ RSpec.describe "bundle show", :bundler => "< 2" do
       install_gemfile <<-G
         gem "foo", :git => "#{lib_path("foo-1.0")}"
       G
-      expect(the_bundle).to include_gems "foo 1.0"
+      expect(the_carat).to include_gems "foo 1.0"
 
-      bundle :show
+      carat :show
       expect(out).to include("foo (1.0 #{@git.ref_for("master", 6)}")
     end
 
@@ -94,9 +94,9 @@ RSpec.describe "bundle show", :bundler => "< 2" do
       install_gemfile <<-G
         gem "foo", :git => "#{lib_path("foo-1.0")}", :branch => "omg"
       G
-      expect(the_bundle).to include_gems "foo 1.0.omg"
+      expect(the_carat).to include_gems "foo 1.0.omg"
 
-      bundle :show
+      carat :show
       expect(out).to include("foo (1.0 #{@git.ref_for("omg", 6)}")
     end
 
@@ -106,7 +106,7 @@ RSpec.describe "bundle show", :bundler => "< 2" do
         gem "foo", :git => "#{lib_path("foo-1.0")}", :ref => "#{sha}"
       G
 
-      bundle :show
+      carat :show
       expect(out).to include("foo (1.0 #{sha[0..6]})")
     end
 
@@ -115,9 +115,9 @@ RSpec.describe "bundle show", :bundler => "< 2" do
       install_gemfile <<-G
         gem "foo", "1.0.0-beta.1", :git => "#{lib_path("foo")}"
       G
-      expect(the_bundle).to include_gems "foo 1.0.0.pre.beta.1"
+      expect(the_carat).to include_gems "foo 1.0.0.pre.beta.1"
 
-      bundle! :show
+      carat! :show
       expect(out).to include("foo (1.0.0.pre.beta.1")
     end
   end
@@ -131,19 +131,19 @@ RSpec.describe "bundle show", :bundler => "< 2" do
     end
 
     it "does not output git errors" do
-      bundle :show
+      carat :show
       expect(err).to lack_errors
     end
   end
 
-  it "performs an automatic bundle install" do
+  it "performs an automatic carat install" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "foo"
     G
 
-    bundle "config auto_install 1"
-    bundle :show
+    carat "config auto_install 1"
+    carat :show
     expect(out).to include("Installing foo 1.0")
   end
 
@@ -156,13 +156,13 @@ RSpec.describe "bundle show", :bundler => "< 2" do
 
       invalid_regexp = "[]"
 
-      bundle "show #{invalid_regexp}"
+      carat "show #{invalid_regexp}"
       expect(out).to include("Could not find gem '#{invalid_regexp}'.")
     end
   end
 
   context "--outdated option" do
-    # Regression test for https://github.com/bundler/bundler/issues/5375
+    # Regression test for https://github.com/caratrb/carat/issues/5375
     before do
       build_repo2
     end
@@ -173,7 +173,7 @@ RSpec.describe "bundle show", :bundler => "< 2" do
         gem "rails"
       G
 
-      expect(the_bundle).to include_gem("rails 2.3.2")
+      expect(the_carat).to include_gem("rails 2.3.2")
 
       update_repo2 do
         build_gem "rails", "3.0.0" do |s|
@@ -181,10 +181,10 @@ RSpec.describe "bundle show", :bundler => "< 2" do
         end
       end
 
-      bundle! "show --outdated"
+      carat! "show --outdated"
 
-      bundle! "install"
-      expect(the_bundle).to include_gem("rails 2.3.2")
+      carat! "install"
+      expect(the_carat).to include_gem("rails 2.3.2")
     end
   end
 end

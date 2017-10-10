@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "forwardable"
-require "support/the_bundle"
+require "support/the_carat"
 module Spec
   module Matchers
     extend RSpec::Matchers
@@ -91,7 +91,7 @@ module Spec
     end
 
     RSpec::Matchers.define :have_dep do |*args|
-      dep = Bundler::Dependency.new(*args)
+      dep = Carat::Dependency.new(*args)
 
       match do |actual|
         actual.length == 1 && actual.all? {|d| d == dep }
@@ -132,7 +132,7 @@ module Spec
       diffable
 
       match do |actual|
-        @actual = Bundler.read_file(actual)
+        @actual = Carat.read_file(actual)
         values_match?(file_contents, @actual)
       end
     end
@@ -141,7 +141,7 @@ module Spec
       string.to_s.gsub(/^/, indent_character * padding).gsub("\t", "    ")
     end
 
-    define_compound_matcher :include_gems, [be_an_instance_of(Spec::TheBundle)] do |*names|
+    define_compound_matcher :include_gems, [be_an_instance_of(Spec::TheCarat)] do |*names|
       match do
         opts = names.last.is_a?(Hash) ? names.pop : {}
         source = opts.delete(:source)
@@ -149,7 +149,7 @@ module Spec
         groups << opts
         @errors = names.map do |name|
           name, version, platform = name.split(/\s+/)
-          version_const = name == "bundler" ? "Bundler::VERSION" : Spec::Builders.constantize(name)
+          version_const = name == "carat" ? "Carat::VERSION" : Spec::Builders.constantize(name)
           begin
             run! "require '#{name}.rb'; puts #{version_const}", *groups
           rescue => e
@@ -223,20 +223,20 @@ module Spec
 
     def plugin_should_be_installed(*names)
       names.each do |name|
-        expect(Bundler::Plugin).to be_installed(name)
-        path = Pathname.new(Bundler::Plugin.installed?(name))
+        expect(Carat::Plugin).to be_installed(name)
+        path = Pathname.new(Carat::Plugin.installed?(name))
         expect(path + "plugins.rb").to exist
       end
     end
 
     def plugin_should_not_be_installed(*names)
       names.each do |name|
-        expect(Bundler::Plugin).not_to be_installed(name)
+        expect(Carat::Plugin).not_to be_installed(name)
       end
     end
 
     def lockfile_should_be(expected)
-      expect(bundled_app("Gemfile.lock")).to read_as(strip_whitespace(expected))
+      expect(carated_app("Gemfile.lock")).to read_as(strip_whitespace(expected))
     end
   end
 end

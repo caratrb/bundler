@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install" do
+RSpec.describe "carat install" do
   describe "with --path" do
     before :each do
       build_gem "rack", "1.0.0", :to_system => true do |s|
@@ -13,76 +13,76 @@ RSpec.describe "bundle install" do
       G
     end
 
-    it "does not use available system gems with bundle --path vendor/bundle", :bundler => "< 2" do
-      bundle! :install, forgotten_command_line_options(:path => "vendor/bundle")
-      expect(the_bundle).to include_gems "rack 1.0.0"
+    it "does not use available system gems with carat --path vendor/carat", :carat => "< 2" do
+      carat! :install, forgotten_command_line_options(:path => "vendor/carat")
+      expect(the_carat).to include_gems "rack 1.0.0"
     end
 
     it "handles paths with regex characters in them" do
-      dir = bundled_app("bun++dle")
+      dir = carated_app("bun++dle")
       dir.mkpath
 
       Dir.chdir(dir) do
-        bundle! :install, forgotten_command_line_options(:path => dir.join("vendor/bundle"))
-        expect(out).to include("installed into `./vendor/bundle`")
+        carat! :install, forgotten_command_line_options(:path => dir.join("vendor/carat"))
+        expect(out).to include("installed into `./vendor/carat`")
       end
 
       dir.rmtree
     end
 
-    it "prints a warning to let the user know what has happened with bundle --path vendor/bundle" do
-      bundle! :install, forgotten_command_line_options(:path => "vendor/bundle")
-      expect(out).to include("gems are installed into `./vendor/bundle`")
+    it "prints a warning to let the user know what has happened with carat --path vendor/carat" do
+      carat! :install, forgotten_command_line_options(:path => "vendor/carat")
+      expect(out).to include("gems are installed into `./vendor/carat`")
     end
 
-    it "disallows --path vendor/bundle --system", :bundler => "< 2" do
-      bundle "install --path vendor/bundle --system"
+    it "disallows --path vendor/carat --system", :carat => "< 2" do
+      carat "install --path vendor/carat --system"
       expect(out).to include("Please choose only one option.")
       expect(exitstatus).to eq(15) if exitstatus
     end
 
-    it "remembers to disable system gems after the first time with bundle --path vendor/bundle", :bundler => "< 2" do
-      bundle "install --path vendor/bundle"
-      FileUtils.rm_rf bundled_app("vendor")
-      bundle "install"
+    it "remembers to disable system gems after the first time with carat --path vendor/carat", :carat => "< 2" do
+      carat "install --path vendor/carat"
+      FileUtils.rm_rf carated_app("vendor")
+      carat "install"
 
       expect(vendored_gems("gems/rack-1.0.0")).to be_directory
-      expect(the_bundle).to include_gems "rack 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0"
     end
 
     context "with path_relative_to_cwd set to true" do
-      before { bundle! "config path_relative_to_cwd true" }
+      before { carat! "config path_relative_to_cwd true" }
 
-      it "installs the bundle relatively to current working directory", :bundler => "< 2" do
-        Dir.chdir(bundled_app.parent) do
-          bundle! "install --gemfile='#{bundled_app}/Gemfile' --path vendor/bundle"
-          expect(out).to include("installed into `./vendor/bundle`")
-          expect(bundled_app("../vendor/bundle")).to be_directory
+      it "installs the carat relatively to current working directory", :carat => "< 2" do
+        Dir.chdir(carated_app.parent) do
+          carat! "install --gemfile='#{carated_app}/Gemfile' --path vendor/carat"
+          expect(out).to include("installed into `./vendor/carat`")
+          expect(carated_app("../vendor/carat")).to be_directory
         end
-        expect(the_bundle).to include_gems "rack 1.0.0"
+        expect(the_carat).to include_gems "rack 1.0.0"
       end
 
-      it "installs the standalone bundle relative to the cwd" do
-        Dir.chdir(bundled_app.parent) do
-          bundle! :install, :gemfile => bundled_app("Gemfile"), :standalone => true
-          expect(out).to include("installed into `./bundled_app/bundle`")
-          expect(bundled_app("bundle")).to be_directory
-          expect(bundled_app("bundle/ruby")).to be_directory
+      it "installs the standalone carat relative to the cwd" do
+        Dir.chdir(carated_app.parent) do
+          carat! :install, :gemfile => carated_app("Gemfile"), :standalone => true
+          expect(out).to include("installed into `./carated_app/carat`")
+          expect(carated_app("carat")).to be_directory
+          expect(carated_app("carat/ruby")).to be_directory
         end
 
-        bundle! "config unset path"
+        carat! "config unset path"
 
-        Dir.chdir(bundled_app("subdir").tap(&:mkpath)) do
-          bundle! :install, :gemfile => bundled_app("Gemfile"), :standalone => true
-          expect(out).to include("installed into `../bundle`")
-          expect(bundled_app("bundle")).to be_directory
-          expect(bundled_app("bundle/ruby")).to be_directory
+        Dir.chdir(carated_app("subdir").tap(&:mkpath)) do
+          carat! :install, :gemfile => carated_app("Gemfile"), :standalone => true
+          expect(out).to include("installed into `../carat`")
+          expect(carated_app("carat")).to be_directory
+          expect(carated_app("carat/ruby")).to be_directory
         end
       end
     end
   end
 
-  describe "when BUNDLE_PATH or the global path config is set" do
+  describe "when CARAT_PATH or the global path config is set" do
     before :each do
       build_lib "rack", "1.0.0", :to_system => true do |s|
         s.write "lib/rack.rb", "raise 'FAIL'"
@@ -94,69 +94,69 @@ RSpec.describe "bundle install" do
       G
     end
 
-    def set_bundle_path(type, location)
+    def set_carat_path(type, location)
       if type == :env
-        ENV["BUNDLE_PATH"] = location
+        ENV["CARAT_PATH"] = location
       elsif type == :global
-        bundle "config path #{location}", "no-color" => nil
+        carat "config path #{location}", "no-color" => nil
       end
     end
 
     [:env, :global].each do |type|
       it "installs gems to a path if one is specified" do
-        set_bundle_path(type, bundled_app("vendor2").to_s)
-        bundle! :install, forgotten_command_line_options(:path => "vendor/bundle")
+        set_carat_path(type, carated_app("vendor2").to_s)
+        carat! :install, forgotten_command_line_options(:path => "vendor/carat")
 
         expect(vendored_gems("gems/rack-1.0.0")).to be_directory
-        expect(bundled_app("vendor2")).not_to be_directory
-        expect(the_bundle).to include_gems "rack 1.0.0"
+        expect(carated_app("vendor2")).not_to be_directory
+        expect(the_carat).to include_gems "rack 1.0.0"
       end
 
-      it "installs gems to BUNDLE_PATH with #{type}" do
-        set_bundle_path(type, bundled_app("vendor").to_s)
+      it "installs gems to CARAT_PATH with #{type}" do
+        set_carat_path(type, carated_app("vendor").to_s)
 
-        bundle :install
+        carat :install
 
-        expect(bundled_app("vendor/gems/rack-1.0.0")).to be_directory
-        expect(the_bundle).to include_gems "rack 1.0.0"
+        expect(carated_app("vendor/gems/rack-1.0.0")).to be_directory
+        expect(the_carat).to include_gems "rack 1.0.0"
       end
 
-      it "installs gems to BUNDLE_PATH relative to root when relative" do
-        set_bundle_path(type, "vendor")
+      it "installs gems to CARAT_PATH relative to root when relative" do
+        set_carat_path(type, "vendor")
 
-        FileUtils.mkdir_p bundled_app("lol")
-        Dir.chdir(bundled_app("lol")) do
-          bundle :install
+        FileUtils.mkdir_p carated_app("lol")
+        Dir.chdir(carated_app("lol")) do
+          carat :install
         end
 
-        expect(bundled_app("vendor/gems/rack-1.0.0")).to be_directory
-        expect(the_bundle).to include_gems "rack 1.0.0"
+        expect(carated_app("vendor/gems/rack-1.0.0")).to be_directory
+        expect(the_carat).to include_gems "rack 1.0.0"
       end
     end
 
-    it "installs gems to BUNDLE_PATH from .bundle/config" do
-      config "BUNDLE_PATH" => bundled_app("vendor/bundle").to_s
+    it "installs gems to CARAT_PATH from .carat/config" do
+      config "CARAT_PATH" => carated_app("vendor/carat").to_s
 
-      bundle :install
+      carat :install
 
       expect(vendored_gems("gems/rack-1.0.0")).to be_directory
-      expect(the_bundle).to include_gems "rack 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0"
     end
 
-    it "sets BUNDLE_PATH as the first argument to bundle install" do
-      bundle! :install, forgotten_command_line_options(:path => "./vendor/bundle")
+    it "sets CARAT_PATH as the first argument to carat install" do
+      carat! :install, forgotten_command_line_options(:path => "./vendor/carat")
 
       expect(vendored_gems("gems/rack-1.0.0")).to be_directory
-      expect(the_bundle).to include_gems "rack 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0"
     end
 
     it "disables system gems when passing a path to install" do
       # This is so that vendored gems can be distributed to others
       build_gem "rack", "1.1.0", :to_system => true
-      bundle! :install, forgotten_command_line_options(:path => "./vendor/bundle")
+      carat! :install, forgotten_command_line_options(:path => "./vendor/carat")
 
       expect(vendored_gems("gems/rack-1.0.0")).to be_directory
-      expect(the_bundle).to include_gems "rack 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0"
     end
 
     it "re-installs gems whose extensions have been deleted", :rubygems => ">= 2.3" do
@@ -169,29 +169,29 @@ RSpec.describe "bundle install" do
         gem "very_simple_binary"
       G
 
-      bundle! :install, forgotten_command_line_options(:path => "./vendor/bundle")
+      carat! :install, forgotten_command_line_options(:path => "./vendor/carat")
 
       expect(vendored_gems("gems/very_simple_binary-1.0")).to be_directory
       expect(vendored_gems("extensions")).to be_directory
-      expect(the_bundle).to include_gems "very_simple_binary 1.0", :source => "remote1"
+      expect(the_carat).to include_gems "very_simple_binary 1.0", :source => "remote1"
 
       vendored_gems("extensions").rmtree
 
       run "require 'very_simple_binary_c'"
-      expect(err).to include("Bundler::GemNotFound")
+      expect(err).to include("Carat::GemNotFound")
 
-      bundle :install, forgotten_command_line_options(:path => "./vendor/bundle")
+      carat :install, forgotten_command_line_options(:path => "./vendor/carat")
 
       expect(vendored_gems("gems/very_simple_binary-1.0")).to be_directory
       expect(vendored_gems("extensions")).to be_directory
-      expect(the_bundle).to include_gems "very_simple_binary 1.0", :source => "remote1"
+      expect(the_carat).to include_gems "very_simple_binary 1.0", :source => "remote1"
     end
   end
 
   describe "to a file" do
     before do
       in_app_root do
-        `touch /tmp/idontexist bundle`
+        `touch /tmp/idontexist carat`
       end
     end
 
@@ -201,7 +201,7 @@ RSpec.describe "bundle install" do
         gem "rack"
       G
 
-      bundle :install, forgotten_command_line_options(:path => "bundle")
+      carat :install, forgotten_command_line_options(:path => "carat")
       expect(out).to match(/file already exists/)
     end
   end

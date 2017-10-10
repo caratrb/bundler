@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle console", :bundler => "< 2" do
+RSpec.describe "carat console", :carat => "< 2" do
   before :each do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
@@ -11,7 +11,7 @@ RSpec.describe "bundle console", :bundler => "< 2" do
   end
 
   it "starts IRB with the default group loaded" do
-    bundle "console" do |input, _, _|
+    carat "console" do |input, _, _|
       input.puts("puts RACK")
       input.puts("exit")
     end
@@ -19,7 +19,7 @@ RSpec.describe "bundle console", :bundler => "< 2" do
   end
 
   it "uses IRB as default console" do
-    bundle "console" do |input, _, _|
+    carat "console" do |input, _, _|
       input.puts("__method__")
       input.puts("exit")
     end
@@ -31,9 +31,9 @@ RSpec.describe "bundle console", :bundler => "< 2" do
       source "file://#{gem_repo1}"
       gem "pry"
     G
-    bundle "config console pry"
+    carat "config console pry"
 
-    bundle "console" do |input, _, _|
+    carat "console" do |input, _, _|
       input.puts("__method__")
       input.puts("exit")
     end
@@ -41,10 +41,10 @@ RSpec.describe "bundle console", :bundler => "< 2" do
   end
 
   it "falls back to IRB if the other REPL isn't available" do
-    bundle "config console pry"
+    carat "config console pry"
     # make sure pry isn't there
 
-    bundle "console" do |input, _, _|
+    carat "console" do |input, _, _|
       input.puts("__method__")
       input.puts("exit")
     end
@@ -52,7 +52,7 @@ RSpec.describe "bundle console", :bundler => "< 2" do
   end
 
   it "doesn't load any other groups" do
-    bundle "console" do |input, _, _|
+    carat "console" do |input, _, _|
       input.puts("puts ACTIVESUPPORT")
       input.puts("exit")
     end
@@ -61,7 +61,7 @@ RSpec.describe "bundle console", :bundler => "< 2" do
 
   describe "when given a group" do
     it "loads the given group" do
-      bundle "console test" do |input, _, _|
+      carat "console test" do |input, _, _|
         input.puts("puts ACTIVESUPPORT")
         input.puts("exit")
       end
@@ -69,7 +69,7 @@ RSpec.describe "bundle console", :bundler => "< 2" do
     end
 
     it "loads the default group" do
-      bundle "console test" do |input, _, _|
+      carat "console test" do |input, _, _|
         input.puts("puts RACK")
         input.puts("exit")
       end
@@ -77,7 +77,7 @@ RSpec.describe "bundle console", :bundler => "< 2" do
     end
 
     it "doesn't load other groups" do
-      bundle "console test" do |input, _, _|
+      carat "console test" do |input, _, _|
         input.puts("puts RACK_MIDDLEWARE")
         input.puts("exit")
       end
@@ -85,7 +85,7 @@ RSpec.describe "bundle console", :bundler => "< 2" do
     end
   end
 
-  it "performs an automatic bundle install" do
+  it "performs an automatic carat install" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack"
@@ -94,13 +94,13 @@ RSpec.describe "bundle console", :bundler => "< 2" do
       gem "foo"
     G
 
-    bundle "config auto_install 1"
-    bundle :console do |input, _, _|
+    carat "config auto_install 1"
+    carat :console do |input, _, _|
       input.puts("puts 'hello'")
       input.puts("exit")
     end
     expect(out).to include("Installing foo 1.0")
     expect(out).to include("hello")
-    expect(the_bundle).to include_gems "foo 1.0"
+    expect(the_carat).to include_gems "foo 1.0"
   end
 end

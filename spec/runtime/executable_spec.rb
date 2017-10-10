@@ -8,8 +8,8 @@ RSpec.describe "Running bin/* commands" do
     G
   end
 
-  it "runs the bundled command when in the bundle" do
-    bundle! "binstubs rack"
+  it "runs the carated command when in the carat" do
+    carat! "binstubs rack"
 
     build_gem "rack", "2.0", :to_system => true do |s|
       s.executables = "rackup"
@@ -20,34 +20,34 @@ RSpec.describe "Running bin/* commands" do
   end
 
   it "allows the location of the gem stubs to be specified" do
-    bundle! "binstubs rack", :path => "gbin"
+    carat! "binstubs rack", :path => "gbin"
 
-    expect(bundled_app("bin")).not_to exist
-    expect(bundled_app("gbin/rackup")).to exist
+    expect(carated_app("bin")).not_to exist
+    expect(carated_app("gbin/rackup")).to exist
 
-    gembin bundled_app("gbin/rackup")
+    gembin carated_app("gbin/rackup")
     expect(out).to eq("1.0.0")
   end
 
   it "allows absolute paths as a specification of where to install bin stubs" do
-    bundle! "binstubs rack", :path => tmp("bin")
+    carat! "binstubs rack", :path => tmp("bin")
 
     gembin tmp("bin/rackup")
     expect(out).to eq("1.0.0")
   end
 
   it "uses the default ruby install name when shebang is not specified" do
-    bundle! "binstubs rack"
+    carat! "binstubs rack"
     expect(File.open("bin/rackup").gets).to eq("#!/usr/bin/env #{RbConfig::CONFIG["ruby_install_name"]}\n")
   end
 
   it "allows the name of the shebang executable to be specified" do
-    bundle! "binstubs rack", :shebang => "ruby-foo"
+    carat! "binstubs rack", :shebang => "ruby-foo"
     expect(File.open("bin/rackup").gets).to eq("#!/usr/bin/env ruby-foo\n")
   end
 
-  it "runs the bundled command when out of the bundle" do
-    bundle! "binstubs rack"
+  it "runs the carated command when out of the carat" do
+    carat! "binstubs rack"
 
     build_gem "rack", "2.0", :to_system => true do |s|
       s.executables = "rackup"
@@ -68,7 +68,7 @@ RSpec.describe "Running bin/* commands" do
       gem "rack", :path => "#{lib_path("rack")}"
     G
 
-    bundle! "binstubs rack"
+    carat! "binstubs rack"
 
     build_gem "rack", "2.0", :to_system => true do |s|
       s.executables = "rackup"
@@ -78,45 +78,45 @@ RSpec.describe "Running bin/* commands" do
     expect(out).to eq("1.0")
   end
 
-  it "creates a bundle binstub" do
-    build_gem "bundler", Bundler::VERSION, :to_system => true do |s|
-      s.executables = "bundle"
+  it "creates a carat binstub" do
+    build_gem "carat", Carat::VERSION, :to_system => true do |s|
+      s.executables = "carat"
     end
 
     gemfile <<-G
       source "file://#{gem_repo1}"
-      gem "bundler"
+      gem "carat"
     G
 
-    bundle! "binstubs bundler"
+    carat! "binstubs carat"
 
-    expect(bundled_app("bin/bundle")).to exist
+    expect(carated_app("bin/carat")).to exist
   end
 
   it "does not generate bin stubs if the option was not specified" do
-    bundle! "install"
+    carat! "install"
 
-    expect(bundled_app("bin/rackup")).not_to exist
+    expect(carated_app("bin/rackup")).not_to exist
   end
 
-  it "allows you to stop installing binstubs", :bundler => "< 2" do
-    bundle! "install --binstubs bin/"
-    bundled_app("bin/rackup").rmtree
-    bundle! "install --binstubs \"\""
+  it "allows you to stop installing binstubs", :carat => "< 2" do
+    carat! "install --binstubs bin/"
+    carated_app("bin/rackup").rmtree
+    carat! "install --binstubs \"\""
 
-    expect(bundled_app("bin/rackup")).not_to exist
+    expect(carated_app("bin/rackup")).not_to exist
 
-    bundle! "config bin"
+    carat! "config bin"
     expect(out).to include("You have not configured a value for `bin`")
   end
 
-  it "remembers that the option was specified", :bundler => "< 2" do
+  it "remembers that the option was specified", :carat => "< 2" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "activesupport"
     G
 
-    bundle! :install, forgotten_command_line_options([:binstubs, :bin] => "bin")
+    carat! :install, forgotten_command_line_options([:binstubs, :bin] => "bin")
 
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -124,26 +124,26 @@ RSpec.describe "Running bin/* commands" do
       gem "rack"
     G
 
-    bundle "install"
+    carat "install"
 
-    expect(bundled_app("bin/rackup")).to exist
+    expect(carated_app("bin/rackup")).to exist
   end
 
-  it "rewrites bins on --binstubs (to maintain backwards compatibility)", :bundler => "< 2" do
+  it "rewrites bins on --binstubs (to maintain backwards compatibility)", :carat => "< 2" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack"
     G
 
-    bundle! :install, forgotten_command_line_options([:binstubs, :bin] => "bin")
+    carat! :install, forgotten_command_line_options([:binstubs, :bin] => "bin")
 
-    File.open(bundled_app("bin/rackup"), "wb") do |file|
+    File.open(carated_app("bin/rackup"), "wb") do |file|
       file.print "OMG"
     end
 
-    bundle "install"
+    carat "install"
 
-    expect(bundled_app("bin/rackup").read).to_not eq("OMG")
+    expect(carated_app("bin/rackup").read).to_not eq("OMG")
   end
 
   it "rewrites bins on binstubs (to maintain backwards compatibility)" do
@@ -154,8 +154,8 @@ RSpec.describe "Running bin/* commands" do
 
     create_file("bin/rackup", "OMG")
 
-    bundle! "binstubs rack"
+    carat! "binstubs rack"
 
-    expect(bundled_app("bin/rackup").read).to_not eq("OMG")
+    expect(carated_app("bin/rackup").read).to_not eq("OMG")
   end
 end

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install" do
+RSpec.describe "carat install" do
   %w[force redownload].each do |flag|
     describe_opts = {}
-    describe_opts[:bundler] = "< 2" if flag == "force"
+    describe_opts[:carat] = "< 2" if flag == "force"
     describe "with --#{flag}", describe_opts do
       before :each do
         gemfile <<-G
@@ -13,22 +13,22 @@ RSpec.describe "bundle install" do
       end
 
       it "re-installs installed gems" do
-        rack_lib = default_bundle_path("gems/rack-1.0.0/lib/rack.rb")
+        rack_lib = default_carat_path("gems/rack-1.0.0/lib/rack.rb")
 
-        bundle! :install
+        carat! :install
         rack_lib.open("w") {|f| f.write("blah blah blah") }
-        bundle! :install, flag => true
+        carat! :install, flag => true
 
         expect(out).to include "Installing rack 1.0.0"
         expect(rack_lib.open(&:read)).to eq("RACK = '1.0.0'\n")
-        expect(the_bundle).to include_gems "rack 1.0.0"
+        expect(the_carat).to include_gems "rack 1.0.0"
       end
 
-      it "works on first bundle install" do
-        bundle! :install, flag => true
+      it "works on first carat install" do
+        carat! :install, flag => true
 
         expect(out).to include "Installing rack 1.0.0"
-        expect(the_bundle).to include_gems "rack 1.0.0"
+        expect(the_carat).to include_gems "rack 1.0.0"
       end
 
       context "with a git gem" do
@@ -41,20 +41,20 @@ RSpec.describe "bundle install" do
         end
 
         it "re-installs installed gems" do
-          foo_lib = default_bundle_path("bundler/gems/foo-1.0-#{ref}/lib/foo.rb")
+          foo_lib = default_carat_path("carat/gems/foo-1.0-#{ref}/lib/foo.rb")
 
-          bundle! :install
+          carat! :install
           foo_lib.open("w") {|f| f.write("blah blah blah") }
-          bundle! :install, flag => true
+          carat! :install, flag => true
 
           expect(foo_lib.open(&:read)).to eq("FOO = '1.0'\n")
-          expect(the_bundle).to include_gems "foo 1.0"
+          expect(the_carat).to include_gems "foo 1.0"
         end
 
-        it "works on first bundle install" do
-          bundle! :install, flag => true
+        it "works on first carat install" do
+          carat! :install, flag => true
 
-          expect(the_bundle).to include_gems "foo 1.0"
+          expect(the_carat).to include_gems "foo 1.0"
         end
       end
     end

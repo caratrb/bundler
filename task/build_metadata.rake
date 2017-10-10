@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
 def write_build_metadata(build_metadata)
-  build_metadata_file = "lib/bundler/build_metadata.rb"
+  build_metadata_file = "lib/carat/build_metadata.rb"
 
   ivars = build_metadata.sort.map do |k, v|
-    "    @#{k} = #{bundler_spec.send(:ruby_code, v)}"
+    "    @#{k} = #{carat_spec.send(:ruby_code, v)}"
   end.join("\n")
 
   contents = File.read(build_metadata_file)
@@ -14,7 +14,7 @@ end
 
 task :build_metadata do
   build_metadata = {
-    :built_at => bundler_spec.date.utc.strftime("%Y-%m-%d"),
+    :built_at => carat_spec.date.utc.strftime("%Y-%m-%d"),
     :git_commit_sha => `git rev-parse --short HEAD`.strip,
     :release => Rake::Task["release"].instance_variable_get(:@already_invoked),
   }

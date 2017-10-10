@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle info" do
+RSpec.describe "carat info" do
   context "info from specific gem in gemfile" do
     before do
       install_gemfile <<-G
@@ -10,7 +10,7 @@ RSpec.describe "bundle info" do
     end
 
     it "prints information about the current gem" do
-      bundle "info rails"
+      carat "info rails"
       expect(out).to include "* rails (2.3.2)
 \tSummary: This is just a fake gem for testing
 \tHomepage: http://example.com"
@@ -19,14 +19,14 @@ RSpec.describe "bundle info" do
 
     context "given a gem that is not installed" do
       it "prints missing gem error" do
-        bundle "info foo"
+        carat "info foo"
         expect(out).to eq "Could not find gem 'foo'."
       end
     end
 
     context "given a default gem shippped in ruby" do
       it "prints information about the default gem", :if => (RUBY_VERSION >= "2.0") do
-        bundle "info rdoc"
+        carat "info rdoc"
         expect(out).to include("* rdoc")
         expect(out).to include("Default Gem: yes")
       end
@@ -49,7 +49,7 @@ RSpec.describe "bundle info" do
 
     context "given --path option" do
       it "prints the path to the gem" do
-        bundle "info rails"
+        carat "info rails"
         expect(out).to match(%r{.*\/rails\-2\.3\.2})
       end
     end

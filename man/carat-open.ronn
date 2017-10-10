@@ -1,0 +1,19 @@
+carat-open(1) -- Opens the source directory for a gem in your carat
+=====================================================================
+
+## SYNOPSIS
+
+`carat open` [GEM]
+
+## DESCRIPTION
+
+Opens the source directory of the provided GEM in your editor.
+
+For this to work the `EDITOR` or `CARAT_EDITOR` environment variable has to
+be set.
+
+Example:
+
+    carat open 'rack'
+
+Will open the source directory for the 'rack' gem in your carat.

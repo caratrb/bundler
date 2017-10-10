@@ -1,14 +1,14 @@
 # Filing Issues: a guide
 
-So! You're having problems with Bundler. This file is here to help. If you're running into an error, try reading the rest of this file for help. If you can't figure out how to solve your problem, there are also instructions on how to report a bug.
+So! You're having problems with Carat. This file is here to help. If you're running into an error, try reading the rest of this file for help. If you can't figure out how to solve your problem, there are also instructions on how to report a bug.
 
 Before filing an issue, check our [troubleshooting guide](../TROUBLESHOOTING.md) for quick fixes to common issues.
 
 ## Documentation
 
-Instructions for common Bundler uses can be found on the [Bundler documentation site](http://bundler.io/).
+Instructions for common Carat uses can be found on the [Carat documentation site](http://carat.io/).
 
-Detailed information about each Bundler command, including help with common problems, can be found in the [Bundler man pages](http://bundler.io/man/bundle.1.html) or [Bundler Command Line Reference](http://bundler.io/v1.11/commands.html).
+Detailed information about each Carat command, including help with common problems, can be found in the [Carat man pages](http://carat.io/man/carat.1.html) or [Carat Command Line Reference](http://carat.io/v1.11/commands.html).
 
 ## Reporting unresolved problems
 
@@ -30,22 +30,22 @@ If you are unable to do that, please include the following information in your r
  - What you expected to happen
  - What actually happened
  - The exception backtrace(s), if any
- - Everything output by running `bundle env`
+ - Everything output by running `carat env`
 
-If your version of Bundler does not have the `bundle env` command, then please include:
+If your version of Carat does not have the `carat env` command, then please include:
 
  - Your `Gemfile`
  - Your `Gemfile.lock`
- - Your Bundler configuration settings (run `bundle config`)
- - What version of bundler you are using (run `bundle -v`)
+ - Your Carat configuration settings (run `carat config`)
+ - What version of carat you are using (run `carat -v`)
  - What version of Ruby you are using (run `ruby -v`)
  - What version of RubyGems you are using (run `gem -v`)
  - Whether you are using RVM, and if so what version (run `rvm -v`)
- - Whether you have the `rubygems-bundler` gem, which can break gem executables (run `gem list rubygems-bundler`)
+ - Whether you have the `rubygems-carat` gem, which can break gem executables (run `gem list rubygems-carat`)
  - Whether you have the `open_gem` gem, which can cause rake activation conflicts (run `gem list open_gem`)
 
-If you have either `rubygems-bundler` or `open_gem` installed, please try removing them and then following the troubleshooting steps above before opening a new ticket.
+If you have either `rubygems-carat` or `open_gem` installed, please try removing them and then following the troubleshooting steps above before opening a new ticket.
 
-[Create a gist](https://gist.github.com) containing all of that information, then visit the [Bundler issue tracker](https://github.com/bundler/bundler/issues) and [create a ticket](https://github.com/bundler/bundler/issues/new) describing your problem and linking to your gist.
+[Create a gist](https://gist.github.com) containing all of that information, then visit the [Carat issue tracker](https://github.com/caratrb/carat/issues) and [create a ticket](https://github.com/caratrb/carat/issues/new) describing your problem and linking to your gist.
 
-Thanks for reporting issues and helping make Bundler better!
+Thanks for reporting issues and helping make Carat better!

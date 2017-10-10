@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle update" do
+RSpec.describe "carat update" do
   describe "git sources" do
     it "floats on a branch when :branch is used" do
       build_git "foo", "1.0"
@@ -16,9 +16,9 @@ RSpec.describe "bundle update" do
         s.write "lib/foo.rb", "FOO = '1.1'"
       end
 
-      bundle "update", :all => bundle_update_requires_all?
+      carat "update", :all => carat_update_requires_all?
 
-      expect(the_bundle).to include_gems "foo 1.1"
+      expect(the_carat).to include_gems "foo 1.1"
     end
 
     it "updates correctly when you have like craziness" do
@@ -31,8 +31,8 @@ RSpec.describe "bundle update" do
         gem "rails", :git => "#{lib_path("rails")}"
       G
 
-      bundle! "update rails"
-      expect(the_bundle).to include_gems "rails 3.0", "activesupport 3.0"
+      carat! "update rails"
+      expect(the_carat).to include_gems "rails 3.0", "activesupport 3.0"
     end
 
     it "floats on a branch when :branch is used and the source is specified in the update" do
@@ -49,14 +49,14 @@ RSpec.describe "bundle update" do
         s.write "lib/foo.rb", "FOO = '1.1'"
       end
 
-      bundle "update --source foo"
+      carat "update --source foo"
 
-      expect(the_bundle).to include_gems "foo 1.1"
+      expect(the_carat).to include_gems "foo 1.1"
     end
 
     it "floats on master when updating all gems that are pinned to the source even if you have child dependencies" do
       build_git "foo", :path => lib_path("foo")
-      build_gem "bar", :to_bundle => true do |s|
+      build_gem "bar", :to_carat => true do |s|
         s.add_dependency "foo"
       end
 
@@ -69,9 +69,9 @@ RSpec.describe "bundle update" do
         s.write "lib/foo.rb", "FOO = '1.1'"
       end
 
-      bundle "update foo"
+      carat "update foo"
 
-      expect(the_bundle).to include_gems "foo 1.1"
+      expect(the_carat).to include_gems "foo 1.1"
     end
 
     it "notices when you change the repo url in the Gemfile" do
@@ -90,7 +90,7 @@ RSpec.describe "bundle update" do
 
       expect(err).to lack_errors
       expect(out).to include("Fetching #{lib_path}/foo_two")
-      expect(out).to include("Bundle complete!")
+      expect(out).to include("Carat complete!")
     end
 
     it "fetches tags from the remote" do
@@ -111,7 +111,7 @@ RSpec.describe "bundle update" do
         gem 'foo', :git => "#{@remote.path}", :tag => "fubar"
       G
 
-      bundle "update", :all => bundle_update_requires_all?
+      carat "update", :all => carat_update_requires_all?
       expect(exitstatus).to eq(0) if exitstatus
     end
 
@@ -191,8 +191,8 @@ RSpec.describe "bundle update" do
 
       lib_path("foo-1.0").join(".git").rmtree
 
-      bundle :update, :all => bundle_update_requires_all?
-      expect(last_command.bundler_err).to include(lib_path("foo-1.0").to_s).
+      carat :update, :all => carat_update_requires_all?
+      expect(last_command.carat_err).to include(lib_path("foo-1.0").to_s).
         and match(/Git error: command `git fetch.+has failed/)
     end
 
@@ -208,9 +208,9 @@ RSpec.describe "bundle update" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      bundle %(config local.rack #{lib_path("local-rack")})
-      bundle "update rack"
-      expect(out).to include("Bundle updated!")
+      carat %(config local.rack #{lib_path("local-rack")})
+      carat "update rack"
+      expect(out).to include("Gems updated!")
     end
 
     it "shows the previous version of the gem" do
@@ -233,7 +233,7 @@ RSpec.describe "bundle update" do
           rails!
       G
 
-      bundle "update", :all => bundle_update_requires_all?
+      carat "update", :all => carat_update_requires_all?
       expect(out).to include("Using rails 3.0 (was 2.3.2) from #{lib_path("rails")} (at master@#{revision_for(lib_path("rails"))[0..6]})")
     end
   end
@@ -257,7 +257,7 @@ RSpec.describe "bundle update" do
     it "updates the source" do
       update_git "foo", :path => @git.path
 
-      bundle "update --source foo"
+      carat "update --source foo"
 
       in_app_root do
         run <<-RUBY
@@ -272,16 +272,16 @@ RSpec.describe "bundle update" do
     it "unlocks gems that were originally pulled in by the source" do
       update_git "foo", "2.0", :path => @git.path
 
-      bundle "update --source foo"
-      expect(the_bundle).to include_gems "foo 2.0"
+      carat "update --source foo"
+      expect(the_carat).to include_gems "foo 2.0"
     end
 
     it "leaves all other gems frozen" do
       update_repo2
       update_git "foo", :path => @git.path
 
-      bundle "update --source foo"
-      expect(the_bundle).to include_gems "rack 1.0"
+      carat "update --source foo"
+      expect(the_carat).to include_gems "rack 1.0"
     end
   end
 
@@ -299,7 +299,7 @@ RSpec.describe "bundle update" do
       G
     end
 
-    it "the --source flag updates version of gems that were originally pulled in by the source", :bundler => "< 2" do
+    it "the --source flag updates version of gems that were originally pulled in by the source", :carat => "< 2" do
       spec_lines = lib_path("bar/foo.gemspec").read.split("\n")
       spec_lines[5] = "s.version = '2.0'"
 
@@ -309,7 +309,7 @@ RSpec.describe "bundle update" do
 
       ref = @git.ref_for "master"
 
-      bundle "update --source bar"
+      carat "update --source bar"
 
       lockfile_should_be <<-G
         GIT
@@ -330,12 +330,12 @@ RSpec.describe "bundle update" do
           foo!
           rack
 
-        BUNDLED WITH
-           #{Bundler::VERSION}
+        CARAT VERSION
+           #{Carat::VERSION}
       G
     end
 
-    it "the --source flag updates version of gems that were originally pulled in by the source", :bundler => "2" do
+    it "the --source flag updates version of gems that were originally pulled in by the source", :carat => "2" do
       spec_lines = lib_path("bar/foo.gemspec").read.split("\n")
       spec_lines[5] = "s.version = '2.0'"
 
@@ -345,7 +345,7 @@ RSpec.describe "bundle update" do
 
       ref = @git.ref_for "master"
 
-      bundle "update --source bar"
+      carat "update --source bar"
 
       lockfile_should_be <<-G
         GEM
@@ -366,8 +366,8 @@ RSpec.describe "bundle update" do
           foo!
           rack
 
-        BUNDLED WITH
-           #{Bundler::VERSION}
+        CARAT VERSION
+           #{Carat::VERSION}
       G
     end
   end

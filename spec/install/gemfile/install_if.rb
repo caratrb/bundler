@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-describe "bundle install with install_if conditionals" do
+describe "carat install with install_if conditionals" do
   it "follows the install_if DSL" do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
@@ -14,9 +14,9 @@ describe "bundle install with install_if conditionals" do
       gem "rack"
     G
 
-    expect(the_bundle).to include_gems("rack 1.0", "activesupport 2.3.5")
-    expect(the_bundle).not_to include_gems("thin")
-    expect(the_bundle).not_to include_gems("foo")
+    expect(the_carat).to include_gems("rack 1.0", "activesupport 2.3.5")
+    expect(the_carat).not_to include_gems("thin")
+    expect(the_carat).not_to include_gems("foo")
 
     lockfile_should_be <<-L
       GEM
@@ -37,8 +37,8 @@ describe "bundle install with install_if conditionals" do
         rack
         thin
 
-      BUNDLED WITH
-         #{Bundler::VERSION}
+      CARAT VERSION
+         #{Carat::VERSION}
     L
   end
 end

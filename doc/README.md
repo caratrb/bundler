@@ -1,10 +1,10 @@
-# Docs: Contributing and developing Bundler
+# Docs: Contributing and developing Carat
 
-_If you're looking for documentation on how to use Bundler: visit [bundler.io](http://bundler.io/), or run `bundle help` from the command line. You may also be interested in [troubleshooting common issues](TROUBLESHOOTING.md) found when using Bundler._
+_If you're looking for documentation on how to use Carat: visit [carat.io](http://carat.io/), or run `carat help` from the command line. You may also be interested in [troubleshooting common issues](TROUBLESHOOTING.md) found when using Carat._
 
-Bundler welcomes contributions from *everyone*. While contributing, please follow the project [code of conduct](http://bundler.io/conduct.html), so that everyone can be included.
+Carat welcomes contributions from *everyone*. While contributing, please follow the project [code of conduct](http://carat.io/conduct.html), so that everyone can be included.
 
-If you'd like to help make Bundler better, you totally rock! Thanks for helping us make Bundler better.
+If you'd like to help make Carat better, you totally rock! Thanks for helping us make Carat better.
 
 ## Contributing
 
@@ -21,7 +21,7 @@ If you'd like to help make Bundler better, you totally rock! Thanks for helping 
 * [Development setup](development/SETUP.md)
 * [Submitting pull requests](development/PULL_REQUESTS.md)
 * [Adding new features](development/NEW_FEATURES.md)
-* [Releasing Bundler](development/RELEASING.md)
+* [Releasing Carat](development/RELEASING.md)
 
 ## Documentation
 

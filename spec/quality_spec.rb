@@ -131,7 +131,7 @@ RSpec.describe "The library itself" do
 
   it "does not include any unresolved merge conflicts" do
     error_messages = []
-    exempt = %r{lock/lockfile_(bundler_1_)?spec|quality_spec|vcr_cassettes|\.ronn|lockfile_parser\.rb}
+    exempt = %r{lock/lockfile_(carat_1_)?spec|quality_spec|vcr_cassettes|\.ronn|lockfile_parser\.rb}
     Dir.chdir(root) do
       `git ls-files -z`.split("\x0").each do |filename|
         next if filename =~ exempt
@@ -185,18 +185,18 @@ RSpec.describe "The library itself" do
     all_settings = Hash.new {|h, k| h[k] = [] }
     documented_settings = []
 
-    Bundler::Settings::BOOL_KEYS.each {|k| all_settings[k] << "in Bundler::Settings::BOOL_KEYS" }
-    Bundler::Settings::NUMBER_KEYS.each {|k| all_settings[k] << "in Bundler::Settings::NUMBER_KEYS" }
-    Bundler::Settings::ARRAY_KEYS.each {|k| all_settings[k] << "in Bundler::Settings::ARRAY_KEYS" }
+    Carat::Settings::BOOL_KEYS.each {|k| all_settings[k] << "in Carat::Settings::BOOL_KEYS" }
+    Carat::Settings::NUMBER_KEYS.each {|k| all_settings[k] << "in Carat::Settings::NUMBER_KEYS" }
+    Carat::Settings::ARRAY_KEYS.each {|k| all_settings[k] << "in Carat::Settings::ARRAY_KEYS" }
 
     Dir.chdir(root) do
       key_pattern = /([a-z\._-]+)/i
       `git ls-files -z -- lib`.split("\x0").each do |filename|
         File.readlines(filename).each_with_index do |line, number|
-          line.scan(/Bundler\.settings\[:#{key_pattern}\]/).flatten.each {|s| all_settings[s] << "referenced at `#{filename}:#{number.succ}`" }
+          line.scan(/Carat\.settings\[:#{key_pattern}\]/).flatten.each {|s| all_settings[s] << "referenced at `#{filename}:#{number.succ}`" }
         end
       end
-      documented_settings = File.read("man/bundle-config.ronn")[/LIST OF AVAILABLE KEYS.*/m].scan(/^\* `#{key_pattern}`/).flatten
+      documented_settings = File.read("man/carat-config.ronn")[/LIST OF AVAILABLE KEYS.*/m].scan(/^\* `#{key_pattern}`/).flatten
     end
 
     documented_settings.each do |s|
@@ -219,15 +219,15 @@ RSpec.describe "The library itself" do
   it "can still be built" do
     Dir.chdir(root) do
       begin
-        gem_command! :build, "bundler.gemspec"
-        if Bundler.rubygems.provides?(">= 2.4")
+        gem_command! :build, "carat.gemspec"
+        if Carat.rubygems.provides?(">= 2.4")
           # older rubygems have weird warnings, and we won't actually be using them
           # to build the gem for releases anyways
-          expect(last_command.stderr).to be_empty, "bundler should build as a gem without warnings, but\n#{err}"
+          expect(last_command.stderr).to be_empty, "carat should build as a gem without warnings, but\n#{err}"
         end
       ensure
         # clean up the .gem generated
-        FileUtils.rm("bundler-#{Bundler::VERSION}.gem")
+        FileUtils.rm("carat-#{Carat::VERSION}.gem")
       end
     end
   end
@@ -235,14 +235,14 @@ RSpec.describe "The library itself" do
   it "does not contain any warnings" do
     Dir.chdir(root) do
       exclusions = %w[
-        lib/bundler/capistrano.rb
-        lib/bundler/deployment.rb
-        lib/bundler/gem_tasks.rb
-        lib/bundler/vlad.rb
-        lib/bundler/templates/gems.rb
+        lib/carat/capistrano.rb
+        lib/carat/deployment.rb
+        lib/carat/gem_tasks.rb
+        lib/carat/vlad.rb
+        lib/carat/templates/gems.rb
       ]
       lib_files = `git ls-files -z -- lib`.split("\x0").grep(/\.rb$/) - exclusions
-      lib_files.reject! {|f| f.start_with?("lib/bundler/vendor") }
+      lib_files.reject! {|f| f.start_with?("lib/carat/vendor") }
       lib_files.map! {|f| f.chomp(".rb") }
       sys_exec!("ruby -w -Ilib") do |input, _, _|
         lib_files.each do |f|

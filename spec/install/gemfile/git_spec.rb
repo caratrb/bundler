@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install with git sources" do
+RSpec.describe "carat install with git sources" do
   describe "when floating on master" do
     before :each do
       build_git "foo" do |s|
@@ -16,7 +16,7 @@ RSpec.describe "bundle install with git sources" do
     end
 
     it "fetches gems" do
-      expect(the_bundle).to include_gems("foo 1.0")
+      expect(the_carat).to include_gems("foo 1.0")
 
       run <<-RUBY
         require 'foo'
@@ -26,15 +26,15 @@ RSpec.describe "bundle install with git sources" do
       expect(out).to eq("WIN")
     end
 
-    it "caches the git repo", :bundler => "< 2" do
-      expect(Dir["#{default_bundle_path}/cache/bundler/git/foo-1.0-*"]).to have_attributes :size => 1
+    it "caches the git repo", :carat => "< 2" do
+      expect(Dir["#{default_carat_path}/cache/carat/git/foo-1.0-*"]).to have_attributes :size => 1
     end
 
     it "caches the git repo globally" do
       simulate_new_machine
-      bundle! "config global_gem_cache true"
-      bundle! :install
-      expect(Dir["#{home}/.bundle/cache/git/foo-1.0-*"]).to have_attributes :size => 1
+      carat! "config global_gem_cache true"
+      carat! :install
+      expect(Dir["#{home}/.carat/cache/git/foo-1.0-*"]).to have_attributes :size => 1
     end
 
     it "caches the evaluated gemspec" do
@@ -45,10 +45,10 @@ RSpec.describe "bundle install with git sources" do
         s.write "foo.gemspec", foospec
       end
 
-      bundle "update foo"
+      carat "update foo"
 
       sha = git.ref_for("master", 11)
-      spec_file = default_bundle_path.join("bundler/gems/foo-1.0-#{sha}/foo.gemspec").to_s
+      spec_file = default_carat_path.join("carat/gems/foo-1.0-#{sha}/foo.gemspec").to_s
       ruby_code = Gem::Specification.load(spec_file).to_ruby
       file_code = File.read(spec_file)
       expect(file_code).to eq(ruby_code)
@@ -58,7 +58,7 @@ RSpec.describe "bundle install with git sources" do
       update_git "foo"
 
       in_app_root2 do
-        install_gemfile bundled_app2("Gemfile"), <<-G
+        install_gemfile carated_app2("Gemfile"), <<-G
           git "#{lib_path("foo-1.0")}" do
             gem 'foo'
           end
@@ -76,7 +76,7 @@ RSpec.describe "bundle install with git sources" do
     end
 
     it "sets up git gem executables on the path" do
-      bundle "exec foobar"
+      carat "exec foobar"
       expect(out).to eq("1.0")
     end
 
@@ -128,21 +128,21 @@ RSpec.describe "bundle install with git sources" do
     end
 
     it "still works after moving the application directory" do
-      bundle "install --path vendor/bundle"
-      FileUtils.mv bundled_app, tmp("bundled_app.bck")
+      carat "install --path vendor/carat"
+      FileUtils.mv carated_app, tmp("carated_app.bck")
 
-      Dir.chdir tmp("bundled_app.bck")
-      expect(the_bundle).to include_gems "foo 1.0"
+      Dir.chdir tmp("carated_app.bck")
+      expect(the_carat).to include_gems "foo 1.0"
     end
 
     it "can still install after moving the application directory" do
-      bundle "install --path vendor/bundle"
-      FileUtils.mv bundled_app, tmp("bundled_app.bck")
+      carat "install --path vendor/carat"
+      FileUtils.mv carated_app, tmp("carated_app.bck")
 
       update_git "foo", "1.1", :path => lib_path("foo-1.0")
 
-      Dir.chdir tmp("bundled_app.bck")
-      gemfile tmp("bundled_app.bck/Gemfile"), <<-G
+      Dir.chdir tmp("carated_app.bck")
+      gemfile tmp("carated_app.bck/Gemfile"), <<-G
         source "file://#{gem_repo1}"
         git "#{lib_path("foo-1.0")}" do
           gem 'foo'
@@ -151,9 +151,9 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", "1.0"
       G
 
-      bundle "update foo"
+      carat "update foo"
 
-      expect(the_bundle).to include_gems "foo 1.1", "rack 1.0"
+      expect(the_carat).to include_gems "foo 1.1", "rack 1.0"
     end
   end
 
@@ -171,8 +171,8 @@ RSpec.describe "bundle install with git sources" do
     end
 
     it "does not explode" do
-      bundle "install"
-      expect(the_bundle).to include_gems "rack 1.0"
+      carat "install"
+      expect(the_carat).to include_gems "rack 1.0"
     end
   end
 
@@ -221,7 +221,7 @@ RSpec.describe "bundle install with git sources" do
       end
 
       Dir.chdir(lib_path("foo-1.0")) do
-        `git update-ref -m 'Bundler Spec!' refs/bundler/1 master~1`
+        `git update-ref -m 'Carat Spec!' refs/carat/1 master~1`
       end
 
       # want to ensure we don't fallback to HEAD
@@ -230,7 +230,7 @@ RSpec.describe "bundle install with git sources" do
       end
 
       install_gemfile! <<-G
-        git "#{lib_path("foo-1.0")}", :ref => "refs/bundler/1" do
+        git "#{lib_path("foo-1.0")}", :ref => "refs/carat/1" do
           gem "foo"
         end
       G
@@ -257,7 +257,7 @@ RSpec.describe "bundle install with git sources" do
       end
 
       Dir.chdir(lib_path("foo-1.0")) do
-        `git update-ref -m 'Bundler Spec!' refs/bundler/1 master~1`
+        `git update-ref -m 'Carat Spec!' refs/carat/1 master~1`
       end
 
       # want to ensure we don't fallback to HEAD
@@ -266,7 +266,7 @@ RSpec.describe "bundle install with git sources" do
       end
 
       install_gemfile! <<-G
-        git "#{lib_path("foo-1.0")}", :ref => "refs/bundler/1" do
+        git "#{lib_path("foo-1.0")}", :ref => "refs/carat/1" do
           gem "foo"
         end
       G
@@ -282,10 +282,10 @@ RSpec.describe "bundle install with git sources" do
 
     it "does not download random non-head refs" do
       Dir.chdir(lib_path("foo-1.0")) do
-        sys_exec!("git update-ref -m 'Bundler Spec!' refs/bundler/1 master~1")
+        sys_exec!("git update-ref -m 'Carat Spec!' refs/carat/1 master~1")
       end
 
-      bundle! "config global_gem_cache true"
+      carat! "config global_gem_cache true"
 
       install_gemfile! <<-G
         git "#{lib_path("foo-1.0")}" do
@@ -294,13 +294,13 @@ RSpec.describe "bundle install with git sources" do
       G
 
       # ensure we also git fetch after cloning
-      bundle! :update, :all => bundle_update_requires_all?
+      carat! :update, :all => carat_update_requires_all?
 
-      Dir.chdir(Dir[home(".bundle/cache/git/foo-*")].first) do
+      Dir.chdir(Dir[home(".carat/cache/git/foo-*")].first) do
         sys_exec("git ls-remote .")
       end
 
-      expect(out).not_to include("refs/bundler/1")
+      expect(out).not_to include("refs/carat/1")
     end
   end
 
@@ -318,7 +318,7 @@ RSpec.describe "bundle install with git sources" do
         end
       G
 
-      expect(the_bundle).to include_gems("foo 1.0")
+      expect(the_carat).to include_gems("foo 1.0")
     end
 
     context "when the branch starts with a `#`" do
@@ -330,7 +330,7 @@ RSpec.describe "bundle install with git sources" do
           end
         G
 
-        expect(the_bundle).to include_gems("foo 1.0")
+        expect(the_carat).to include_gems("foo 1.0")
       end
     end
 
@@ -343,7 +343,7 @@ RSpec.describe "bundle install with git sources" do
           end
         G
 
-        expect(the_bundle).to include_gems("foo 1.0")
+        expect(the_carat).to include_gems("foo 1.0")
       end
     end
   end
@@ -362,7 +362,7 @@ RSpec.describe "bundle install with git sources" do
         end
       G
 
-      expect(the_bundle).to include_gems("foo 1.0")
+      expect(the_carat).to include_gems("foo 1.0")
     end
 
     context "when the tag starts with a `#`" do
@@ -374,7 +374,7 @@ RSpec.describe "bundle install with git sources" do
           end
         G
 
-        expect(the_bundle).to include_gems("foo 1.0")
+        expect(the_carat).to include_gems("foo 1.0")
       end
     end
 
@@ -387,7 +387,7 @@ RSpec.describe "bundle install with git sources" do
           end
         G
 
-        expect(the_bundle).to include_gems("foo 1.0")
+        expect(the_carat).to include_gems("foo 1.0")
       end
     end
   end
@@ -406,8 +406,8 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      bundle! %(config local.rack #{lib_path("local-rack")})
-      bundle! :install
+      carat! %(config local.rack #{lib_path("local-rack")})
+      carat! :install
 
       run "require 'rack'"
       expect(out).to eq("LOCAL")
@@ -427,7 +427,7 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      bundle %(config local.rack #{lib_path("local-rack")})
+      carat %(config local.rack #{lib_path("local-rack")})
       run "require 'rack'"
       expect(out).to eq("LOCAL")
     end
@@ -447,8 +447,8 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      bundle! %(config local.rack #{lib_path("local-rack")})
-      bundle! :install
+      carat! %(config local.rack #{lib_path("local-rack")})
+      carat! :install
       run! "require 'rack'"
       expect(out).to eq("LOCAL")
     end
@@ -463,17 +463,17 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      lockfile0 = File.read(bundled_app("Gemfile.lock"))
+      lockfile0 = File.read(carated_app("Gemfile.lock"))
 
       FileUtils.cp_r("#{lib_path("rack-0.8")}/.", lib_path("local-rack"))
       update_git "rack", "0.8", :path => lib_path("local-rack") do |s|
         s.add_dependency "nokogiri", "1.4.2"
       end
 
-      bundle %(config local.rack #{lib_path("local-rack")})
+      carat %(config local.rack #{lib_path("local-rack")})
       run "require 'rack'"
 
-      lockfile1 = File.read(bundled_app("Gemfile.lock"))
+      lockfile1 = File.read(carated_app("Gemfile.lock"))
       expect(lockfile1).not_to eq(lockfile0)
     end
 
@@ -485,15 +485,15 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      lockfile0 = File.read(bundled_app("Gemfile.lock"))
+      lockfile0 = File.read(carated_app("Gemfile.lock"))
 
       FileUtils.cp_r("#{lib_path("rack-0.8")}/.", lib_path("local-rack"))
       update_git "rack", "0.8", :path => lib_path("local-rack")
 
-      bundle %(config local.rack #{lib_path("local-rack")})
-      bundle :install
+      carat %(config local.rack #{lib_path("local-rack")})
+      carat :install
 
-      lockfile1 = File.read(bundled_app("Gemfile.lock"))
+      lockfile1 = File.read(carated_app("Gemfile.lock"))
       expect(lockfile1).not_to eq(lockfile0)
     end
 
@@ -505,8 +505,8 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      bundle %(config local.rack #{lib_path("local-rack")})
-      bundle :install
+      carat %(config local.rack #{lib_path("local-rack")})
+      carat :install
       expect(out).to match(/Cannot use local override for rack-0.8 because #{Regexp.escape(lib_path('local-rack').to_s)} does not exist/)
     end
 
@@ -519,8 +519,8 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}"
       G
 
-      bundle %(config local.rack #{lib_path("local-rack")})
-      bundle :install
+      carat %(config local.rack #{lib_path("local-rack")})
+      carat :install
       expect(out).to match(/cannot use local override/i)
     end
 
@@ -533,10 +533,10 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}"
       G
 
-      bundle %(config local.rack #{lib_path("local-rack")})
-      bundle %(config disable_local_branch_check true)
-      bundle :install
-      expect(out).to match(/Bundle complete!/)
+      carat %(config local.rack #{lib_path("local-rack")})
+      carat %(config disable_local_branch_check true)
+      carat :install
+      expect(out).to match(/Carat complete!/)
     end
 
     it "explodes on different branches on install" do
@@ -553,8 +553,8 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      bundle %(config local.rack #{lib_path("local-rack")})
-      bundle :install
+      carat %(config local.rack #{lib_path("local-rack")})
+      carat :install
       expect(out).to match(/is using branch another but Gemfile specifies master/)
     end
 
@@ -570,8 +570,8 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}", :branch => "master"
       G
 
-      bundle %(config local.rack #{lib_path("local-rack")})
-      bundle :install
+      carat %(config local.rack #{lib_path("local-rack")})
+      carat :install
       expect(out).to match(/The Gemfile lock is pointing to revision \w+/)
     end
   end
@@ -584,7 +584,7 @@ RSpec.describe "bundle install with git sources" do
     #     gem "thingy", :git => "git@notthere.fallingsnow.net:somebody/thingy.git"
     #   G
     #
-    #   bundle :install
+    #   carat :install
     #
     #   # p out
     #   # p err
@@ -601,7 +601,7 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack-0.8")}"
       G
 
-      expect(the_bundle).to include_gems "rack 0.8"
+      expect(the_carat).to include_gems "rack 0.8"
     end
 
     it "installs dependencies from git even if a newer gem is available elsewhere" do
@@ -637,7 +637,7 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", "1.0.0", :git => "#{lib_path("rack")}"
       G
 
-      expect(the_bundle).to include_gems "rack 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0"
     end
 
     it "correctly unlocks when changing to a git source without versions" do
@@ -653,7 +653,7 @@ RSpec.describe "bundle install with git sources" do
         gem "rack", :git => "#{lib_path("rack")}"
       G
 
-      expect(the_bundle).to include_gems "rack 1.2"
+      expect(the_carat).to include_gems "rack 1.2"
     end
   end
 
@@ -669,7 +669,7 @@ RSpec.describe "bundle install with git sources" do
         end
       G
 
-      expect(the_bundle).to include_gems "omg 1.0", "hi2u 1.0"
+      expect(the_carat).to include_gems "omg 1.0", "hi2u 1.0"
     end
   end
 
@@ -701,8 +701,8 @@ RSpec.describe "bundle install with git sources" do
       gem "rails", "2.3.2"
     G
 
-    expect(the_bundle).to include_gems "foo 1.0"
-    expect(the_bundle).to include_gems "rails 2.3.2"
+    expect(the_carat).to include_gems "foo 1.0"
+    expect(the_carat).to include_gems "rails 2.3.2"
   end
 
   it "runs the gemspec in the context of its parent directory" do
@@ -731,8 +731,8 @@ RSpec.describe "bundle install with git sources" do
       gem "rails", "2.3.2"
     G
 
-    expect(the_bundle).to include_gems "bar 1.0"
-    expect(the_bundle).to include_gems "rails 2.3.2"
+    expect(the_carat).to include_gems "bar 1.0"
+    expect(the_carat).to include_gems "rails 2.3.2"
   end
 
   it "installs from git even if a rubygems gem is present" do
@@ -746,7 +746,7 @@ RSpec.describe "bundle install with git sources" do
       gem "foo", "1.0", :git => "#{lib_path("foo-1.0")}"
     G
 
-    expect(the_bundle).to include_gems "foo 1.0"
+    expect(the_carat).to include_gems "foo 1.0"
   end
 
   it "fakes the gem out if there is no gemspec" do
@@ -758,8 +758,8 @@ RSpec.describe "bundle install with git sources" do
       gem "rails", "2.3.2"
     G
 
-    expect(the_bundle).to include_gems("foo 1.0")
-    expect(the_bundle).to include_gems("rails 2.3.2")
+    expect(the_carat).to include_gems("foo 1.0")
+    expect(the_carat).to include_gems("rails 2.3.2")
   end
 
   it "catches git errors and spits out useful output" do
@@ -767,7 +767,7 @@ RSpec.describe "bundle install with git sources" do
       gem "foo", "1.0", :git => "omgomg"
     G
 
-    bundle :install
+    carat :install
 
     expect(out).to include("Git error:")
     expect(err).to include("fatal")
@@ -781,7 +781,7 @@ RSpec.describe "bundle install with git sources" do
       gem "foo", :git => "#{lib_path("foo space-1.0")}"
     G
 
-    expect(the_bundle).to include_gems "foo 1.0"
+    expect(the_carat).to include_gems "foo 1.0"
   end
 
   it "handles repos that have been force-pushed" do
@@ -792,21 +792,21 @@ RSpec.describe "bundle install with git sources" do
         gem 'forced'
       end
     G
-    expect(the_bundle).to include_gems "forced 1.0"
+    expect(the_carat).to include_gems "forced 1.0"
 
     update_git "forced" do |s|
       s.write "lib/forced.rb", "FORCED = '1.1'"
     end
 
-    bundle "update", :all => bundle_update_requires_all?
-    expect(the_bundle).to include_gems "forced 1.1"
+    carat "update", :all => carat_update_requires_all?
+    expect(the_carat).to include_gems "forced 1.1"
 
     Dir.chdir(lib_path("forced-1.0")) do
       `git reset --hard HEAD^`
     end
 
-    bundle "update", :all => bundle_update_requires_all?
-    expect(the_bundle).to include_gems "forced 1.0"
+    carat "update", :all => carat_update_requires_all?
+    expect(the_carat).to include_gems "forced 1.0"
   end
 
   it "ignores submodules if :submodule is not passed" do
@@ -826,7 +826,7 @@ RSpec.describe "bundle install with git sources" do
     G
     expect(out).to match(/could not find gem 'submodule/i)
 
-    expect(the_bundle).not_to include_gems "has_submodule 1.0"
+    expect(the_carat).not_to include_gems "has_submodule 1.0"
   end
 
   it "handles repos with submodules" do
@@ -845,7 +845,7 @@ RSpec.describe "bundle install with git sources" do
       end
     G
 
-    expect(the_bundle).to include_gems "has_submodule 1.0"
+    expect(the_carat).to include_gems "has_submodule 1.0"
   end
 
   it "handles implicit updates when modifying the source info" do
@@ -883,36 +883,36 @@ RSpec.describe "bundle install with git sources" do
 
     FileUtils.rm_rf(lib_path("foo-1.0"))
 
-    bundle "install"
+    carat "install"
     expect(out).not_to match(/updating/i)
   end
 
-  it "doesn't blow up if bundle install is run twice in a row" do
+  it "doesn't blow up if carat install is run twice in a row" do
     build_git "foo"
 
     gemfile <<-G
       gem "foo", :git => "#{lib_path("foo-1.0")}"
     G
 
-    bundle "install"
-    bundle "install"
+    carat "install"
+    carat "install"
     expect(exitstatus).to eq(0) if exitstatus
   end
 
   it "prints a friendly error if a file blocks the git repo" do
     build_git "foo"
 
-    FileUtils.mkdir_p(default_bundle_path)
-    FileUtils.touch(default_bundle_path("bundler"))
+    FileUtils.mkdir_p(default_carat_path)
+    FileUtils.touch(default_carat_path("carat"))
 
     install_gemfile <<-G
       gem "foo", :git => "#{lib_path("foo-1.0")}"
     G
 
     expect(exitstatus).to_not eq(0) if exitstatus
-    expect(out).to include("Bundler could not install a gem because it " \
+    expect(out).to include("Carat could not install a gem because it " \
                            "needs to create a directory, but a file exists " \
-                           "- #{default_bundle_path("bundler")}")
+                           "- #{default_carat_path("carat")}")
   end
 
   it "does not duplicate git gem sources" do
@@ -927,8 +927,8 @@ RSpec.describe "bundle install with git sources" do
       gem "bar", :git => "#{lib_path("nested")}"
     G
 
-    bundle "install"
-    expect(File.read(bundled_app("Gemfile.lock")).scan("GIT").size).to eq(1)
+    carat "install"
+    expect(File.read(carated_app("Gemfile.lock")).scan("GIT").size).to eq(1)
   end
 
   describe "switching sources" do
@@ -951,7 +951,7 @@ RSpec.describe "bundle install with git sources" do
         gem "bar", :git => "#{lib_path("bar")}"
       G
 
-      expect(the_bundle).to include_gems "foo 1.0", "bar 1.0"
+      expect(the_carat).to include_gems "foo 1.0", "bar 1.0"
     end
 
     it "doesn't explode when switching Gem to Git source" do
@@ -976,7 +976,7 @@ RSpec.describe "bundle install with git sources" do
     end
   end
 
-  describe "bundle install after the remote has been updated" do
+  describe "carat install after the remote has been updated" do
     it "installs" do
       build_git "valim"
 
@@ -988,12 +988,12 @@ RSpec.describe "bundle install with git sources" do
       update_git "valim"
       new_revision = revision_for(lib_path("valim-1.0"))
 
-      lockfile = File.read(bundled_app("Gemfile.lock"))
-      File.open(bundled_app("Gemfile.lock"), "w") do |file|
+      lockfile = File.read(carated_app("Gemfile.lock"))
+      File.open(carated_app("Gemfile.lock"), "w") do |file|
         file.puts lockfile.gsub(/revision: #{old_revision}/, "revision: #{new_revision}")
       end
 
-      bundle "install"
+      carat "install"
 
       run <<-R
         require "valim"
@@ -1010,18 +1010,18 @@ RSpec.describe "bundle install with git sources" do
       install_gemfile <<-G
         gem "foo", :git => "file://#{lib_path("foo-1.0")}", :ref => "#{revision}"
       G
-      bundle "install"
+      carat "install"
       expect(out).to_not match(/Revision.*does not exist/)
 
       install_gemfile <<-G
         gem "foo", :git => "file://#{lib_path("foo-1.0")}", :ref => "deadbeef"
       G
-      bundle "install"
+      carat "install"
       expect(out).to include("Revision deadbeef does not exist in the repository")
     end
   end
 
-  describe "bundle install --deployment with git sources" do
+  describe "carat install --deployment with git sources" do
     it "works" do
       build_git "valim", :path => lib_path("valim")
 
@@ -1032,7 +1032,7 @@ RSpec.describe "bundle install with git sources" do
 
       simulate_new_machine
 
-      bundle! :install, forgotten_command_line_options(:deployment => true)
+      carat! :install, forgotten_command_line_options(:deployment => true)
     end
   end
 
@@ -1052,7 +1052,7 @@ RSpec.describe "bundle install with git sources" do
         H
       end
 
-      bundle :install,
+      carat :install,
         :requires => [lib_path("install_hooks.rb")]
       expect(err).to eq_err("Ran pre-install hook: foo-1.0")
     end
@@ -1072,7 +1072,7 @@ RSpec.describe "bundle install with git sources" do
         H
       end
 
-      bundle :install,
+      carat :install,
         :requires => [lib_path("install_hooks.rb")]
       expect(err).to eq_err("Ran post-install hook: foo-1.0")
     end
@@ -1092,7 +1092,7 @@ RSpec.describe "bundle install with git sources" do
         H
       end
 
-      bundle :install,
+      carat :install,
         :requires => [lib_path("install_hooks.rb")]
       expect(out).to include("failed for foo-1.0")
     end
@@ -1128,7 +1128,7 @@ RSpec.describe "bundle install with git sources" do
       run! <<-R
         puts $:.grep(/ext/)
       R
-      expect(out).to eq(Pathname.glob(default_bundle_path("bundler/gems/extensions/**/foo-1.0-*")).first.to_s)
+      expect(out).to eq(Pathname.glob(default_carat_path("carat/gems/extensions/**/foo-1.0-*")).first.to_s)
     end
 
     it "does not use old extension after ref changes" do
@@ -1184,8 +1184,8 @@ RSpec.describe "bundle install with git sources" do
         gem "foo", :git => "#{lib_path("foo-1.0")}"
       G
 
-      expect(last_command.bundler_err).to end_with(<<-M.strip)
-An error occurred while installing foo (1.0), and Bundler cannot continue.
+      expect(last_command.carat_err).to end_with(<<-M.strip)
+An error occurred while installing foo (1.0), and Carat cannot continue.
 
 In Gemfile:
   foo
@@ -1240,7 +1240,7 @@ In Gemfile:
       s.executables = "xxxxxxbar"
     end
 
-    Bundler::SharedHelpers.with_clean_git_env do
+    Carat::SharedHelpers.with_clean_git_env do
       ENV["GIT_DIR"]       = "bar"
       ENV["GIT_WORK_TREE"] = "bar"
 
@@ -1268,9 +1268,9 @@ In Gemfile:
       G
 
       with_path_as("") do
-        bundle "update", :all => bundle_update_requires_all?
+        carat "update", :all => carat_update_requires_all?
       end
-      expect(last_command.bundler_err).
+      expect(last_command.carat_err).
         to include("You need to install git to be able to use gems from git repositories. For help installing git, please refer to GitHub's tutorial at https://help.github.com/articles/set-up-git")
     end
 
@@ -1282,17 +1282,17 @@ In Gemfile:
           gem 'foo'
         end
       G
-      bundle :package, forgotten_command_line_options([:all, :cache_all] => true)
+      carat :package, forgotten_command_line_options([:all, :cache_all] => true)
       simulate_new_machine
 
-      bundle! "install", :env => { "PATH" => "" }
+      carat! "install", :env => { "PATH" => "" }
       expect(out).to_not include("You need to install git to be able to use gems from git repositories.")
     end
   end
 
   describe "when the git source is overridden with a local git repo" do
     before do
-      bundle! "config --global local.foo #{lib_path("foo")}"
+      carat! "config --global local.foo #{lib_path("foo")}"
     end
 
     describe "and git output is colorized" do
@@ -1309,8 +1309,8 @@ In Gemfile:
           gem "foo", :git => "#{lib_path("foo")}", :branch => "master"
         G
 
-        bundle :install
-        expect(the_bundle).to include_gems "foo 1.0"
+        carat :install
+        expect(the_carat).to include_gems "foo 1.0"
       end
     end
   end
@@ -1326,7 +1326,7 @@ In Gemfile:
           end
         G
 
-        bundle :install
+        carat :install
         expect(last_command.stdboth).to_not include("password1")
         expect(last_command.stdout).to include("Fetching https://user1@github.com/company/private-repo")
       end
@@ -1342,7 +1342,7 @@ In Gemfile:
           end
         G
 
-        bundle :install
+        carat :install
         expect(last_command.stdboth).to_not include("oauth_token")
         expect(last_command.stdout).to include("Fetching https://x-oauth-basic@github.com/company/private-repo")
       end

@@ -1,0 +1,288 @@
+# encoding: utf-8
+# frozen_string_literal: true
+
+require "carat"
+
+RSpec.describe Carat do
+  describe "#load_gemspec_uncached" do
+    let(:app_gemspec_path) { tmp("test.gemspec") }
+    subject { Carat.load_gemspec_uncached(app_gemspec_path) }
+
+    context "with incorrect YAML file" do
+      before do
+        File.open(app_gemspec_path, "wb") do |f|
+          f.write strip_whitespace(<<-GEMSPEC)
+            ---
+              {:!00 ao=gu\g1= 7~f
+          GEMSPEC
+        end
+      end
+
+      it "catches YAML syntax errors" do
+        expect { subject }.to raise_error(Carat::GemspecError, /error while loading `test.gemspec`/)
+      end
+
+      context "on Rubies with a settable YAML engine", :if => defined?(YAML::ENGINE) do
+        context "with Syck as YAML::Engine" do
+          it "raises a GemspecError after YAML load throws ArgumentError" do
+            orig_yamler = YAML::ENGINE.yamler
+            YAML::ENGINE.yamler = "syck"
+
+            expect { subject }.to raise_error(Carat::GemspecError)
+
+            YAML::ENGINE.yamler = orig_yamler
+          end
+        end
+
+        context "with Psych as YAML::Engine" do
+          it "raises a GemspecError after YAML load throws Psych::SyntaxError" do
+            orig_yamler = YAML::ENGINE.yamler
+            YAML::ENGINE.yamler = "psych"
+
+            expect { subject }.to raise_error(Carat::GemspecError)
+
+            YAML::ENGINE.yamler = orig_yamler
+          end
+        end
+      end
+    end
+
+    context "with correct YAML file", :if => defined?(Encoding) do
+      it "can load a gemspec with unicode characters with default ruby encoding" do
+        # spec_helper forces the external encoding to UTF-8 but that's not the
+        # default until Ruby 2.0
+        verbose = $VERBOSE
+        $VERBOSE = false
+        encoding = Encoding.default_external
+        Encoding.default_external = "ASCII"
+        $VERBOSE = verbose
+
+        File.open(app_gemspec_path, "wb") do |file|
+          file.puts <<-GEMSPEC.gsub(/^\s+/, "")
+            # -*- encoding: utf-8 -*-
+            Gem::Specification.new do |gem|
+              gem.author = "André the Giant"
+            end
+          GEMSPEC
+        end
+
+        expect(subject.author).to eq("André the Giant")
+
+        verbose = $VERBOSE
+        $VERBOSE = false
+        Encoding.default_external = encoding
+        $VERBOSE = verbose
+      end
+    end
+
+    it "sets loaded_from" do
+      app_gemspec_path.open("w") do |f|
+        f.puts <<-GEMSPEC
+          Gem::Specification.new do |gem|
+            gem.name = "validated"
+          end
+        GEMSPEC
+      end
+
+      expect(subject.loaded_from).to eq(app_gemspec_path.expand_path.to_s)
+    end
+
+    context "validate is true" do
+      subject { Carat.load_gemspec_uncached(app_gemspec_path, true) }
+
+      it "validates the specification" do
+        app_gemspec_path.open("w") do |f|
+          f.puts <<-GEMSPEC
+            Gem::Specification.new do |gem|
+              gem.name = "validated"
+            end
+          GEMSPEC
+        end
+        expect(Carat.rubygems).to receive(:validate).with have_attributes(:name => "validated")
+        subject
+      end
+    end
+
+    context "with gemspec containing local variables" do
+      before do
+        File.open(app_gemspec_path, "wb") do |f|
+          f.write strip_whitespace(<<-GEMSPEC)
+            must_not_leak = true
+            Gem::Specification.new do |gem|
+              gem.name = "leak check"
+            end
+          GEMSPEC
+        end
+      end
+
+      it "should not pollute the TOPLEVEL_BINDING" do
+        subject
+        expect(TOPLEVEL_BINDING.eval("local_variables")).to_not include(:must_not_leak)
+      end
+    end
+  end
+
+  describe "#which" do
+    let(:executable) { "executable" }
+    let(:path) { %w[/a /b c ../d /e] }
+    let(:expected) { "executable" }
+
+    before do
+      ENV["PATH"] = path.join(File::PATH_SEPARATOR)
+
+      allow(File).to receive(:file?).and_return(false)
+      allow(File).to receive(:executable?).and_return(false)
+      if expected
+        expect(File).to receive(:file?).with(expected).and_return(true)
+        expect(File).to receive(:executable?).with(expected).and_return(true)
+      end
+    end
+
+    subject { described_class.which(executable) }
+
+    shared_examples_for "it returns the correct executable" do
+      it "returns the expected file" do
+        expect(subject).to eq(expected)
+      end
+    end
+
+    it_behaves_like "it returns the correct executable"
+
+    context "when the executable in inside a quoted path" do
+      let(:expected) { "/e/executable" }
+      it_behaves_like "it returns the correct executable"
+    end
+
+    context "when the executable is not found" do
+      let(:expected) { nil }
+      it_behaves_like "it returns the correct executable"
+    end
+  end
+
+  describe "configuration" do
+    context "disable_shared_gems" do
+      it "should unset GEM_PATH with empty string" do
+        env = {}
+        expect(Carat).to receive(:use_system_gems?).and_return(false)
+        Carat.send(:configure_gem_path, env)
+        expect(env.keys).to include("GEM_PATH")
+        expect(env["GEM_PATH"]).to eq ""
+      end
+    end
+  end
+
+  describe "#rm_rf" do
+    context "the directory is world writable" do
+      let(:carat_ui) { Carat.ui }
+      it "should raise a friendly error" do
+        allow(File).to receive(:exist?).and_return(true)
+        allow(carat_fileutils).to receive(:remove_entry_secure).and_raise(ArgumentError)
+        allow(File).to receive(:world_writable?).and_return(true)
+        message = <<EOF
+It is a security vulnerability to allow your home directory to be world-writable, and carat can not continue.
+You should probably consider fixing this issue by running `chmod o-w ~` on *nix.
+Please refer to http://ruby-doc.org/stdlib-2.1.2/libdoc/fileutils/rdoc/FileUtils.html#method-c-remove_entry_secure for details.
+EOF
+        expect(carat_ui).to receive(:warn).with(message)
+        expect { Carat.send(:rm_rf, carated_app) }.to raise_error(Carat::PathError)
+      end
+    end
+  end
+
+  describe "#user_home" do
+    context "home directory is set" do
+      it "should return the user home" do
+        path = "/home/oggy"
+        allow(Carat.rubygems).to receive(:user_home).and_return(path)
+        allow(File).to receive(:directory?).with(path).and_return true
+        allow(File).to receive(:writable?).with(path).and_return true
+        expect(Carat.user_home).to eq(Pathname(path))
+      end
+    end
+
+    context "home directory is not set" do
+      it "should issue warning and return a temporary user home" do
+        allow(Carat.rubygems).to receive(:user_home).and_return(nil)
+        allow(Etc).to receive(:getlogin).and_return("USER")
+        allow(Dir).to receive(:tmpdir).and_return("/TMP")
+        allow(FileTest).to receive(:exist?).with("/TMP/carat/home").and_return(true)
+        expect(FileUtils).to receive(:mkpath).with("/TMP/carat/home/USER")
+        message = <<EOF
+Your home directory is not set.
+Carat will use `/TMP/carat/home/USER' as your home directory temporarily.
+EOF
+        expect(Carat.ui).to receive(:warn).with(message)
+        expect(Carat.user_home).to eq(Pathname("/TMP/carat/home/USER"))
+      end
+    end
+  end
+
+  describe "#tmp_home_path" do
+    it "should create temporary user home" do
+      allow(Dir).to receive(:tmpdir).and_return("/TMP")
+      allow(FileTest).to receive(:exist?).with("/TMP/carat/home").and_return(false)
+      expect(FileUtils).to receive(:mkpath).once.ordered.with("/TMP/carat/home")
+      expect(FileUtils).to receive(:mkpath).once.ordered.with("/TMP/carat/home/USER")
+      expect(File).to receive(:chmod).with(0o777, "/TMP/carat/home")
+      expect(Carat.tmp_home_path("USER", "")).to eq(Pathname("/TMP/carat/home/USER"))
+    end
+  end
+
+  context "user cache dir" do
+    let(:home_path)                  { Pathname.new(ENV["HOME"]) }
+
+    let(:xdg_data_home)              { home_path.join(".local") }
+    let(:xdg_cache_home)             { home_path.join(".cache") }
+    let(:xdg_config_home)            { home_path.join(".config") }
+
+    let(:carat_user_home_default)   { home_path.join(".carat") }
+    let(:carat_user_home_custom)    { xdg_data_home.join("carat") }
+
+    let(:carat_user_cache_default)  { carat_user_home_default.join("cache") }
+    let(:carat_user_cache_custom)   { xdg_cache_home.join("carat") }
+
+    let(:carat_user_config_default) { carat_user_home_default.join("config") }
+    let(:carat_user_config_custom)  { xdg_config_home.join("carat") }
+
+    let(:carat_user_plugin_default) { carat_user_home_default.join("plugin") }
+    let(:carat_user_plugin_custom)  { xdg_data_home.join("carat").join("plugin") }
+
+    describe "#user_carat_path" do
+      before do
+        allow(Carat.rubygems).to receive(:user_home).and_return(home_path)
+      end
+
+      it "should use the default home path" do
+        expect(Carat.user_carat_path).to           eq(carat_user_home_default)
+        expect(Carat.user_carat_path("home")).to   eq(carat_user_home_default)
+        expect(Carat.user_carat_path("cache")).to  eq(carat_user_cache_default)
+        expect(Carat.user_cache).to                 eq(carat_user_cache_default)
+        expect(Carat.user_carat_path("config")).to eq(carat_user_config_default)
+        expect(Carat.user_carat_path("plugin")).to eq(carat_user_plugin_default)
+      end
+
+      it "should use custom home path as root for other paths" do
+        ENV["CARAT_USER_HOME"] = carat_user_home_custom.to_s
+        expect(Carat.user_carat_path).to           eq(carat_user_home_custom)
+        expect(Carat.user_carat_path("home")).to   eq(carat_user_home_custom)
+        expect(Carat.user_carat_path("cache")).to  eq(carat_user_home_custom.join("cache"))
+        expect(Carat.user_cache).to                 eq(carat_user_home_custom.join("cache"))
+        expect(Carat.user_carat_path("config")).to eq(carat_user_home_custom.join("config"))
+        expect(Carat.user_carat_path("plugin")).to eq(carat_user_home_custom.join("plugin"))
+      end
+
+      it "should use all custom paths, except home" do
+        ENV.delete("CARAT_USER_HOME")
+        ENV["CARAT_USER_CACHE"]  = carat_user_cache_custom.to_s
+        ENV["CARAT_USER_CONFIG"] = carat_user_config_custom.to_s
+        ENV["CARAT_USER_PLUGIN"] = carat_user_plugin_custom.to_s
+        expect(Carat.user_carat_path).to           eq(carat_user_home_default)
+        expect(Carat.user_carat_path("home")).to   eq(carat_user_home_default)
+        expect(Carat.user_carat_path("cache")).to  eq(carat_user_cache_custom)
+        expect(Carat.user_cache).to                 eq(carat_user_cache_custom)
+        expect(Carat.user_carat_path("config")).to eq(carat_user_config_custom)
+        expect(Carat.user_carat_path("plugin")).to eq(carat_user_plugin_custom)
+      end
+    end
+  end
+end

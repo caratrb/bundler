@@ -18,22 +18,22 @@ Prior to submitting your PR, please run the test suite:
 
       $ bin/rspec
 
-If you are unable to run the entire test suite, please run the unit test suite and at least the integration specs related to the command or domain of Bundler that your code changes relate to.
+If you are unable to run the entire test suite, please run the unit test suite and at least the integration specs related to the command or domain of Carat that your code changes relate to.
 
-Ex. For a pull request that changes something with `bundle update`, you might run:
+Ex. For a pull request that changes something with `carat update`, you might run:
 
-      $ bin/rspec spec/bundler
+      $ bin/rspec spec/carat
       $ bin/rspec spec/commands/update_spec.rb
 
 ## Commit messages
 
 Please ensure that the commit messages included in the pull request __do not__ have the following:
-  - `@tag` GitHub user or team references (ex. `@indirect` or `@bundler/core`)
-  - `#id` references to issues or pull requests (ex. `#43` or `bundler/bundler-site#12`)
+  - `@tag` GitHub user or team references (ex. `@indirect` or `@carat/core`)
+  - `#id` references to issues or pull requests (ex. `#43` or `caratrb/carat-site#12`)
 
 If you want to use these mechanisms, please instead include them in the pull request description. This prevents multiple notifications or references being created on commit rebases or pull request/branch force pushes.
 
-Additionally, do not use `[ci skip]` or `[skip ci]` mechanisms in your pull request titles/descriptions or commit messages. Every potential commit and pull request should run through Bundler's CI system. This applies to all changes/commits (ex. even a change to just documentation or the removal of a comment).
+Additionally, do not use `[ci skip]` or `[skip ci]` mechanisms in your pull request titles/descriptions or commit messages. Every potential commit and pull request should run through Carat's CI system. This applies to all changes/commits (ex. even a change to just documentation or the removal of a comment).
 
 ## CHANGELOG.md
 

@@ -1,0 +1,108 @@
+carat(1) -- Ruby Dependency Management
+=======================================
+
+## SYNOPSIS
+
+`carat` COMMAND [--no-color] [--verbose] [ARGS]
+
+## DESCRIPTION
+
+Carat manages an `application's dependencies` through its entire life
+across many machines systematically and repeatably.
+
+See [the carat website](http://carat.io) for information on getting
+started, and Gemfile(5) for more information on the `Gemfile` format.
+
+## OPTIONS
+
+* `--no-color`:
+  Print all output without color
+
+* `--retry`, `-r`:
+  Specify the number of times you wish to attempt network commands
+
+* `--verbose`, `-V`:
+  Print out additional logging information
+
+## CARAT COMMANDS
+
+We divide `carat` subcommands into primary commands and utilities.
+
+## PRIMARY COMMANDS
+
+* [`carat install(1)`][carat-install]:
+  Install the gems specified by the `Gemfile` or `Gemfile.lock`
+
+* [`carat update(1)`][carat-update]:
+  Update dependencies to their latest versions
+
+* [`carat package(1)`][carat-package]:
+  Package the .gem files required by your application into the
+  `vendor/cache` directory
+
+* [`carat exec(1)`][carat-exec]:
+  Execute a script in the context of the current carat
+
+* [`carat config(1)`][carat-config]:
+  Specify and read configuration options for carat
+
+* `carat help(1)`:
+  Display detailed help for each subcommand
+
+## UTILITIES
+
+* `carat add(1)`:
+  Add the named gem to the Gemfile and run `carat install`
+
+* `carat binstubs(1)`:
+  Generate binstubs for executables in a gem
+
+* `carat check(1)`:
+  Determine whether the requirements for your application are installed
+  and available to carat
+
+* `carat show(1)`:
+  Show the source location of a particular gem in the carat
+
+* [`carat outdated(1)`][carat-outdated]:
+  Show all of the outdated gems in the current carat
+
+* `carat console(1)`:
+  Start an IRB session in the context of the current carat
+
+* `carat open(1)`:
+  Open an installed gem in the editor
+
+* [`carat lock(1)`][carat-lock]:
+  Generate a lockfile for your dependencies
+
+* `carat viz(1)`:
+  Generate a visual representation of your dependencies
+
+* `carat init(1)`:
+  Generate a simple `Gemfile`, placed in the current directory
+
+* [`carat gem(1)`][carat-gem]:
+  Create a simple gem, suitable for development with carat
+
+* [`carat platform(1)`][carat-platform]:
+  Display platform compatibility information
+
+* `carat clean(1)`:
+  Clean up unused gems in your carat directory
+
+* `carat doctor(1)`:
+  Display warnings about common potential problems
+
+## PLUGINS
+
+When running a command that isn't listed in PRIMARY COMMANDS or UTILITIES,
+Carat will try to find an executable on your path named `carat-<command>`
+and execute it, passing down any extra arguments to it.
+
+## OBSOLETE
+
+These commands are obsolete and should no longer be used
+
+* `carat cache(1)`
+* `carat show(1)`

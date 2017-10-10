@@ -1,35 +1,35 @@
 # frozen_string_literal: true
 
 %w[cache package].each do |cmd|
-  RSpec.describe "bundle #{cmd} with path" do
-    it "is no-op when the path is within the bundle" do
-      build_lib "foo", :path => bundled_app("lib/foo")
+  RSpec.describe "carat #{cmd} with path" do
+    it "is no-op when the path is within the carat" do
+      build_lib "foo", :path => carated_app("lib/foo")
 
       install_gemfile <<-G
-        gem "foo", :path => '#{bundled_app("lib/foo")}'
+        gem "foo", :path => '#{carated_app("lib/foo")}'
       G
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
-      expect(bundled_app("vendor/cache/foo-1.0")).not_to exist
-      expect(the_bundle).to include_gems "foo 1.0"
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      expect(carated_app("vendor/cache/foo-1.0")).not_to exist
+      expect(the_carat).to include_gems "foo 1.0"
     end
 
-    it "copies when the path is outside the bundle " do
+    it "copies when the path is outside the carat " do
       build_lib "foo"
 
       install_gemfile <<-G
         gem "foo", :path => '#{lib_path("foo-1.0")}'
       G
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
-      expect(bundled_app("vendor/cache/foo-1.0")).to exist
-      expect(bundled_app("vendor/cache/foo-1.0/.bundlecache")).to be_file
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      expect(carated_app("vendor/cache/foo-1.0")).to exist
+      expect(carated_app("vendor/cache/foo-1.0/.caratcache")).to be_file
 
       FileUtils.rm_rf lib_path("foo-1.0")
-      expect(the_bundle).to include_gems "foo 1.0"
+      expect(the_carat).to include_gems "foo 1.0"
     end
 
-    it "copies when the path is outside the bundle and the paths intersect" do
+    it "copies when the path is outside the carat and the paths intersect" do
       libname = File.basename(Dir.pwd) + "_gem"
       libpath = File.join(File.dirname(Dir.pwd), libname)
 
@@ -39,12 +39,12 @@
         gem "#{libname}", :path => '#{libpath}'
       G
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
-      expect(bundled_app("vendor/cache/#{libname}")).to exist
-      expect(bundled_app("vendor/cache/#{libname}/.bundlecache")).to be_file
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      expect(carated_app("vendor/cache/#{libname}")).to exist
+      expect(carated_app("vendor/cache/#{libname}/.caratcache")).to be_file
 
       FileUtils.rm_rf libpath
-      expect(the_bundle).to include_gems "#{libname} 1.0"
+      expect(the_carat).to include_gems "#{libname} 1.0"
     end
 
     it "updates the path on each cache" do
@@ -54,15 +54,15 @@
         gem "foo", :path => '#{lib_path("foo-1.0")}'
       G
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
 
       build_lib "foo" do |s|
         s.write "lib/foo.rb", "puts :CACHE"
       end
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
 
-      expect(bundled_app("vendor/cache/foo-1.0")).to exist
+      expect(carated_app("vendor/cache/foo-1.0")).to exist
       FileUtils.rm_rf lib_path("foo-1.0")
 
       run "require 'foo'"
@@ -76,26 +76,26 @@
         gem "foo", :path => '#{lib_path("foo-1.0")}'
       G
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
 
       install_gemfile <<-G
         gem "bar", :path => '#{lib_path("bar-1.0")}'
       G
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
-      expect(bundled_app("vendor/cache/bar-1.0")).not_to exist
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      expect(carated_app("vendor/cache/bar-1.0")).not_to exist
     end
 
-    it "raises a warning without --all", :bundler => "< 2" do
+    it "raises a warning without --all", :carat => "< 2" do
       build_lib "foo"
 
       install_gemfile <<-G
         gem "foo", :path => '#{lib_path("foo-1.0")}'
       G
 
-      bundle cmd
+      carat cmd
       expect(out).to match(/please pass the \-\-all flag/)
-      expect(bundled_app("vendor/cache/foo-1.0")).not_to exist
+      expect(carated_app("vendor/cache/foo-1.0")).not_to exist
     end
 
     it "stores the given flag" do
@@ -105,7 +105,7 @@
         gem "foo", :path => '#{lib_path("foo-1.0")}'
       G
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
       build_lib "bar"
 
       install_gemfile <<-G
@@ -113,8 +113,8 @@
         gem "bar", :path => '#{lib_path("bar-1.0")}'
       G
 
-      bundle cmd
-      expect(bundled_app("vendor/cache/bar-1.0")).to exist
+      carat cmd
+      expect(carated_app("vendor/cache/bar-1.0")).to exist
     end
 
     it "can rewind chosen configuration" do
@@ -124,7 +124,7 @@
         gem "foo", :path => '#{lib_path("foo-1.0")}'
       G
 
-      bundle cmd, forgotten_command_line_options([:all, :cache_all] => true)
+      carat cmd, forgotten_command_line_options([:all, :cache_all] => true)
       build_lib "baz"
 
       gemfile <<-G
@@ -132,8 +132,8 @@
         gem "baz", :path => '#{lib_path("baz-1.0")}'
       G
 
-      bundle "#{cmd} --no-all"
-      expect(bundled_app("vendor/cache/baz-1.0")).not_to exist
+      carat "#{cmd} --no-all"
+      expect(carated_app("vendor/cache/baz-1.0")).not_to exist
     end
   end
 end

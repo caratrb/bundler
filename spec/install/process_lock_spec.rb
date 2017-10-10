@@ -2,13 +2,13 @@
 
 RSpec.describe "process lock spec" do
   describe "when an install operation is already holding a process lock" do
-    before { FileUtils.mkdir_p(default_bundle_path) }
+    before { FileUtils.mkdir_p(default_carat_path) }
 
-    it "will not run a second concurrent bundle install until the lock is released" do
+    it "will not run a second concurrent carat install until the lock is released" do
       thread = Thread.new do
-        Bundler::ProcessLock.lock(default_bundle_path) do
+        Carat::ProcessLock.lock(default_carat_path) do
           sleep 1 # ignore quality_spec
-          expect(the_bundle).not_to include_gems "rack 1.0"
+          expect(the_carat).not_to include_gems "rack 1.0"
         end
       end
 
@@ -18,7 +18,7 @@ RSpec.describe "process lock spec" do
       G
 
       thread.join
-      expect(the_bundle).to include_gems "rack 1.0"
+      expect(the_carat).to include_gems "rack 1.0"
     end
   end
 end

@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 RSpec.describe "global gem caching" do
-  before { bundle! "config global_gem_cache true" }
+  before { carat! "config global_gem_cache true" }
 
   describe "using the cross-application user cache" do
     let(:source)  { "http://localgemserver.test" }
     let(:source2) { "http://gemserver.example.org" }
 
     def source_global_cache(*segments)
-      home(".bundle", "cache", "gems", "localgemserver.test.80.dd34752a738ee965a2a4298dc16db6c5", *segments)
+      home(".carat", "cache", "gems", "localgemserver.test.80.dd34752a738ee965a2a4298dc16db6c5", *segments)
     end
 
     def source2_global_cache(*segments)
-      home(".bundle", "cache", "gems", "gemserver.example.org.80.1ae1663619ffe0a3c9d97712f44c705b", *segments)
+      home(".carat", "cache", "gems", "gemserver.example.org.80.1ae1663619ffe0a3c9d97712f44c705b", *segments)
     end
 
     it "caches gems into the global cache on download" do
@@ -21,7 +21,7 @@ RSpec.describe "global gem caching" do
         gem "rack"
       G
 
-      expect(the_bundle).to include_gems "rack 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0"
       expect(source_global_cache("rack-1.0.0.gem")).to exist
     end
 
@@ -34,7 +34,7 @@ RSpec.describe "global gem caching" do
         gem "rack"
       G
 
-      expect(the_bundle).to include_gems "rack 1.0.0"
+      expect(the_carat).to include_gems "rack 1.0.0"
     end
 
     describe "when the same gem from different sources is installed" do
@@ -44,8 +44,8 @@ RSpec.describe "global gem caching" do
           gem "rack"
         G
 
-        FileUtils.rm_r(default_bundle_path)
-        expect(the_bundle).not_to include_gems "rack 1.0.0"
+        FileUtils.rm_r(default_carat_path)
+        expect(the_carat).not_to include_gems "rack 1.0.0"
         expect(source_global_cache("rack-1.0.0.gem")).to exist
         # rack 1.0.0 is not installed and it is in the global cache
 
@@ -54,8 +54,8 @@ RSpec.describe "global gem caching" do
           gem "rack", "0.9.1"
         G
 
-        FileUtils.rm_r(default_bundle_path)
-        expect(the_bundle).not_to include_gems "rack 0.9.1"
+        FileUtils.rm_r(default_carat_path)
+        expect(the_carat).not_to include_gems "rack 0.9.1"
         expect(source2_global_cache("rack-0.9.1.gem")).to exist
         # rack 0.9.1 is not installed and it is in the global cache
 
@@ -64,21 +64,21 @@ RSpec.describe "global gem caching" do
           gem "rack", "1.0.0"
         G
 
-        bundle! :install, :artifice => "compact_index_no_gem"
+        carat! :install, :artifice => "compact_index_no_gem"
         # rack 1.0.0 is installed and rack 0.9.1 is not
-        expect(the_bundle).to include_gems "rack 1.0.0"
-        expect(the_bundle).not_to include_gems "rack 0.9.1"
-        FileUtils.rm_r(default_bundle_path)
+        expect(the_carat).to include_gems "rack 1.0.0"
+        expect(the_carat).not_to include_gems "rack 0.9.1"
+        FileUtils.rm_r(default_carat_path)
 
         gemfile <<-G
           source "#{source2}"
           gem "rack", "0.9.1"
         G
 
-        bundle! :install, :artifice => "compact_index_no_gem"
+        carat! :install, :artifice => "compact_index_no_gem"
         # rack 0.9.1 is installed and rack 1.0.0 is not
-        expect(the_bundle).to include_gems "rack 0.9.1"
-        expect(the_bundle).not_to include_gems "rack 1.0.0"
+        expect(the_carat).to include_gems "rack 0.9.1"
+        expect(the_carat).not_to include_gems "rack 1.0.0"
       end
 
       it "should not install if the wrong source is provided" do
@@ -87,9 +87,9 @@ RSpec.describe "global gem caching" do
           gem "rack"
         G
 
-        bundle! :install, :artifice => "compact_index"
-        FileUtils.rm_r(default_bundle_path)
-        expect(the_bundle).not_to include_gems "rack 1.0.0"
+        carat! :install, :artifice => "compact_index"
+        FileUtils.rm_r(default_carat_path)
+        expect(the_carat).not_to include_gems "rack 1.0.0"
         expect(source_global_cache("rack-1.0.0.gem")).to exist
         # rack 1.0.0 is not installed and it is in the global cache
 
@@ -98,9 +98,9 @@ RSpec.describe "global gem caching" do
           gem "rack", "0.9.1"
         G
 
-        bundle! :install, :artifice => "compact_index"
-        FileUtils.rm_r(default_bundle_path)
-        expect(the_bundle).not_to include_gems "rack 0.9.1"
+        carat! :install, :artifice => "compact_index"
+        FileUtils.rm_r(default_carat_path)
+        expect(the_carat).not_to include_gems "rack 0.9.1"
         expect(source2_global_cache("rack-0.9.1.gem")).to exist
         # rack 0.9.1 is not installed and it is in the global cache
 
@@ -111,11 +111,11 @@ RSpec.describe "global gem caching" do
 
         expect(source_global_cache("rack-1.0.0.gem")).to exist
         expect(source2_global_cache("rack-0.9.1.gem")).to exist
-        bundle :install, :artifice => "compact_index_no_gem"
+        carat :install, :artifice => "compact_index_no_gem"
         expect(out).to include("Internal Server Error 500")
         # rack 1.0.0 is not installed and rack 0.9.1 is not
-        expect(the_bundle).not_to include_gems "rack 1.0.0"
-        expect(the_bundle).not_to include_gems "rack 0.9.1"
+        expect(the_carat).not_to include_gems "rack 1.0.0"
+        expect(the_carat).not_to include_gems "rack 0.9.1"
 
         gemfile <<-G
           source "#{source}"
@@ -124,11 +124,11 @@ RSpec.describe "global gem caching" do
 
         expect(source_global_cache("rack-1.0.0.gem")).to exist
         expect(source2_global_cache("rack-0.9.1.gem")).to exist
-        bundle :install, :artifice => "compact_index_no_gem"
+        carat :install, :artifice => "compact_index_no_gem"
         expect(out).to include("Internal Server Error 500")
         # rack 0.9.1 is not installed and rack 1.0.0 is not
-        expect(the_bundle).not_to include_gems "rack 0.9.1"
-        expect(the_bundle).not_to include_gems "rack 1.0.0"
+        expect(the_carat).not_to include_gems "rack 0.9.1"
+        expect(the_carat).not_to include_gems "rack 1.0.0"
       end
     end
 
@@ -141,14 +141,14 @@ RSpec.describe "global gem caching" do
         G
 
         # Both gems are installed and in the global cache
-        expect(the_bundle).to include_gems "rack 1.0.0"
-        expect(the_bundle).to include_gems "activesupport 2.3.5"
+        expect(the_carat).to include_gems "rack 1.0.0"
+        expect(the_carat).to include_gems "activesupport 2.3.5"
         expect(source_global_cache("rack-1.0.0.gem")).to exist
         expect(source_global_cache("activesupport-2.3.5.gem")).to exist
-        FileUtils.rm_r(default_bundle_path)
+        FileUtils.rm_r(default_carat_path)
         # Both gems are now only in the global cache
-        expect(the_bundle).not_to include_gems "rack 1.0.0"
-        expect(the_bundle).not_to include_gems "activesupport 2.3.5"
+        expect(the_carat).not_to include_gems "rack 1.0.0"
+        expect(the_carat).not_to include_gems "activesupport 2.3.5"
 
         install_gemfile! <<-G, :artifice => "compact_index_no_gem"
           source "#{source}"
@@ -156,30 +156,30 @@ RSpec.describe "global gem caching" do
         G
 
         # rack is installed and both are in the global cache
-        expect(the_bundle).to include_gems "rack 1.0.0"
-        expect(the_bundle).not_to include_gems "activesupport 2.3.5"
+        expect(the_carat).to include_gems "rack 1.0.0"
+        expect(the_carat).not_to include_gems "activesupport 2.3.5"
         expect(source_global_cache("rack-1.0.0.gem")).to exist
         expect(source_global_cache("activesupport-2.3.5.gem")).to exist
 
-        Dir.chdir bundled_app2 do
-          create_file bundled_app2("gems.rb"), <<-G
+        Dir.chdir carated_app2 do
+          create_file carated_app2("gems.rb"), <<-G
             source "#{source}"
             gem "activesupport"
           G
 
           # Neither gem is installed and both are in the global cache
-          expect(the_bundle).not_to include_gems "rack 1.0.0"
-          expect(the_bundle).not_to include_gems "activesupport 2.3.5"
+          expect(the_carat).not_to include_gems "rack 1.0.0"
+          expect(the_carat).not_to include_gems "activesupport 2.3.5"
           expect(source_global_cache("rack-1.0.0.gem")).to exist
           expect(source_global_cache("activesupport-2.3.5.gem")).to exist
 
           # Install using the global cache instead of by downloading the .gem
           # from the server
-          bundle! :install, :artifice => "compact_index_no_gem"
+          carat! :install, :artifice => "compact_index_no_gem"
 
           # activesupport is installed and both are in the global cache
-          expect(the_bundle).not_to include_gems "rack 1.0.0"
-          expect(the_bundle).to include_gems "activesupport 2.3.5"
+          expect(the_carat).not_to include_gems "rack 1.0.0"
+          expect(the_carat).to include_gems "activesupport 2.3.5"
           expect(source_global_cache("rack-1.0.0.gem")).to exist
           expect(source_global_cache("activesupport-2.3.5.gem")).to exist
         end
@@ -201,12 +201,12 @@ RSpec.describe "global gem caching" do
         gem "very_simple_path_binary", :path => "#{lib_path("very_simple_path_binary-1.0")}"
       G
 
-      gem_binary_cache = home(".bundle", "cache", "extensions", specific_local_platform.to_s, Bundler.ruby_scope,
+      gem_binary_cache = home(".carat", "cache", "extensions", specific_local_platform.to_s, Carat.ruby_scope,
         Digest(:MD5).hexdigest("#{gem_repo1}/"), "very_simple_binary-1.0")
-      git_binary_cache = home(".bundle", "cache", "extensions", specific_local_platform.to_s, Bundler.ruby_scope,
+      git_binary_cache = home(".carat", "cache", "extensions", specific_local_platform.to_s, Carat.ruby_scope,
         "very_simple_git_binary-1.0-#{revision}", "very_simple_git_binary-1.0")
 
-      cached_extensions = Pathname.glob(home(".bundle", "cache", "extensions", "*", "*", "*", "*", "*")).sort
+      cached_extensions = Pathname.glob(home(".carat", "cache", "extensions", "*", "*", "*", "*", "*")).sort
       expect(cached_extensions).to eq [gem_binary_cache, git_binary_cache].sort
 
       run! <<-R
@@ -215,15 +215,15 @@ RSpec.describe "global gem caching" do
       R
       expect(out).to eq "VERY_SIMPLE_BINARY_IN_C\nVERY_SIMPLE_GIT_BINARY_IN_C"
 
-      FileUtils.rm Dir[home(".bundle", "cache", "extensions", "**", "*binary_c*")]
+      FileUtils.rm Dir[home(".carat", "cache", "extensions", "**", "*binary_c*")]
 
       gem_binary_cache.join("very_simple_binary_c.rb").open("w") {|f| f << "puts File.basename(__FILE__)" }
       git_binary_cache.join("very_simple_git_binary_c.rb").open("w") {|f| f << "puts File.basename(__FILE__)" }
 
-      bundle! "config --local path different_path"
-      bundle! :install
+      carat! "config --local path different_path"
+      carat! :install
 
-      expect(Dir[home(".bundle", "cache", "extensions", "**", "*binary_c*")]).to all(end_with(".rb"))
+      expect(Dir[home(".carat", "cache", "extensions", "**", "*binary_c*")]).to all(end_with(".rb"))
 
       run! <<-R
         require 'very_simple_binary_c'

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle update" do
+RSpec.describe "carat update" do
   let(:config) {}
 
   before do
@@ -10,9 +10,9 @@ RSpec.describe "bundle update" do
       gem 'thin'
     G
 
-    bundle! "config #{config}" if config
+    carat! "config #{config}" if config
 
-    bundle! :install
+    carat! :install
   end
 
   shared_examples "a config observer" do
@@ -52,7 +52,7 @@ RSpec.describe "bundle update" do
         gem 'thin'
       G
 
-      bundle! :update, :all => bundle_update_requires_all?
+      carat! :update, :all => carat_update_requires_all?
     end
 
     it_behaves_like "a post-install message outputter"
@@ -67,7 +67,7 @@ RSpec.describe "bundle update" do
         gem 'thin'
       G
 
-      bundle! :update, :all => bundle_update_requires_all?
+      carat! :update, :all => carat_update_requires_all?
     end
 
     it_behaves_like "a post-install message outputter"

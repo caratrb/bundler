@@ -1,0 +1,34 @@
+carat-pristine(1) -- Restores installed gems to their pristine condition
+===========================================================================
+
+## SYNOPSIS
+
+`carat pristine`
+
+## DESCRIPTION
+
+`pristine` restores the installed gems in the carat to their pristine condition
+using the local gem cache from RubyGems. For git gems, a forced checkout will be performed.
+
+For further explanation, `carat pristine` ignores unpacked files on disk. In other
+words, this command utilizes the local `.gem` cache or the gem's git repository
+as if one were installing from scratch.
+
+Note: the Carat gem cannot be restored to its original state with `pristine`.
+One also cannot use `carat pristine` on gems with a 'path' option in the Gemfile,
+because carat has no original copy it can restore from.
+
+When is it practical to use `carat pristine`?
+
+It comes in handy when a developer is debugging a gem. `carat pristine` is a
+great way to get rid of experimental changes to a gem that one may not want.
+
+Why use `carat pristine` over `gem pristine --all`?
+
+Both commands are very similar.
+For context: `carat pristine`, without arguments, cleans all gems from the lockfile.
+Meanwhile, `gem pristine --all` cleans all installed gems for that Ruby version.
+
+If a developer forgets which gems in their project they might
+have been debugging, the Rubygems `gem pristine [GEMNAME]` command may be inconvenient.
+One can avoid waiting for `gem pristine --all`, and instead run `carat pristine`.

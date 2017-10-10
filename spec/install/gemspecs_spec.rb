@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe "bundle install" do
+RSpec.describe "carat install" do
   describe "when a gem has a YAML gemspec" do
     before :each do
       build_repo2 do
@@ -13,7 +13,7 @@ RSpec.describe "bundle install" do
         source "file://#{gem_repo2}"
         gem "yaml_spec"
       G
-      bundle :install
+      carat :install
       expect(err).to lack_errors
     end
 
@@ -33,8 +33,8 @@ RSpec.describe "bundle install" do
       gem 'rack'
     G
 
-    FileUtils.mkdir_p "#{default_bundle_path}/specifications"
-    File.open("#{default_bundle_path}/specifications/rack-1.0.0.gemspec", "w+") do |f|
+    FileUtils.mkdir_p "#{default_carat_path}/specifications"
+    File.open("#{default_carat_path}/specifications/rack-1.0.0.gemspec", "w+") do |f|
       spec = Gem::Specification.new do |s|
         s.name = "rack"
         s.version = "1.0.0"
@@ -42,13 +42,13 @@ RSpec.describe "bundle install" do
       end
       f.write spec.to_ruby
     end
-    bundle :install, :artifice => "endpoint_marshal_fail" # force gemspec load
-    expect(the_bundle).to include_gems "activesupport 2.3.2"
+    carat :install, :artifice => "endpoint_marshal_fail" # force gemspec load
+    expect(the_carat).to include_gems "activesupport 2.3.2"
   end
 
   context "when ruby version is specified in gemspec and gemfile" do
     it "installs when patch level is not specified and the version matches" do
-      build_lib("foo", :path => bundled_app) do |s|
+      build_lib("foo", :path => carated_app) do |s|
         s.required_ruby_version = "~> #{RUBY_VERSION}.0"
       end
 
@@ -56,12 +56,12 @@ RSpec.describe "bundle install" do
         ruby '#{RUBY_VERSION}', :engine_version => '#{RUBY_VERSION}', :engine => 'ruby'
         gemspec
       G
-      expect(the_bundle).to include_gems "foo 1.0"
+      expect(the_carat).to include_gems "foo 1.0"
     end
 
     it "installs when patch level is specified and the version still matches the current version",
       :if => RUBY_PATCHLEVEL >= 0 do
-      build_lib("foo", :path => bundled_app) do |s|
+      build_lib("foo", :path => carated_app) do |s|
         s.required_ruby_version = "#{RUBY_VERSION}.#{RUBY_PATCHLEVEL}"
       end
 
@@ -69,13 +69,13 @@ RSpec.describe "bundle install" do
         ruby '#{RUBY_VERSION}', :engine_version => '#{RUBY_VERSION}', :engine => 'ruby', :patchlevel => '#{RUBY_PATCHLEVEL}'
         gemspec
       G
-      expect(the_bundle).to include_gems "foo 1.0"
+      expect(the_carat).to include_gems "foo 1.0"
     end
 
     it "fails and complains about patchlevel on patchlevel mismatch",
       :if => RUBY_PATCHLEVEL >= 0 do
       patchlevel = RUBY_PATCHLEVEL.to_i + 1
-      build_lib("foo", :path => bundled_app) do |s|
+      build_lib("foo", :path => carated_app) do |s|
         s.required_ruby_version = "#{RUBY_VERSION}.#{patchlevel}"
       end
 
@@ -92,7 +92,7 @@ RSpec.describe "bundle install" do
     it "fails and complains about version on version mismatch" do
       version = Gem::Requirement.create(RUBY_VERSION).requirements.first.last.bump.version
 
-      build_lib("foo", :path => bundled_app) do |s|
+      build_lib("foo", :path => carated_app) do |s|
         s.required_ruby_version = version
       end
 

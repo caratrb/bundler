@@ -10,7 +10,7 @@
 /pkg/
 
 # output from ronn
-/lib/bundler/man/
+/lib/carat/man/
 man/*
 !man/*.ronn
 
@@ -18,4 +18,4 @@ man/*
 .rspec_status
 
 # files generated during packaging
-/lib/bundler/generated/
+/lib/carat/generated/
