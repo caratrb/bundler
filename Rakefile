@@ -115,16 +115,8 @@ namespace :spec do
       # Strip secure_path so that RVM paths transmit through sudo -E
       system "sudo sed -i '/secure_path/d' /etc/sudoers"
       # Install groff for the ronn gem
-      sh "sudo apt-get install groff -y"
-      if RUBY_VERSION < '1.9'
-        # Downgrade Rubygems on 1.8 so Ronn can be required
-        # https://github.com/rubygems/rubygems/issues/784
-        sh "gem update --system 2.1.11"
-      else
-        # Downgrade Rubygems so RSpec 3 can be installed
-        # https://github.com/rubygems/rubygems/issues/813
-        sh "gem update --system 2.2.0"
-      end
+      sh "sudo apt-get install groff-base -y"
+      sh "gem update --system 2.6.13"
       # Install the other gem deps, etc.
       Rake::Task["spec:deps"].invoke
     end
