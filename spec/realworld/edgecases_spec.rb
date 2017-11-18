@@ -53,7 +53,7 @@ describe "real world edgecases", :realworld => true do
     gem "builder", "~> 2.1.2"
     G
     expect(out).to include("i18n 0.6.11")
-    expect(out).to include("activesupport 3.0.5")
+    expect(out).to include("activesupport 3.2.22.5")
   end
 
   # https://github.com/bundler/bundler/issues/1500
