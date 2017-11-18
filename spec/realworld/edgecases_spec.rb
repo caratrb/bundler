@@ -21,20 +21,6 @@ describe "real world edgecases", :realworld => true do
     expect(out).not_to include("Removing outdated .gem files from vendor/cache")
   end
 
-  # https://github.com/bundler/bundler/issues/1486
-  # this is a hash collision that only manifests on 1.8.7
-  it "finds the correct child versions", :ruby => "1.8" do
-    install_gemfile <<-G
-      source :rubygems
-
-      gem 'i18n', '~> 0.6.0'
-      gem 'activesupport', '~> 3.0'
-      gem 'activerecord', '~> 3.0'
-      gem 'builder', '~> 2.1.2'
-    G
-    expect(out).to include("activemodel 3.0.5")
-  end
-
   it "resolves dependencies correctly", :ruby => "1.9" do
     install_gemfile <<-G
     source "https://rubygems.org"
