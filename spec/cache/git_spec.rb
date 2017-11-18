@@ -1,6 +1,6 @@
 require "spec_helper"
 
-xdescribe "git base name" do
+describe "git base name" do
   it "base_name should strip private repo uris" do
     source  = Bundler::Source::Git.new("uri" => "git@github.com:bundler.git")
     expect(source.send(:base_name)).to eq("bundler")
@@ -13,7 +13,7 @@ xdescribe "git base name" do
 end
 
 %w(cache package).each do |cmd|
-  xdescribe "bundle #{cmd} with git" do
+  describe "bundle #{cmd} with git" do
     it "copies repository to vendor cache and uses it" do
       git = build_git "foo"
       ref = git.ref_for("master", 11)
