@@ -12,7 +12,7 @@ env:
   # We need to know if changes to rubygems will break bundler on release
   - RGV=master
   # Test the latest rubygems release with all of our supported rubies
-  - RGV=v2.4.5
+  - RGV=v2.6.14
 
 matrix:
   fast_finish: true
