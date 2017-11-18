@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle cache" do
+xdescribe "bundle cache" do
 
   describe "when there are only gemsources" do
     before :each do

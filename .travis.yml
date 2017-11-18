@@ -1,10 +1,6 @@
 language: ruby
 script: rake spec:travis
-before_script:
- - echo|gem uninstall bundler --all || true
- - echo|gem uninstall bundler --all || true
- - echo|gem uninstall bundler --all || true
- - travis_retry rake spec:travis:deps
+before_script: travis_retry rake spec:travis:deps
 sudo: required
 
 rvm:
