@@ -40,7 +40,7 @@ describe "real world edgecases", :realworld => true do
     gem "rails", "~> 3"
     gem "gxapi_rails"
     G
-    expect(out).to include("gxapi_rails 0.0.6")
+    expect(out).to include("gxapi_rails 0.1.0")
   end
 
   it "installs the latest version of i18n" do
