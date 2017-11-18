@@ -104,7 +104,9 @@ describe "bundle install with gem sources" do
 
     describe "when some gems require a different version of ruby" do
       it "does not try to install those gems" do
-        pending "waiting for a rubygems index that includes ruby version"
+        if Gem::VERSION <= "2.6.14"
+          pending "waiting for a rubygems index that includes ruby version"
+        end
 
         update_repo gem_repo1 do
           build_gem "require_ruby" do |s|
