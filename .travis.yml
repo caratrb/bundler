@@ -2,7 +2,7 @@ language: ruby
 script: rake spec:travis
 before_script:
   - ruby -rrubygems -rfileutils -e'FileUtils.mv(Gem::Specification.default_specifications_dir + "/bundler-1.16.0.gemspec", Gem::Specification.dirs.last)'
-  - echo|gem uninstall bundler --all
+  - echo|(gem uninstall bundler --all || true)
   - travis_retry rake spec:travis:deps
 sudo: required
 
