@@ -1,10 +1,6 @@
 language: ruby
 script: rake spec:travis
-before_script:
- - echo|gem uninstall bundler --all || true
- - echo|gem uninstall bundler --all || true
- - echo|gem uninstall bundler --all || true
- - travis_retry rake spec:travis:deps
+before_script: travis_retry rake spec:travis:deps
 sudo: required
 
 rvm:
@@ -14,9 +10,9 @@ rvm:
 # see Rakefile:66 for the list of possible RGV values
 env:
   # We need to know if changes to rubygems will break bundler on release
-  - RGV=master
+  - GEM_PATH="lol" GEM_HOME="lol" RGV=master
   # Test the latest rubygems release with all of our supported rubies
-  - RGV=v2.7.2
+  - GEM_PATH="lol" GEM_HOME="lol" RGV=v2.7.2
 
 matrix:
   fast_finish: true
