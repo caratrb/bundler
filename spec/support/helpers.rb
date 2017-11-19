@@ -76,7 +76,7 @@ module Spec
       sys_exec(cmd, expect_err){|i| yield i if block_given? }
     end
 
-    def bundle_ruby(options = {})
+    def carat_ruby(options = {})
       expect_err = options.delete(:expect_err)
       options["no-color"] = true unless options.key?("no-color")
 

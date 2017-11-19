@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle_ruby" do
+describe "carat_ruby" do
   context "without patchlevel" do
     it "returns the ruby version" do
       gemfile <<-G
@@ -10,7 +10,7 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby
+      carat_ruby
 
       expect(out).to eq("ruby 1.9.3")
     end
@@ -23,7 +23,7 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby
+      carat_ruby
 
       expect(out).to eq("ruby 1.9.3")
     end
@@ -36,7 +36,7 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby
+      carat_ruby
 
       expect(out).to eq("ruby 1.8.7 (jruby 1.6.5)")
     end
@@ -49,7 +49,7 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby
+      carat_ruby
 
       expect(out).to eq("ruby 1.8.7 (rbx 1.2.4)")
     end
@@ -62,10 +62,10 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby :exitstatus => true
+      carat_ruby :exitstatus => true
       expect(exitstatus).not_to eq(0) if exitstatus
 
-      bundle_ruby
+      carat_ruby
       expect(out).to eq("Please define :engine_version")
     end
 
@@ -77,10 +77,10 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby :exitstatus => true
+      carat_ruby :exitstatus => true
       expect(exitstatus).not_to eq(0) if exitstatus
 
-      bundle_ruby
+      carat_ruby
       expect(out).to eq("Please define :engine")
     end
 
@@ -92,10 +92,10 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby :exitstatus => true
+      carat_ruby :exitstatus => true
       expect(exitstatus).not_to eq(0) if exitstatus
 
-      bundle_ruby
+      carat_ruby
       expect(out).to eq("ruby_version must match the :engine_version for MRI")
     end
 
@@ -106,7 +106,7 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby
+      carat_ruby
 
       expect(out).to eq("No ruby version specified")
     end
@@ -121,7 +121,7 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby
+      carat_ruby
 
       expect(out).to eq("ruby 1.9.3p429")
     end
@@ -134,7 +134,7 @@ describe "bundle_ruby" do
         gem "foo"
       G
 
-      bundle_ruby
+      carat_ruby
 
       expect(out).to eq("ruby 1.9.3p392 (jruby 1.7.4)")
     end
