@@ -60,7 +60,7 @@ module Carat
       Carat.settings[:path]     = nil if options[:system]
       Carat.settings[:path]     = "vendor/bundle" if options[:deployment]
       Carat.settings[:path]     = options["path"] if options["path"]
-      Carat.settings[:path]     ||= "carat" if options["standalone"]
+      Carat.settings[:path]     ||= "bundle" if options["standalone"]
       Carat.settings[:bin]      = options["binstubs"] if options["binstubs"]
       Carat.settings[:bin]      = nil if options["binstubs"] && options["binstubs"].empty?
       Carat.settings[:shebang]  = options["shebang"] if options["shebang"]
