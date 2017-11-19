@@ -13,7 +13,7 @@ module Bundler
       class GitNotAllowedError < GitError
         def initialize(command)
           msg =  "Bundler is trying to run a `git #{command}` at runtime. You probably need to run `bundle install`. However, "
-          msg << "this error message could probably be more useful. Please submit a ticket at http://github.com/bundler/bundler/issues "
+          msg << "this error message could probably be more useful. Please submit a ticket at http://github.com/caratrb/carat/issues "
           msg << "with steps to reproduce as well as the following\n\nCALLER: #{caller.join("\n")}"
           super msg
         end

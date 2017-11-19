@@ -98,7 +98,7 @@ module Bundler
     # returns a list of the dependencies
     def unmet_dependency_names
       names = dependency_names
-      names.delete_if{|n| n == "bundler" }
+      names.delete_if{|n| n == "carat" }
       names.select{|n| search(n).empty? }
     end
 

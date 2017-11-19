@@ -285,7 +285,7 @@ describe "gemcutter's dependency API" do
   it "considers all possible versions of dependencies from all api gem sources" do
     # In this scenario, the gem "somegem" only exists in repo4.  It depends on specific version of activesupport that
     # exists only in repo1.  There happens also be a version of activesupport in repo4, but not the one that version 1.0.0
-    # of somegem wants. This test makes sure that bundler actually finds version 1.2.3 of active support in the other
+    # of somegem wants. This test makes sure that carat actually finds version 1.2.3 of active support in the other
     # repo and installs it.
     build_repo4 do
       build_gem "activesupport", "1.2.0"
@@ -381,11 +381,11 @@ describe "gemcutter's dependency API" do
     should_be_installed "back_deps 1.0"
   end
 
-  it "does not refetch if the only unmet dependency is bundler" do
+  it "does not refetch if the only unmet dependency is carat" do
     gemfile <<-G
       source "#{source_uri}"
 
-      gem "bundler_dep"
+      gem "carat_dep"
     G
 
     bundle :install, :artifice => "endpoint"

@@ -255,7 +255,7 @@ describe "bundle install with groups" do
       G
 
       ruby <<-R
-        require "bundler"
+        require "carat"
         Bundler.setup :default
         Bundler.require :default
         puts RACK

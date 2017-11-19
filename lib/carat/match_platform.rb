@@ -1,4 +1,4 @@
-require 'bundler/gem_helpers'
+require 'carat/gem_helpers'
 
 module Bundler
   module MatchPlatform

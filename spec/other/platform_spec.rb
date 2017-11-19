@@ -1027,7 +1027,7 @@ G
 
       ruby <<-R
         require 'rubygems'
-        require 'bundler/setup'
+        require 'carat/setup'
       R
 
       expect(bundled_app("Gemfile.lock")).not_to exist
@@ -1047,7 +1047,7 @@ G
 
       ruby <<-R
         require 'rubygems'
-        require 'bundler/setup'
+        require 'carat/setup'
       R
 
       expect(bundled_app("Gemfile.lock")).not_to exist
@@ -1068,7 +1068,7 @@ G
 
         ruby <<-R
           require 'rubygems'
-          require 'bundler/setup'
+          require 'carat/setup'
         R
 
         expect(bundled_app("Gemfile.lock")).not_to exist
@@ -1089,7 +1089,7 @@ G
 
       ruby <<-R
         require 'rubygems'
-        require 'bundler/setup'
+        require 'carat/setup'
       R
 
       expect(bundled_app("Gemfile.lock")).not_to exist

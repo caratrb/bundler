@@ -1,7 +1,7 @@
-require 'bundler/shared_helpers'
+require 'carat/shared_helpers'
 
 if Bundler::SharedHelpers.in_bundle?
-  require 'bundler'
+  require 'carat'
 
   if STDOUT.tty? || ENV['BUNDLER_FORCE_TTY']
     begin
@@ -18,7 +18,7 @@ if Bundler::SharedHelpers.in_bundle?
     Bundler.setup
   end
 
-  # Add bundler to the load path after disabling system gems
-  bundler_lib = File.expand_path("../..", __FILE__)
-  $LOAD_PATH.unshift(bundler_lib) unless $LOAD_PATH.include?(bundler_lib)
+  # Add carat to the load path after disabling system gems
+  carat_lib = File.expand_path("../..", __FILE__)
+  $LOAD_PATH.unshift(carat_lib) unless $LOAD_PATH.include?(carat_lib)
 end

@@ -79,13 +79,13 @@ describe "Running bin/* commands" do
   end
 
   it "don't bundle da bundla" do
-    build_gem "bundler", Bundler::VERSION, :to_system => true do |s|
+    build_gem "carat", Bundler::VERSION, :to_system => true do |s|
       s.executables = "bundle"
     end
 
     gemfile <<-G
       source "file://#{gem_repo1}"
-      gem "bundler"
+      gem "carat"
     G
 
     bundle "install --binstubs"

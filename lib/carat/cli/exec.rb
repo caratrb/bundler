@@ -29,14 +29,14 @@ module Bundler
       Bundler.load.setup_environment
       Kernel.exec(@cmd, *args)
     rescue Errno::EACCES
-      Bundler.ui.error "bundler: not executable: #{cmd}"
+      Bundler.ui.error "carat: not executable: #{cmd}"
       exit 126
     rescue Errno::ENOENT
-      Bundler.ui.error "bundler: command not found: #{cmd}"
+      Bundler.ui.error "carat: command not found: #{cmd}"
       Bundler.ui.warn  "Install missing gem executables with `bundle install`"
       exit 127
     rescue ArgumentError
-      Bundler.ui.error "bundler: exec needs a command to run"
+      Bundler.ui.error "carat: exec needs a command to run"
       exit 128
     end
 

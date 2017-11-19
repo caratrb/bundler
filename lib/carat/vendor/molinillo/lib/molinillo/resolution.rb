@@ -111,8 +111,8 @@ module Bundler::Molinillo
         debug { 'Activated: ' + Hash[activated.vertices.select { |_n, v| v.payload }].keys.join(', ') } if state
       end
 
-      require 'bundler/vendor/molinillo/lib/molinillo/state'
-      require 'bundler/vendor/molinillo/lib/molinillo/modules/specification_provider'
+      require 'carat/vendor/molinillo/lib/molinillo/state'
+      require 'carat/vendor/molinillo/lib/molinillo/modules/specification_provider'
 
       ResolutionState.new.members.each do |member|
         define_method member do |*args, &block|

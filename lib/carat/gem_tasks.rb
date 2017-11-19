@@ -1,2 +1,2 @@
-require 'bundler/gem_helper'
+require 'carat/gem_helper'
 Bundler::GemHelper.install_tasks

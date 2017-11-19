@@ -1,51 +1,51 @@
 require 'fileutils'
 require 'pathname'
 require 'rbconfig'
-require 'bundler/gem_path_manipulation'
-require 'bundler/rubygems_ext'
-require 'bundler/rubygems_integration'
-require 'bundler/version'
-require 'bundler/constants'
-require 'bundler/current_ruby'
+require 'carat/gem_path_manipulation'
+require 'carat/rubygems_ext'
+require 'carat/rubygems_integration'
+require 'carat/version'
+require 'carat/constants'
+require 'carat/current_ruby'
 
 module Bundler
   preserve_gem_path
   ORIGINAL_ENV = ENV.to_hash
 
-  autoload :AnonymizableURI,       'bundler/anonymizable_uri'
-  autoload :Definition,            'bundler/definition'
-  autoload :Dependency,            'bundler/dependency'
-  autoload :DepProxy,              'bundler/dep_proxy'
-  autoload :Deprecate,             'bundler/deprecate'
-  autoload :Dsl,                   'bundler/dsl'
-  autoload :EndpointSpecification, 'bundler/endpoint_specification'
-  autoload :Environment,           'bundler/environment'
-  autoload :Env,                   'bundler/env'
-  autoload :Fetcher,               'bundler/fetcher'
-  autoload :GemHelper,             'bundler/gem_helper'
-  autoload :GemHelpers,            'bundler/gem_helpers'
-  autoload :GemInstaller,          'bundler/gem_installer'
-  autoload :Graph,                 'bundler/graph'
-  autoload :Index,                 'bundler/index'
-  autoload :Installer,             'bundler/installer'
-  autoload :Injector,              'bundler/injector'
-  autoload :LazySpecification,     'bundler/lazy_specification'
-  autoload :LockfileParser,        'bundler/lockfile_parser'
-  autoload :MatchPlatform,         'bundler/match_platform'
-  autoload :RemoteSpecification,   'bundler/remote_specification'
-  autoload :Resolver,              'bundler/resolver'
-  autoload :Retry,                 'bundler/retry'
-  autoload :RubyVersion,           'bundler/ruby_version'
-  autoload :RubyDsl,               'bundler/ruby_dsl'
-  autoload :Runtime,               'bundler/runtime'
-  autoload :Settings,              'bundler/settings'
-  autoload :SharedHelpers,         'bundler/shared_helpers'
-  autoload :SpecSet,               'bundler/spec_set'
-  autoload :Source,                'bundler/source'
-  autoload :SourceList,            'bundler/source_list'
-  autoload :Specification,         'bundler/shared_helpers'
-  autoload :SystemRubyVersion,     'bundler/ruby_version'
-  autoload :UI,                    'bundler/ui'
+  autoload :AnonymizableURI,       'carat/anonymizable_uri'
+  autoload :Definition,            'carat/definition'
+  autoload :Dependency,            'carat/dependency'
+  autoload :DepProxy,              'carat/dep_proxy'
+  autoload :Deprecate,             'carat/deprecate'
+  autoload :Dsl,                   'carat/dsl'
+  autoload :EndpointSpecification, 'carat/endpoint_specification'
+  autoload :Environment,           'carat/environment'
+  autoload :Env,                   'carat/env'
+  autoload :Fetcher,               'carat/fetcher'
+  autoload :GemHelper,             'carat/gem_helper'
+  autoload :GemHelpers,            'carat/gem_helpers'
+  autoload :GemInstaller,          'carat/gem_installer'
+  autoload :Graph,                 'carat/graph'
+  autoload :Index,                 'carat/index'
+  autoload :Installer,             'carat/installer'
+  autoload :Injector,              'carat/injector'
+  autoload :LazySpecification,     'carat/lazy_specification'
+  autoload :LockfileParser,        'carat/lockfile_parser'
+  autoload :MatchPlatform,         'carat/match_platform'
+  autoload :RemoteSpecification,   'carat/remote_specification'
+  autoload :Resolver,              'carat/resolver'
+  autoload :Retry,                 'carat/retry'
+  autoload :RubyVersion,           'carat/ruby_version'
+  autoload :RubyDsl,               'carat/ruby_dsl'
+  autoload :Runtime,               'carat/runtime'
+  autoload :Settings,              'carat/settings'
+  autoload :SharedHelpers,         'carat/shared_helpers'
+  autoload :SpecSet,               'carat/spec_set'
+  autoload :Source,                'carat/source'
+  autoload :SourceList,            'carat/source_list'
+  autoload :Specification,         'carat/shared_helpers'
+  autoload :SystemRubyVersion,     'carat/ruby_version'
+  autoload :UI,                    'carat/ui'
 
   class BundlerError < StandardError
     def self.status_code(code)
@@ -171,11 +171,11 @@ module Bundler
     end
 
     def user_bundle_path
-      Pathname.new(Bundler.rubygems.user_home).join(".bundler")
+      Pathname.new(Bundler.rubygems.user_home).join(".carat")
     end
 
     def home
-      bundle_path.join("bundler")
+      bundle_path.join("carat")
     end
 
     def install_path
@@ -187,7 +187,7 @@ module Bundler
     end
 
     def cache
-      bundle_path.join("cache/bundler")
+      bundle_path.join("cache/carat")
     end
 
     def root
@@ -212,7 +212,7 @@ module Bundler
     end
 
     def tmp(name = Process.pid.to_s)
-      Pathname.new(Dir.mktmpdir(["bundler", name]))
+      Pathname.new(Dir.mktmpdir(["carat", name]))
     end
 
     def rm_rf(path)
@@ -239,7 +239,7 @@ module Bundler
         ENV['MANPATH'] = ENV['BUNDLE_ORIG_MANPATH']
         ENV.delete_if { |k,_| k[0,7] == 'BUNDLE_' }
         if ENV.has_key? 'RUBYOPT'
-          ENV['RUBYOPT'] = ENV['RUBYOPT'].sub '-rbundler/setup', ''
+          ENV['RUBYOPT'] = ENV['RUBYOPT'].sub '-rcarat/setup', ''
           ENV['RUBYOPT'] = ENV['RUBYOPT'].sub "-I#{File.expand_path('..', __FILE__)}", ''
         end
         yield

@@ -1,4 +1,4 @@
-require 'bundler/vendor/molinillo/lib/molinillo/dependency_graph'
+require 'carat/vendor/molinillo/lib/molinillo/dependency_graph'
 
 module Bundler::Molinillo
   # This class encapsulates a dependency resolver.
@@ -7,7 +7,7 @@ module Bundler::Molinillo
   #
   #
   class Resolver
-    require 'bundler/vendor/molinillo/lib/molinillo/resolution'
+    require 'carat/vendor/molinillo/lib/molinillo/resolution'
 
     # @return [SpecificationProvider] the specification provider used
     #   in the resolution process

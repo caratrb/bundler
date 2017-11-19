@@ -6,7 +6,7 @@ module Bundler
   class Source
 
     class Git < Path
-      autoload :GitProxy, 'bundler/source/git/git_proxy'
+      autoload :GitProxy, 'carat/source/git/git_proxy'
 
       attr_reader :uri, :ref, :branch, :options, :submodules
 

@@ -10,7 +10,7 @@ describe "real world edgecases", :realworld => true do
     expect(err).to eq("")
   end
 
-  # https://github.com/bundler/bundler/issues/1202
+  # https://github.com/carat/carat/issues/1202
   it "bundle cache works with rubygems 1.3.7 and pre gems", :ruby => "1.8" do
     install_gemfile <<-G
       source :rubygems
@@ -56,7 +56,7 @@ describe "real world edgecases", :realworld => true do
     expect(out).to include("activesupport 3.2.22.5")
   end
 
-  # https://github.com/bundler/bundler/issues/1500
+  # https://github.com/carat/carat/issues/1500
   it "does not fail install because of gem plugins" do
     realworld_system_gems("open_gem --version 1.4.2", "rake --version 0.9.2")
     gemfile <<-G
@@ -74,14 +74,14 @@ describe "real world edgecases", :realworld => true do
     gemfile <<-G
       source :rubygems
 
-      gem 'activerecord',  :github => 'carlhuda/rails-bundler-test', :branch => 'master'
-      gem 'activesupport', :github => 'carlhuda/rails-bundler-test', :branch => 'master'
-      gem 'actionpack',    :github => 'carlhuda/rails-bundler-test', :branch => 'master'
+      gem 'activerecord',  :github => 'carlhuda/rails-carat-test', :branch => 'master'
+      gem 'activesupport', :github => 'carlhuda/rails-carat-test', :branch => 'master'
+      gem 'actionpack',    :github => 'carlhuda/rails-carat-test', :branch => 'master'
     G
 
     lockfile <<-L
       GIT
-        remote: git://github.com/carlhuda/rails-bundler-test.git
+        remote: git://github.com/carlhuda/rails-carat-test.git
         revision: 369e28a87419565f1940815219ea9200474589d4
         branch: master
         specs:
@@ -108,7 +108,7 @@ describe "real world edgecases", :realworld => true do
             multi_json (~> 1.0)
 
       GIT
-        remote: git://github.com/carlhuda/rails-bundler-test.git
+        remote: git://github.com/carlhuda/rails-carat-test.git
         revision: 369e28a87419565f1940815219ea9200474589d4
         branch: master
         specs:
@@ -135,7 +135,7 @@ describe "real world edgecases", :realworld => true do
             multi_json (~> 1.0)
 
       GIT
-        remote: git://github.com/carlhuda/rails-bundler-test.git
+        remote: git://github.com/carlhuda/rails-carat-test.git
         revision: 369e28a87419565f1940815219ea9200474589d4
         branch: master
         specs:

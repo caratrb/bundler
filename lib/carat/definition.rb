@@ -131,10 +131,10 @@ module Bundler
       @specs ||= begin
         specs = resolve.materialize(Bundler.settings[:cache_all_platforms] ? dependencies : requested_dependencies)
 
-        unless specs["bundler"].any?
+        unless specs["carat"].any?
           local = Bundler.settings[:frozen] ? rubygems_index : index
-          bundler = local.search(Gem::Dependency.new('bundler', VERSION)).last
-          specs["bundler"] = bundler if bundler
+          carat = local.search(Gem::Dependency.new('carat', VERSION)).last
+          specs["carat"] = carat if carat
         end
 
         specs
@@ -207,7 +207,7 @@ module Bundler
       end
     end
 
-    # used when frozen is enabled so we can find the bundler
+    # used when frozen is enabled so we can find the carat
     # spec, even if (say) a git gem is not checked out.
     def rubygems_index
       @rubygems_index ||= Index.build do |idx|
@@ -269,7 +269,7 @@ module Bundler
           # are ordered consistently
           sort_by { |s| s.full_name }.
           each do |spec|
-            next if spec.name == 'bundler'
+            next if spec.name == 'carat'
             out << spec.to_lock
           end
         out << "\n"

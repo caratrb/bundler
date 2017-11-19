@@ -297,8 +297,8 @@ module Bundler
       end
     end
 
-    # Used to make bin stubs that are not created by bundler work
-    # under bundler. The new Gem.bin_path only considers gems in
+    # Used to make bin stubs that are not created by carat work
+    # under carat. The new Gem.bin_path only considers gems in
     # +specs+
     def replace_bin_path(specs)
       gem_class = (class << Gem ; self ; end)
@@ -337,7 +337,7 @@ module Bundler
       redefine_method(gem_class, :refresh) { }
     end
 
-    # Replace or hook into Rubygems to provide a bundlerized view
+    # Replace or hook into Rubygems to provide a caratized view
     # of the world.
     def replace_entrypoints(specs)
       replace_gem(specs)

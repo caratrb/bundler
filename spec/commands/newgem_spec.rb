@@ -495,7 +495,7 @@ describe "bundle gem" do
 
       it "creates a default rake task to run the specs" do
         rakefile = strip_whitespace <<-RAKEFILE
-          require "bundler/gem_tasks"
+          require "carat/gem_tasks"
           require "rspec/core/rake_task"
 
           RSpec::Core::RakeTask.new(:spec)
@@ -533,7 +533,7 @@ describe "bundle gem" do
 
       it "creates a default rake task to run the test suite" do
         rakefile = strip_whitespace <<-RAKEFILE
-          require "bundler/gem_tasks"
+          require "carat/gem_tasks"
           require "rake/testtask"
 
           Rake::TestTask.new(:test) do |t|
@@ -579,7 +579,7 @@ describe "bundle gem" do
 
       it "depends on compile task for build" do
         rakefile = strip_whitespace <<-RAKEFILE
-          require "bundler/gem_tasks"
+          require "carat/gem_tasks"
           require "rake/extensiontask"
 
           task :build => :compile

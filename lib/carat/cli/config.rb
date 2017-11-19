@@ -55,7 +55,7 @@ module Bundler
           end
 
           if env = locations[:env]
-            Bundler.ui.info "You have a bundler environment variable for #{name} set to #{env.inspect}. " \
+            Bundler.ui.info "You have a carat environment variable for #{name} set to #{env.inspect}. " \
               "This will take precedence over the global value you are setting"
           end
 

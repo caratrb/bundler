@@ -37,7 +37,7 @@ describe "Bundler.with_env helpers" do
       expect(result).to eq("true")
     end
 
-    it "should not pass any bundler environment variables" do
+    it "should not pass any carat environment variables" do
       Bundler.with_clean_env do
         expect(`echo $BUNDLE_PATH`.strip).not_to eq('./Gemfile')
       end
@@ -45,14 +45,14 @@ describe "Bundler.with_env helpers" do
 
     it "should not pass RUBYOPT changes" do
       lib_path = File.expand_path('../../../lib', __FILE__)
-      Bundler::ORIGINAL_ENV['RUBYOPT'] = " -I#{lib_path} -rbundler/setup"
+      Bundler::ORIGINAL_ENV['RUBYOPT'] = " -I#{lib_path} -rcarat/setup"
 
       Bundler.with_clean_env do
-        expect(`echo $RUBYOPT`.strip).not_to include '-rbundler/setup'
+        expect(`echo $RUBYOPT`.strip).not_to include '-rcarat/setup'
         expect(`echo $RUBYOPT`.strip).not_to include "-I#{lib_path}"
       end
 
-      expect(Bundler::ORIGINAL_ENV['RUBYOPT']).to eq(" -I#{lib_path} -rbundler/setup")
+      expect(Bundler::ORIGINAL_ENV['RUBYOPT']).to eq(" -I#{lib_path} -rcarat/setup")
     end
 
     it "should not change ORIGINAL_ENV" do
@@ -65,7 +65,7 @@ describe "Bundler.with_env helpers" do
 
     it_should_behave_like "Bundler.with_*_env"
 
-    it "should pass bundler environment variables set before Bundler was run" do
+    it "should pass carat environment variables set before Bundler was run" do
       Bundler.with_original_env do
         expect(`echo $BUNDLE_PATH`.strip).to eq('./Gemfile')
       end

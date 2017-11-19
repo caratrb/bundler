@@ -22,7 +22,7 @@ describe "Bundler.setup with multi platform stuff" do
 
     ruby <<-R
       begin
-        require 'bundler'
+        require 'carat'
         Bundler.setup
       rescue Bundler::GemNotFound => e
         puts "WIN"

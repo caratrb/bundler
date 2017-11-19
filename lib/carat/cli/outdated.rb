@@ -1,4 +1,4 @@
-require 'bundler/cli/common'
+require 'carat/cli/common'
 
 module Bundler
   class CLI::Outdated

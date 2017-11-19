@@ -1,5 +1,5 @@
-require 'bundler/dependency'
-require 'bundler/ruby_dsl'
+require 'carat/dependency'
+require 'carat/ruby_dsl'
 
 module Bundler
   class Dsl
@@ -138,7 +138,7 @@ module Bundler
       unless block_given?
         msg = "You can no longer specify a git source by itself. Instead, \n" \
               "either use the :git option on a gem, or specify the gems that \n" \
-              "bundler should find in the git source by passing a block to \n" \
+              "carat should find in the git source by passing a block to \n" \
               "the git method, like: \n\n" \
               "  git 'git://github.com/rails/rails.git' do\n" \
               "    gem 'rails'\n" \

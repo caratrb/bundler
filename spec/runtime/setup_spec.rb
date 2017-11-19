@@ -10,7 +10,7 @@ describe "Bundler.setup" do
 
       ruby <<-RUBY
         require 'rubygems'
-        require 'bundler'
+        require 'carat'
         Bundler.setup
 
         require 'rack'
@@ -33,7 +33,7 @@ describe "Bundler.setup" do
     it "doesn't make all groups available" do
       ruby <<-RUBY
         require 'rubygems'
-        require 'bundler'
+        require 'carat'
         Bundler.setup(:default)
 
         begin
@@ -49,7 +49,7 @@ describe "Bundler.setup" do
     it "accepts string for group name" do
       ruby <<-RUBY
         require 'rubygems'
-        require 'bundler'
+        require 'carat'
         Bundler.setup(:default, 'test')
 
         require 'rack'
@@ -62,7 +62,7 @@ describe "Bundler.setup" do
     it "leaves all groups available if they were already" do
       ruby <<-RUBY
         require 'rubygems'
-        require 'bundler'
+        require 'carat'
         Bundler.setup
         Bundler.setup(:default)
 
@@ -76,7 +76,7 @@ describe "Bundler.setup" do
     it "leaves :default available if setup is called twice" do
       ruby <<-RUBY
         require 'rubygems'
-        require 'bundler'
+        require 'carat'
         Bundler.setup(:default)
         Bundler.setup(:default, :test)
 
@@ -100,7 +100,7 @@ describe "Bundler.setup" do
 
     ruby <<-R
       require 'rubygems'
-      require 'bundler'
+      require 'carat'
 
       begin
         Bundler.setup
@@ -121,7 +121,7 @@ describe "Bundler.setup" do
 
     ruby <<-R, :expect_err => true
       require 'rubygems'
-      require 'bundler'
+      require 'carat'
 
       Bundler.setup
     R
@@ -145,7 +145,7 @@ describe "Bundler.setup" do
 
     ruby <<-R, :expect_err => true
       require 'rubygems'
-      require 'bundler'
+      require 'carat'
 
       Bundler.setup
     R
@@ -271,7 +271,7 @@ describe "Bundler.setup" do
 
       it "removes system gems from Gem.source_index" do
         run "require 'yard'"
-        expect(out).to eq("bundler-#{Bundler::VERSION}\nyard-1.0")
+        expect(out).to eq("carat-#{Bundler::VERSION}\nyard-1.0")
       end
 
       context "when the ruby stdlib is a substring of Gem.path" do
@@ -324,7 +324,7 @@ describe "Bundler.setup" do
 
       ruby <<-R
         require 'rubygems'
-        require 'bundler'
+        require 'carat'
 
         begin
           Bundler.setup
@@ -346,7 +346,7 @@ describe "Bundler.setup" do
 
       ruby <<-R
         require "rubygems"
-        require "bundler"
+        require "carat"
 
         begin
           Bundler.setup
@@ -538,7 +538,7 @@ describe "Bundler.setup" do
         ruby <<-R
           require 'rubygems'
           gem "thin"
-          require 'bundler'
+          require 'carat'
           begin
             Bundler.setup
             puts "FAIL"
@@ -563,7 +563,7 @@ describe "Bundler.setup" do
         ruby <<-R, :expect_err => true
           require 'rubygems'
           gem "thin"
-          require 'bundler'
+          require 'carat'
           begin
             Bundler.setup
             puts "FAIL"
@@ -827,7 +827,7 @@ describe "Bundler.setup" do
       bundle "install"
 
       ruby <<-RUBY
-        require 'bundler'
+        require 'carat'
         def Bundler.require(path)
           raise "LOSE"
         end
@@ -842,10 +842,10 @@ describe "Bundler.setup" do
   describe "when Bundler is bundled" do
     it "doesn't blow up" do
       install_gemfile <<-G
-        gem "bundler", :path => "#{File.expand_path("..", lib)}"
+        gem "carat", :path => "#{File.expand_path("..", lib)}"
       G
 
-      bundle %|exec ruby -e "require 'bundler'; Bundler.setup"|
+      bundle %|exec ruby -e "require 'carat'; Bundler.setup"|
       expect(err).to be_empty
     end
   end

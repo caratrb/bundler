@@ -252,28 +252,28 @@ module Bundler
       def installed_specs
         @installed_specs ||= begin
           idx = Index.new
-          have_bundler = false
+          have_carat = false
           Bundler.rubygems.all_specs.reverse.each do |spec|
-            next if spec.name == 'bundler' && spec.version.to_s != VERSION
-            have_bundler = true if spec.name == 'bundler'
+            next if spec.name == 'carat' && spec.version.to_s != VERSION
+            have_carat = true if spec.name == 'carat'
             spec.source = self
             idx << spec
           end
 
-          # Always have bundler locally
-          unless have_bundler
-           # We're running bundler directly from the source
+          # Always have carat locally
+          unless have_carat
+           # We're running carat directly from the source
            # so, let's create a fake gemspec for it (it's a path)
            # gemspec
-           bundler = Gem::Specification.new do |s|
-             s.name     = 'bundler'
+           carat = Gem::Specification.new do |s|
+             s.name     = 'carat'
              s.version  = VERSION
              s.platform = Gem::Platform::RUBY
              s.source   = self
-             s.authors  = ["bundler team"]
+             s.authors  = ["carat team"]
              s.loaded_from = File.expand_path("..", __FILE__)
            end
-           idx << bundler
+           idx << carat
           end
           idx
         end
@@ -285,7 +285,7 @@ module Bundler
 
           path = Bundler.app_cache
           Dir["#{path}/*.gem"].each do |gemfile|
-            next if gemfile =~ /^bundler\-[\d\.]+?\.gem/
+            next if gemfile =~ /^carat\-[\d\.]+?\.gem/
             s ||= Bundler.rubygems.spec_from_gem(gemfile)
             s.source = self
             idx << s

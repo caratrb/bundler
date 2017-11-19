@@ -7,7 +7,7 @@ end
 
 require 'rubygems'
 require 'rubygems/specification'
-require 'bundler/match_platform'
+require 'carat/match_platform'
 
 module Gem
   @loaded_stacks = Hash.new { |h,k| h[k] = [] }

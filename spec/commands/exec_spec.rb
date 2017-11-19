@@ -160,7 +160,7 @@ describe "bundle exec" do
     G
 
     rubyopt = ENV['RUBYOPT']
-    rubyopt = "-rbundler/setup #{rubyopt}"
+    rubyopt = "-rcarat/setup #{rubyopt}"
 
     bundle "exec 'echo $RUBYOPT'"
     expect(out).to have_rubyopts(rubyopt)
@@ -175,7 +175,7 @@ describe "bundle exec" do
     G
 
     rubylib = ENV['RUBYLIB']
-    rubylib = "#{rubylib}".split(File::PATH_SEPARATOR).unshift "#{bundler_path}"
+    rubylib = "#{rubylib}".split(File::PATH_SEPARATOR).unshift "#{carat_path}"
     rubylib = rubylib.uniq.join(File::PATH_SEPARATOR)
 
     bundle "exec 'echo $RUBYLIB'"
@@ -192,7 +192,7 @@ describe "bundle exec" do
 
     bundle "exec foobarbaz"
     expect(exitstatus).to eq(127) if exitstatus
-    expect(out).to include("bundler: command not found: foobarbaz")
+    expect(out).to include("carat: command not found: foobarbaz")
     expect(out).to include("Install missing gem executables with `bundle install`")
   end
 
@@ -204,7 +204,7 @@ describe "bundle exec" do
     bundle "exec touch foo"
     bundle "exec ./foo"
     expect(exitstatus).to eq(126) if exitstatus
-    expect(out).to include("bundler: not executable: ./foo")
+    expect(out).to include("carat: not executable: ./foo")
   end
 
   it "errors nicely when no arguments are passed" do
@@ -214,7 +214,7 @@ describe "bundle exec" do
 
     bundle "exec"
     expect(exitstatus).to eq(128) if exitstatus
-    expect(out).to include("bundler: exec needs a command to run")
+    expect(out).to include("carat: exec needs a command to run")
   end
 
   describe "with gem executables" do

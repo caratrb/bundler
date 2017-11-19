@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'bundler/cli'
+require 'carat/cli'
 
 describe "bundle executable" do
   let(:source_uri) { "http://localgemserver.test" }
@@ -14,8 +14,8 @@ describe "bundle executable" do
     expect(exitstatus).to_not be_zero if exitstatus
   end
 
-  it "looks for a binary and executes it if it's named bundler-<task>" do
-    File.open(tmp('bundler-testtasks'), 'w', 0755) do |f|
+  it "looks for a binary and executes it if it's named carat-<task>" do
+    File.open(tmp('carat-testtasks'), 'w', 0755) do |f|
       f.puts "#!/usr/bin/env ruby\nputs 'Hello, world'\n"
     end
 

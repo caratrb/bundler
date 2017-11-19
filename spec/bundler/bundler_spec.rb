@@ -1,6 +1,6 @@
 # encoding: utf-8
 require 'spec_helper'
-require 'bundler'
+require 'carat'
 
 describe Bundler do
   describe "#load_gemspec_uncached" do

@@ -1,4 +1,4 @@
-require 'bundler/cli/common'
+require 'carat/cli/common'
 require 'shellwords'
 
 module Bundler

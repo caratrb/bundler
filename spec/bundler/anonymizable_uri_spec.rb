@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'bundler/anonymizable_uri'
+require 'carat/anonymizable_uri'
 
 describe Bundler::AnonymizableURI do
   def auri(uri, auth = nil)

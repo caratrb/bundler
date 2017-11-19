@@ -108,7 +108,7 @@ module Bundler
 
       Bundler.ui.info "Updating files in #{Bundler.settings.app_cache_path}"
       specs.each do |spec|
-        next if spec.name == 'bundler'
+        next if spec.name == 'carat'
         spec.source.send(:fetch_gem, spec) if Bundler.settings[:cache_all_platforms] && spec.source.respond_to?(:fetch_gem, true)
         spec.source.cache(spec, custom_path) if spec.source.respond_to?(:cache)
       end
@@ -130,8 +130,8 @@ module Bundler
 
     def clean(dry_run = false)
       gem_bins             = Dir["#{Gem.dir}/bin/*"]
-      git_dirs             = Dir["#{Gem.dir}/bundler/gems/*"]
-      git_cache_dirs       = Dir["#{Gem.dir}/cache/bundler/git/*"]
+      git_dirs             = Dir["#{Gem.dir}/carat/gems/*"]
+      git_cache_dirs       = Dir["#{Gem.dir}/cache/carat/git/*"]
       gem_dirs             = Dir["#{Gem.dir}/gems/*"]
       gem_files            = Dir["#{Gem.dir}/cache/*.gem"]
       gemspec_files        = Dir["#{Gem.dir}/specifications/*.gemspec"]
@@ -145,7 +145,7 @@ module Bundler
       specs.each do |spec|
         spec_gem_paths << spec.full_gem_path
         # need to check here in case gems are nested like for the rails git repo
-        md = %r{(.+bundler/gems/.+-[a-f0-9]{7,12})}.match(spec.full_gem_path)
+        md = %r{(.+carat/gems/.+-[a-f0-9]{7,12})}.match(spec.full_gem_path)
         spec_git_paths << md[1] if md
         spec_gem_executables << spec.executables.collect do |executable|
           e = "#{Bundler.rubygems.gem_bindir}/#{executable}"
@@ -211,9 +211,9 @@ module Bundler
 
     def setup_environment
       begin
-        ENV["BUNDLE_BIN_PATH"] = Bundler.rubygems.bin_path("bundler", "bundle", VERSION)
+        ENV["BUNDLE_BIN_PATH"] = Bundler.rubygems.bin_path("carat", "carat", VERSION)
       rescue Gem::GemNotFoundException
-        ENV["BUNDLE_BIN_PATH"] = File.expand_path("../../../bin/bundle", __FILE__)
+        ENV["BUNDLE_BIN_PATH"] = File.expand_path("../../../bin/carat", __FILE__)
       end
 
       # Set BUNDLE_GEMFILE

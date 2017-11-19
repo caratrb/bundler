@@ -876,7 +876,7 @@ describe "the lockfile format" do
       it "preserves Gemfile.lock \\n line endings" do
         expect { ruby <<-RUBY
                    require 'rubygems'
-                   require 'bundler'
+                   require 'carat'
                    Bundler.setup
                  RUBY
                }.not_to change { File.mtime(bundled_app('Gemfile.lock')) }
@@ -889,7 +889,7 @@ describe "the lockfile format" do
 
         expect { ruby <<-RUBY
                    require 'rubygems'
-                   require 'bundler'
+                   require 'carat'
                    Bundler.setup
                  RUBY
                }.not_to change { File.mtime(bundled_app('Gemfile.lock')) }

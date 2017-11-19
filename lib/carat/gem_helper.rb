@@ -1,5 +1,5 @@
-require 'bundler/vendored_thor' unless defined?(Thor)
-require 'bundler'
+require 'carat/vendored_thor' unless defined?(Thor)
+require 'carat'
 
 module Bundler
   class GemHelper

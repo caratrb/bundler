@@ -141,11 +141,11 @@ describe "bundle update without a Gemfile.lock" do
   end
 end
 
-describe "bundle update when a gem depends on a newer version of bundler" do
+describe "bundle update when a gem depends on a newer version of carat" do
   before(:each) do
     build_repo2 do
       build_gem "rails", "3.0.1" do |s|
-        s.add_dependency "bundler", Bundler::VERSION.succ
+        s.add_dependency "carat", Bundler::VERSION.succ
       end
     end
 
@@ -160,11 +160,11 @@ describe "bundle update when a gem depends on a newer version of bundler" do
     expect(err).to be_empty
   end
 
-  it "should explain that bundler conflicted" do
+  it "should explain that carat conflicted" do
     bundle "update"
     expect(out).not_to match(/in snapshot/i)
     expect(out).to match(/current Bundler version/i)
-    expect(out).to match(/perhaps you need to update bundler/i)
+    expect(out).to match(/perhaps you need to update carat/i)
   end
 end
 

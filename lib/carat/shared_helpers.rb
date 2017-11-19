@@ -1,9 +1,9 @@
 require 'pathname'
 require 'rubygems'
 
-require 'bundler/constants'
-require 'bundler/rubygems_integration'
-require 'bundler/current_ruby'
+require 'carat/constants'
+require 'carat/rubygems_integration'
+require 'carat/current_ruby'
 
 module Gem
   class Dependency
@@ -81,8 +81,8 @@ module Bundler
 
       # Set RUBYOPT
       rubyopt = [ENV["RUBYOPT"]].compact
-      if rubyopt.empty? || rubyopt.first !~ /-rbundler\/setup/
-        rubyopt.unshift %|-rbundler/setup|
+      if rubyopt.empty? || rubyopt.first !~ /-rcarat\/setup/
+        rubyopt.unshift %|-rcarat/setup|
         ENV["RUBYOPT"] = rubyopt.join(' ')
       end
 
@@ -120,7 +120,7 @@ module Bundler
       until !File.directory?(current) || current == previous
         if ENV['BUNDLE_SPEC_RUN']
           # avoid stepping above the tmp directory when testing
-          return nil if File.file?(File.join(current, 'bundler.gemspec'))
+          return nil if File.file?(File.join(current, 'carat.gemspec'))
         end
 
         names.each do |name|

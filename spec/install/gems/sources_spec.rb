@@ -373,8 +373,8 @@ describe "bundle install with gems on multiple sources" do
       # 3. this lockfile.
       lockfile <<-L
         GEM
-          remote: file:/Users/andre/src/bundler/bundler/tmp/gems/remote1/
-          remote: file:/Users/andre/src/bundler/bundler/tmp/gems/remote4/
+          remote: file:/Users/andre/src/carat/carat/tmp/gems/remote1/
+          remote: file:/Users/andre/src/carat/carat/tmp/gems/remote4/
           specs:
             bar (0.1)
             foo (0.1)

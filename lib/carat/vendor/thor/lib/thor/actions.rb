@@ -1,12 +1,12 @@
 require "fileutils"
 require "uri"
-require "bundler/vendor/thor/lib/thor/core_ext/io_binary_read"
-require "bundler/vendor/thor/lib/thor/actions/create_file"
-require "bundler/vendor/thor/lib/thor/actions/create_link"
-require "bundler/vendor/thor/lib/thor/actions/directory"
-require "bundler/vendor/thor/lib/thor/actions/empty_directory"
-require "bundler/vendor/thor/lib/thor/actions/file_manipulation"
-require "bundler/vendor/thor/lib/thor/actions/inject_into_file"
+require "carat/vendor/thor/lib/thor/core_ext/io_binary_read"
+require "carat/vendor/thor/lib/thor/actions/create_file"
+require "carat/vendor/thor/lib/thor/actions/create_link"
+require "carat/vendor/thor/lib/thor/actions/directory"
+require "carat/vendor/thor/lib/thor/actions/empty_directory"
+require "carat/vendor/thor/lib/thor/actions/file_manipulation"
+require "carat/vendor/thor/lib/thor/actions/inject_into_file"
 
 class Bundler::Thor
   module Actions

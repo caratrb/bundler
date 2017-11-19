@@ -1,6 +1,6 @@
 require 'rubygems/dependency'
-require 'bundler/shared_helpers'
-require 'bundler/rubygems_ext'
+require 'carat/shared_helpers'
+require 'carat/rubygems_ext'
 
 module Bundler
   class Dependency < Gem::Dependency

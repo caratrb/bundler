@@ -148,7 +148,7 @@ describe "Bundler.require" do
       G
 
       cmd = <<-RUBY
-        require 'bundler'
+        require 'carat'
         Bundler.require
       RUBY
       ruby(cmd, :expect_err => true)

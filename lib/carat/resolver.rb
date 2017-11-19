@@ -9,7 +9,7 @@ require 'set'
 module Bundler
   class Resolver
 
-    require 'bundler/vendored_molinillo'
+    require 'carat/vendored_molinillo'
 
     class Molinillo::VersionConflict
       def clean_req(req)
@@ -41,15 +41,15 @@ module Bundler
             t
           end.join("\n")
 
-          if conflict.requirement.name == 'bundler'
-            o << %(\n  Current Bundler version:\n    bundler (#{Bundler::VERSION}))
-            other_bundler_required = !conflict.requirement.requirement.satisfied_by?(Gem::Version.new Bundler::VERSION)
+          if conflict.requirement.name == 'carat'
+            o << %(\n  Current Bundler version:\n    carat (#{Bundler::VERSION}))
+            other_carat_required = !conflict.requirement.requirement.satisfied_by?(Gem::Version.new Bundler::VERSION)
           end
 
-          if conflict.requirement.name == "bundler" && other_bundler_required
+          if conflict.requirement.name == "carat" && other_carat_required
             o << "\n"
             o << "This Gemfile requires a different version of Bundler.\n"
-            o << "Perhaps you need to update Bundler by running `gem install bundler`?\n"
+            o << "Perhaps you need to update Bundler by running `gem install carat`?\n"
           end
           if conflict.locked_requirement
             o << "\n"
@@ -305,7 +305,7 @@ module Bundler
 
     def verify_gemfile_dependencies_are_found!(requirements)
       requirements.each do |requirement|
-        next if requirement.name == 'bundler'
+        next if requirement.name == 'carat'
         if search_for(requirement).empty?
           if base = @base[requirement.name] and !base.empty?
             version = base.first.version

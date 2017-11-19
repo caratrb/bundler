@@ -1,4 +1,4 @@
-require 'bundler/ui'
+require 'carat/ui'
 require 'rubygems/user_interaction'
 
 module Bundler

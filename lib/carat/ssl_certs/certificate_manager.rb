@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require "bundler/vendored_fileutils"
+require "carat/vendored_fileutils"
 require "net/https"
 require "openssl"
 
 module Bundler
   module SSLCerts
     class CertificateManager
-      attr_reader :bundler_cert_path, :bundler_certs, :rubygems_certs
+      attr_reader :carat_cert_path, :carat_certs, :rubygems_certs
 
       def self.update_from!(rubygems_path)
         new(rubygems_path).update!
@@ -19,13 +19,13 @@ module Bundler
           @rubygems_certs = certificates_in(rubygems_cert_path)
         end
 
-        @bundler_cert_path = File.expand_path("..", __FILE__)
-        @bundler_certs = certificates_in(bundler_cert_path)
+        @carat_cert_path = File.expand_path("..", __FILE__)
+        @carat_certs = certificates_in(carat_cert_path)
       end
 
       def up_to_date?
         rubygems_certs.all? do |rc|
-          bundler_certs.find do |bc|
+          carat_certs.find do |bc|
             File.basename(bc) == File.basename(rc) && FileUtils.compare_file(bc, rc)
           end
         end
@@ -34,8 +34,8 @@ module Bundler
       def update!
         return if up_to_date?
 
-        FileUtils.rm bundler_certs
-        FileUtils.cp rubygems_certs, bundler_cert_path
+        FileUtils.rm carat_certs
+        FileUtils.cp rubygems_certs, carat_cert_path
       end
 
       def connect_to(host)
@@ -55,7 +55,7 @@ module Bundler
       def store
         @store ||= begin
           store = OpenSSL::X509::Store.new
-          bundler_certs.each do |cert|
+          carat_certs.each do |cert|
             store.add_file cert
           end
           store

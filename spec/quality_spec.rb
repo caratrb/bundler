@@ -79,17 +79,17 @@ describe "The library itself" do
 
   it "can still be built" do
     Dir.chdir(root) do
-      `gem build bundler.gemspec`
+      `gem build carat.gemspec`
       expect($?).to eq(0)
 
       # clean up the .gem generated
-      system("rm bundler-#{Bundler::VERSION}.gem")
+      system("rm carat-#{Bundler::VERSION}.gem")
     end
   end
 
   it "does not contain any warnings" do
     Dir.chdir(root.join("lib"))
-    exclusions = /bundler\/capistrano\.rb|bundler\/vlad\.rb|bundler\/gem_tasks\.rb|tmp\/rubygems/
+    exclusions = /carat\/capistrano\.rb|carat\/vlad\.rb|carat\/gem_tasks\.rb|tmp\/rubygems/
     lib_files = `git ls-files -z -- **/*.rb`.split("\x0").reject{|f| f =~ exclusions }
     sys_exec("ruby -w -I. ", :expect_err) do |input|
       lib_files.each do |f|

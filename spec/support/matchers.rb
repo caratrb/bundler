@@ -32,7 +32,7 @@ module Spec
       groups << opts
       names.each do |name|
         name, version, platform = name.split(/\s+/)
-        version_const = name == 'bundler' ? 'Bundler::VERSION' : Spec::Builders.constantize(name)
+        version_const = name == 'carat' ? 'Bundler::VERSION' : Spec::Builders.constantize(name)
         run "require '#{name}.rb'; puts #{version_const}", *groups
         actual_version, actual_platform = out.split(/\s+/)
         expect(Gem::Version.new(actual_version)).to eq(Gem::Version.new(version))

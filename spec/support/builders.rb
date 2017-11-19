@@ -1,4 +1,4 @@
-require 'bundler/shared_helpers'
+require 'carat/shared_helpers'
 
 module Spec
   module Builders
@@ -162,19 +162,19 @@ module Spec
           s.add_c_extension
         end
 
-        build_gem "bundler", "0.9" do |s|
+        build_gem "carat", "0.9" do |s|
           s.executables = "bundle"
           s.write "bin/bundle", "puts 'FAIL'"
         end
 
-        # The bundler 0.8 gem has a rubygems plugin that always loads :(
-        build_gem "bundler", "0.8.1" do |s|
-          s.write "lib/bundler/omg.rb", ""
-          s.write "lib/rubygems_plugin.rb", "require 'bundler/omg' ; puts 'FAIL'"
+        # The carat 0.8 gem has a rubygems plugin that always loads :(
+        build_gem "carat", "0.8.1" do |s|
+          s.write "lib/carat/omg.rb", ""
+          s.write "lib/rubygems_plugin.rb", "require 'carat/omg' ; puts 'FAIL'"
         end
 
-        build_gem "bundler_dep" do |s|
-          s.add_dependency "bundler"
+        build_gem "carat_dep" do |s|
+          s.add_dependency "carat"
         end
 
         # The yard gem iterates over Gem.source_index looking for plugins

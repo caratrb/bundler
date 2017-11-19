@@ -1,6 +1,6 @@
 # encoding: utf-8
 require "cgi"
-require "bundler/vendored_thor"
+require "carat/vendored_thor"
 
 module Bundler
   def self.with_friendly_errors
@@ -73,12 +73,12 @@ module Bundler
       #{issues_url(e)}
 
       If there aren't any reports for this error yet, please create copy and paste the report template above into a new issue. Don't forget to anonymize any private data! The new issue form is located at:
-      https://github.com/bundler/bundler/issues/new
+      https://github.com/caratrb/carat/issues/new
     EOS
   end
 
   def self.issues_url(exception)
-    'https://github.com/bundler/bundler/search?q=' \
+    'https://github.com/caratrb/carat/search?q=' \
     "#{CGI.escape(exception.message.lines.first.chomp)}&type=Issues"
   end
 

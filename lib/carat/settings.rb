@@ -156,7 +156,7 @@ module Bundler
         hash[key] = value
         hash.delete(key) if value.nil?
         FileUtils.mkdir_p(file.dirname)
-        require 'bundler/psyched_yaml'
+        require 'carat/psyched_yaml'
         File.open(file, "w") { |f| f.puts YAML.dump(hash) }
       end
 

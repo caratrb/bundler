@@ -1,4 +1,4 @@
-require "bundler/vendor/thor/lib/thor/actions/empty_directory"
+require "carat/vendor/thor/lib/thor/actions/empty_directory"
 
 class Bundler::Thor
   module Actions

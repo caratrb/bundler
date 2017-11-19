@@ -38,7 +38,7 @@ module Bundler
         :test             => options[:test],
         :ext              => options[:ext],
         :bin              => options[:bin],
-        :bundler_version  => bundler_dependency_version
+        :carat_version  => carat_dependency_version
       }
       ensure_safe_gem_name(name, constant_array)
 
@@ -174,7 +174,7 @@ module Bundler
       test_framework
     end
 
-    def bundler_dependency_version
+    def carat_dependency_version
       v = Gem::Version.new(Bundler::VERSION)
       req = v.segments[0..1]
       req << 'a' if v.prerelease?

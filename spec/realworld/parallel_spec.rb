@@ -69,7 +69,7 @@ describe "parallel", :realworld => true do
 
     ruby <<-RUBY, :no_lib => true
       $:.unshift File.expand_path("bundle")
-      require "bundler/setup"
+      require "carat/setup"
 
       require "diff/lcs"
       puts Diff::LCS

@@ -1,6 +1,6 @@
 require "uri"
 require "rubygems/spec_fetcher"
-require "bundler/match_platform"
+require "carat/match_platform"
 
 module Bundler
   class LazySpecification

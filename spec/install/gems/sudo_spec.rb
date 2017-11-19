@@ -112,7 +112,7 @@ describe "when using sudo", :sudo => true do
 
     it "cleans up the tmpdirs generated" do
       require 'tmpdir'
-      Dir.glob("#{Dir.tmpdir}/bundler*").each do |tmpdir|
+      Dir.glob("#{Dir.tmpdir}/carat*").each do |tmpdir|
         FileUtils.remove_entry_secure(tmpdir)
       end
 
@@ -120,7 +120,7 @@ describe "when using sudo", :sudo => true do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      tmpdirs = Dir.glob("#{Dir.tmpdir}/bundler*")
+      tmpdirs = Dir.glob("#{Dir.tmpdir}/carat*")
 
       expect(tmpdirs).to be_empty
     end

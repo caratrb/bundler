@@ -1,7 +1,7 @@
 module Bundler
   module UI
-    autoload :RGProxy, 'bundler/ui/rg_proxy'
-    autoload :Shell,   'bundler/ui/shell'
-    autoload :Silent,  'bundler/ui/silent'
+    autoload :RGProxy, 'carat/ui/rg_proxy'
+    autoload :Shell,   'carat/ui/shell'
+    autoload :Silent,  'carat/ui/silent'
   end
 end

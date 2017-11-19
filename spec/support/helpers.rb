@@ -33,7 +33,7 @@ module Spec
       expect_err = opts.delete(:expect_err)
       env = opts.delete(:env)
       groups = args.map {|a| a.inspect }.join(", ")
-      setup = "require 'rubygems' ; require 'bundler' ; Bundler.setup(#{groups})\n"
+      setup = "require 'rubygems' ; require 'carat' ; Bundler.setup(#{groups})\n"
       @out = ruby(setup + cmd, :expect_err => expect_err, :env => env)
     end
 
@@ -314,7 +314,7 @@ module Spec
       ENV['BUNDLER_SPEC_RUBY_ENGINE_VERSION'] = old_version if block_given?
     end
 
-    def simulate_bundler_version(version)
+    def simulate_carat_version(version)
       old, ENV['BUNDLER_SPEC_VERSION'] = ENV['BUNDLER_SPEC_VERSION'], version.to_s
       yield if block_given?
     ensure

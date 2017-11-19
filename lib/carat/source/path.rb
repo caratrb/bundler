@@ -2,7 +2,7 @@ module Bundler
   class Source
 
     class Path < Source
-      autoload :Installer, 'bundler/source/path/installer'
+      autoload :Installer, 'carat/source/path/installer'
 
       attr_reader   :path, :options
       attr_writer   :name
@@ -196,7 +196,7 @@ module Bundler
         end
       rescue Gem::InvalidSpecificationException => e
         Bundler.ui.warn "\n#{spec.name} at #{spec.full_gem_path} did not have a valid gemspec.\n" \
-                        "This prevents bundler from installing bins or native extensions, but " \
+                        "This prevents carat from installing bins or native extensions, but " \
                         "that may not affect its functionality."
 
         if !spec.extensions.empty? && !spec.email.empty?

@@ -1,17 +1,17 @@
-require "bundler/vendor/thor/lib/thor/command"
-require "bundler/vendor/thor/lib/thor/core_ext/hash_with_indifferent_access"
-require "bundler/vendor/thor/lib/thor/core_ext/ordered_hash"
-require "bundler/vendor/thor/lib/thor/error"
-require "bundler/vendor/thor/lib/thor/invocation"
-require "bundler/vendor/thor/lib/thor/parser"
-require "bundler/vendor/thor/lib/thor/shell"
-require "bundler/vendor/thor/lib/thor/line_editor"
-require "bundler/vendor/thor/lib/thor/util"
+require "carat/vendor/thor/lib/thor/command"
+require "carat/vendor/thor/lib/thor/core_ext/hash_with_indifferent_access"
+require "carat/vendor/thor/lib/thor/core_ext/ordered_hash"
+require "carat/vendor/thor/lib/thor/error"
+require "carat/vendor/thor/lib/thor/invocation"
+require "carat/vendor/thor/lib/thor/parser"
+require "carat/vendor/thor/lib/thor/shell"
+require "carat/vendor/thor/lib/thor/line_editor"
+require "carat/vendor/thor/lib/thor/util"
 
 class Bundler::Thor
-  autoload :Actions,    "bundler/vendor/thor/lib/thor/actions"
-  autoload :RakeCompat, "bundler/vendor/thor/lib/thor/rake_compat"
-  autoload :Group,      "bundler/vendor/thor/lib/thor/group"
+  autoload :Actions,    "carat/vendor/thor/lib/thor/actions"
+  autoload :RakeCompat, "carat/vendor/thor/lib/thor/rake_compat"
+  autoload :Group,      "carat/vendor/thor/lib/thor/group"
 
   # Shortcuts for help.
   HELP_MAPPINGS       = %w[-h -? --help -D]

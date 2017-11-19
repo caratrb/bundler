@@ -1,5 +1,5 @@
-require 'bundler'
-require 'bundler/vendored_thor'
+require 'carat'
+require 'carat/vendored_thor'
 
 module Bundler
   class CLI < Thor
@@ -69,7 +69,7 @@ module Bundler
     end
 
     def self.handle_no_command_error(command, has_namespace = $thor_runner)
-      return super unless command_path = Bundler.which("bundler-#{command}")
+      return super unless command_path = Bundler.which("carat-#{command}")
 
       Kernel.exec(command_path, *ARGV[1..-1])
     end
@@ -82,7 +82,7 @@ module Bundler
     D
     method_option "gemspec", :type => :string, :banner => "Use the specified .gemspec to create the Gemfile"
     def init
-      require 'bundler/cli/init'
+      require 'carat/cli/init'
       Init.new(options.dup).run
     end
 
@@ -99,7 +99,7 @@ module Bundler
     method_option "path", :type => :string, :banner =>
       "Specify a different path than the system default ($BUNDLE_PATH or $GEM_HOME). Bundler will remember this value for future installs on this machine"
     def check
-      require 'bundler/cli/check'
+      require 'carat/cli/check'
       Check.new(options).run
     end
 
@@ -112,7 +112,7 @@ module Bundler
       Passing [DIR] to install (e.g. vendor) will cause the unpacked gems to be installed
       into the [DIR] directory rather than into system gems.
 
-      If the bundle has already been installed, bundler will tell you so and then exit.
+      If the bundle has already been installed, carat will tell you so and then exit.
     D
     method_option "binstubs", :type => :string, :lazy_default => "bin", :banner =>
       "Generate bin stubs for bundled gems to ./bin"
@@ -151,7 +151,7 @@ module Bundler
       "Exclude gems that are part of the specified named group."
 
     def install
-      require 'bundler/cli/install'
+      require 'carat/cli/install'
       Install.new(options.dup).run
     end
 
@@ -174,7 +174,7 @@ module Bundler
     method_option "source", :type => :array, :banner =>
       "Update a specific source (and all gems associated with it)"
     def update(*gems)
-      require 'bundler/cli/update'
+      require 'carat/cli/update'
       Update.new(options, gems).run
     end
 
@@ -188,7 +188,7 @@ module Bundler
     method_option "outdated", :type => :boolean,
       :banner => "Show verbose output including whether gems are outdated."
     def show(gem_name = nil)
-      require 'bundler/cli/show'
+      require 'carat/cli/show'
       Show.new(options, gem_name).run
     end
     map %w(list) => "show"
@@ -203,7 +203,7 @@ module Bundler
     method_option "path", :type => :string, :lazy_default => "bin", :banner =>
       "Binstub destination directory (default bin)"
     def binstubs(*gems)
-      require 'bundler/cli/binstubs'
+      require 'carat/cli/binstubs'
       Binstubs.new(options, gems).run
     end
 
@@ -221,7 +221,7 @@ module Bundler
     method_option "strict", :type => :boolean, :banner =>
       "Only list newer versions allowed by your Gemfile requirements"
     def outdated(*gems)
-      require 'bundler/cli/outdated'
+      require 'carat/cli/outdated'
       Outdated.new(options, gems).run
     end
 
@@ -230,7 +230,7 @@ module Bundler
     method_option "all-platforms", :type => :boolean, :banner => "Include gems for all platforms, not just the current one"
     method_option "no-prune",  :type => :boolean, :banner => "Don't remove stale gems from the cache."
     def cache
-      require 'bundler/cli/cache'
+      require 'carat/cli/cache'
       Cache.new(options).run
     end
 
@@ -252,7 +252,7 @@ module Bundler
       bundle without having to download any additional gems.
     D
     def package
-      require 'bundler/cli/package'
+      require 'carat/cli/package'
       Package.new(options).run
     end
     map %w(pack) => :package
@@ -265,7 +265,7 @@ module Bundler
       into the system wide Rubygems repository.
     D
     def exec(*args)
-      require 'bundler/cli/exec'
+      require 'carat/cli/exec'
       Exec.new(options, args).run
     end
 
@@ -282,23 +282,23 @@ module Bundler
       where they were specified.
     D
     def config(*args)
-      require 'bundler/cli/config'
+      require 'carat/cli/config'
       Config.new(options, args, self).run
     end
 
     desc "open GEM", "Opens the source directory of the given bundled gem"
     def open(name)
-      require 'bundler/cli/open'
+      require 'carat/cli/open'
       Open.new(options, name).run
     end
 
     desc "console [GROUP]", "Opens an IRB session with the bundle pre-loaded"
     def console(group = nil)
-      require 'bundler/cli/console'
+      require 'carat/cli/console'
       Console.new(options, group).run
     end
 
-    desc "version", "Prints the bundler's version information"
+    desc "version", "Prints the carat's version information"
     def version
       Bundler.ui.info "Bundler version #{Bundler::VERSION}"
     end
@@ -330,7 +330,7 @@ module Bundler
     method_option :version, :type => :boolean, :default => false, :aliases => '-v', :banner => "Set to show each gem version."
     method_option :without, :type => :array, :default => [], :banner => "Exclude gems that are part of the specified named group."
     def viz
-      require 'bundler/cli/viz'
+      require 'carat/cli/viz'
       Viz.new(options).run
     end
 
@@ -345,7 +345,7 @@ module Bundler
     method_option :test, :type => :string, :lazy_default => 'rspec', :aliases => '-t', :banner => "rspec",
       :desc => "Generate a test directory for your library, either rspec or minitest. Set a default with `bundle config gem.test rspec`."
     def gem(name)
-      require 'bundler/cli/gem'
+      require 'carat/cli/gem'
       Gem.new(options, name, self).run
     end
 
@@ -353,13 +353,13 @@ module Bundler
       File.expand_path(File.join(File.dirname(__FILE__), 'templates'))
     end
 
-    desc "clean [OPTIONS]", "Cleans up unused gems in your bundler directory"
+    desc "clean [OPTIONS]", "Cleans up unused gems in your carat directory"
     method_option "dry-run", :type => :boolean, :default => false, :banner =>
       "Only print out changes, do not actually clean gems"
     method_option "force", :type => :boolean, :default => false, :banner =>
       "Forces clean even if --path is not set"
     def clean
-      require 'bundler/cli/clean'
+      require 'carat/cli/clean'
       Clean.new(options.dup).run
     end
 
@@ -367,13 +367,13 @@ module Bundler
     method_option "ruby", :type => :boolean, :default => false, :banner =>
       "only display ruby related platform information"
     def platform
-      require 'bundler/cli/platform'
+      require 'carat/cli/platform'
       Platform.new(options).run
     end
 
     desc "inject GEM VERSION ...", "Add the named gem(s), with version requirements, to the resolved Gemfile"
     def inject(name, version, *gems)
-      require 'bundler/cli/inject'
+      require 'carat/cli/inject'
       Inject.new(options, name, version, gems).run
     end
 

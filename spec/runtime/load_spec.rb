@@ -25,7 +25,7 @@ describe "Bundler.load" do
     end
 
     it "provides a list of the resolved gems" do
-      expect(Bundler.load.gems).to have_gem("rack-1.0.0", "bundler-#{Bundler::VERSION}")
+      expect(Bundler.load.gems).to have_gem("rack-1.0.0", "carat-#{Bundler::VERSION}")
     end
 
     it "ignores blank BUNDLE_GEMFILEs" do
@@ -49,7 +49,7 @@ describe "Bundler.load" do
     end
 
     it "provides a list of the resolved gems" do
-      expect(Bundler.load.gems).to have_gem("rack-1.0.0", "bundler-#{Bundler::VERSION}")
+      expect(Bundler.load.gems).to have_gem("rack-1.0.0", "carat-#{Bundler::VERSION}")
     end
   end
 
@@ -68,15 +68,15 @@ describe "Bundler.load" do
     end
 
     it "does not find a Gemfile above the testing directory" do
-      bundler_gemfile = tmp.join("../Gemfile")
-      unless File.exist?(bundler_gemfile)
-        FileUtils.touch(bundler_gemfile)
-        @remove_bundler_gemfile = true
+      carat_gemfile = tmp.join("../Gemfile")
+      unless File.exist?(carat_gemfile)
+        FileUtils.touch(carat_gemfile)
+        @remove_carat_gemfile = true
       end
       begin
         expect { Bundler.load }.to raise_error(Bundler::GemfileNotFound)
       ensure
-        bundler_gemfile.rmtree if @remove_bundler_gemfile
+        carat_gemfile.rmtree if @remove_carat_gemfile
       end
     end
 
@@ -91,7 +91,7 @@ describe "Bundler.load" do
       G
 
       ruby <<-RUBY
-        require "bundler"
+        require "carat"
         Bundler.setup :default
         Bundler.require :default
         puts RACK

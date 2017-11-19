@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "bundler/ssl_certs/certificate_manager"
+require "carat/ssl_certs/certificate_manager"
 
 RSpec.describe "SSL Certificates", :rubygems_master do
   hosts = %w[

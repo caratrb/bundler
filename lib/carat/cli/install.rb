@@ -108,7 +108,7 @@ module Bundler
       end
 
       if Bundler.settings[:clean] && Bundler.settings[:path]
-        require "bundler/cli/clean"
+        require "carat/cli/clean"
         Bundler::CLI::Clean.new(options).run
       end
     rescue GemNotFound, VersionConflict => e
@@ -137,7 +137,7 @@ module Bundler
 
     def confirm_without_groups
       if Bundler.settings.without.any?
-        require "bundler/cli/common"
+        require "carat/cli/common"
         Bundler.ui.confirm Bundler::CLI::Common.without_groups_message
       end
     end

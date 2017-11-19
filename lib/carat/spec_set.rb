@@ -15,7 +15,7 @@ module Bundler
 
     def for(dependencies, skip = [], check = false, match_current_platform = false)
       handled, deps, specs = {}, dependencies.dup, []
-      skip << 'bundler'
+      skip << 'carat'
 
       until deps.empty?
         dep = deps.shift
@@ -44,7 +44,7 @@ module Bundler
         end
       end
 
-      if spec = lookup['bundler'].first
+      if spec = lookup['carat'].first
         specs << spec
       end
 

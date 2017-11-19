@@ -121,7 +121,7 @@ module Bundler
 
         dep = Bundler::Dependency.new(name, version)
 
-        if pinned && dep.name != 'bundler'
+        if pinned && dep.name != 'carat'
           spec = @specs.find {|k, v| v.name == dep.name }
           dep.source = spec.last.source if spec
 

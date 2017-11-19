@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'bundler/definition'
+require 'carat/definition'
 
 describe Bundler::Definition do
   before do

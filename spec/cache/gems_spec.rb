@@ -269,15 +269,15 @@ describe "bundle cache" do
       expect(out).not_to match(/\-\-all/)
     end
 
-    it "should install gems with the name bundler in them (that aren't bundler)" do
-      build_gem "foo-bundler", "1.0",
+    it "should install gems with the name carat in them (that aren't carat)" do
+      build_gem "foo-carat", "1.0",
         :path => bundled_app('vendor/cache')
 
       install_gemfile <<-G
-        gem "foo-bundler"
+        gem "foo-carat"
       G
 
-      should_be_installed "foo-bundler 1.0"
+      should_be_installed "foo-carat 1.0"
     end
   end
 

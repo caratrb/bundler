@@ -1,4 +1,4 @@
-require 'bundler/vendored_persistent'
+require 'carat/vendored_persistent'
 require 'securerandom'
 require 'cgi'
 
@@ -76,7 +76,7 @@ module Bundler
         @user_agent ||= begin
           ruby = Bundler.ruby_version
 
-          agent = "bundler/#{Bundler::VERSION}"
+          agent = "carat/#{Bundler::VERSION}"
           agent << " rubygems/#{Gem::VERSION}"
           agent << " ruby/#{ruby.version}"
           agent << " (#{ruby.host})"
@@ -121,12 +121,12 @@ module Bundler
           Bundler.settings[:ssl_client_cert]
         raise SSLError if needs_ssl && !defined?(OpenSSL::SSL)
 
-        con = Net::HTTP::Persistent.new 'bundler', :ENV
+        con = Net::HTTP::Persistent.new 'carat', :ENV
 
         if remote_uri.scheme == "https"
           con.verify_mode = (Bundler.settings[:ssl_verify_mode] ||
             OpenSSL::SSL::VERIFY_PEER)
-          con.cert_store = bundler_cert_store
+          con.cert_store = carat_cert_store
         end
 
         if Bundler.settings[:ssl_client_cert]
@@ -170,7 +170,7 @@ module Bundler
       paths.first
     end
 
-    # return the specs in the bundler format as an index
+    # return the specs in the carat format as an index
     def specs(gem_names, source)
       old = Bundler.rubygems.sources
       index = Index.new
@@ -189,7 +189,7 @@ module Bundler
       end
 
       specs[remote_uri].each do |name, version, platform, dependencies|
-        next if name == 'bundler'
+        next if name == 'carat'
         spec = nil
         if dependencies
           spec = EndpointSpecification.new(name, version, platform, dependencies)
@@ -380,7 +380,7 @@ module Bundler
         "this issue. For more information, see http://bit.ly/syck-defaultkey."
     end
 
-    def bundler_cert_store
+    def carat_cert_store
       store = OpenSSL::X509::Store.new
       if Bundler.settings[:ssl_ca_cert]
         if File.directory? Bundler.settings[:ssl_ca_cert]
@@ -408,7 +408,7 @@ module Bundler
       @fetch_uri ||= begin
         if remote_uri.host == "rubygems.org"
           uri = remote_uri.dup
-          uri.host = "bundler.rubygems.org"
+          uri.host = "carat.rubygems.org"
           uri
         else
           remote_uri

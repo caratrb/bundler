@@ -50,12 +50,12 @@ describe "bundle binstubs <gem>" do
       expect(out).to eq("`bundle binstubs` needs at least one gem to run.")
     end
 
-    it "does not bundle the bundler binary" do
+    it "does not bundle the carat binary" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
       G
 
-      bundle "binstubs bundler"
+      bundle "binstubs carat"
 
       expect(bundled_app("bin/bundle")).not_to exist
       expect(out).to eq("Sorry, Bundler can only be run via Rubygems.")

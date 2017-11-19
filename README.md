@@ -23,14 +23,14 @@ See [bundler.io](http://bundler.io) for the full documentation.
 
 ### Troubleshooting
 
-For help with common problems, see [ISSUES](https://github.com/bundler/bundler/blob/master/ISSUES.md).
+For help with common problems, see [ISSUES](https://github.com/caratrb/carat/blob/master/ISSUES.md).
 
 ### Other questions
 
-To see what has changed in recent versions of Bundler, see the [CHANGELOG](https://github.com/bundler/bundler/blob/master/CHANGELOG.md).
+To see what has changed in recent versions of Bundler, see the [CHANGELOG](https://github.com/caratrb/carat/blob/master/CHANGELOG.md).
 
 Feel free to chat with the Bundler core team (and many other users) on IRC in the  [#bundler](irc://irc.freenode.net/bundler) channel on Freenode, or via email on the [Bundler mailing list](http://groups.google.com/group/ruby-bundler).
 
 ### Contributing
 
-If you'd like to contribute to Bundler, that's awesome, and we <3 you. There's a guide to contributing to Bundler (both code and general help) over in [DEVELOPMENT](https://github.com/bundler/bundler/blob/master/DEVELOPMENT.md)
+If you'd like to contribute to Bundler, that's awesome, and we <3 you. There's a guide to contributing to Bundler (both code and general help) over in [DEVELOPMENT](https://github.com/caratrb/carat/blob/master/DEVELOPMENT.md)

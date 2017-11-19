@@ -1,4 +1,4 @@
-require 'bundler/cli/common'
+require 'carat/cli/common'
 
 module Bundler
   class CLI::Show
@@ -17,7 +17,7 @@ module Bundler
       end
 
       if gem_name
-        if gem_name == "bundler"
+        if gem_name == "carat"
           path = File.expand_path("../../../..", __FILE__)
         else
           spec = Bundler::CLI::Common.select_spec(gem_name, :regex_match)

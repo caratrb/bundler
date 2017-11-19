@@ -70,7 +70,7 @@ describe ".bundle/config" do
         ENV["BUNDLE_FOO"] = "env"
 
         bundle "config --global foo global"
-        expect(out).to match(/You have a bundler environment variable for foo set to "env"/)
+        expect(out).to match(/You have a carat environment variable for foo set to "env"/)
 
         run "puts Bundler.settings[:foo]"
         expect(out).to eq("env")

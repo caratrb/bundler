@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'bundler/settings'
+require 'carat/settings'
 
 describe Bundler::Settings do
   describe "#set_local" do

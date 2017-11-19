@@ -2,24 +2,24 @@ require 'spec_helper'
 
 describe "bundle install" do
 
-  describe "with bundler dependencies" do
+  describe "with carat dependencies" do
     before(:each) do
       build_repo2 do
         build_gem "rails", "3.0" do |s|
-          s.add_dependency "bundler", ">= 0.9.0.pre"
+          s.add_dependency "carat", ">= 0.9.0.pre"
         end
-        build_gem "bundler", "0.9.1"
-        build_gem "bundler", Bundler::VERSION
+        build_gem "carat", "0.9.1"
+        build_gem "carat", Bundler::VERSION
       end
     end
 
-    it "are forced to the current bundler version" do
+    it "are forced to the current carat version" do
       install_gemfile <<-G
         source "file://#{gem_repo2}"
         gem "rails", "3.0"
       G
 
-      should_be_installed "bundler #{Bundler::VERSION}"
+      should_be_installed "carat #{Bundler::VERSION}"
     end
 
     it "are not added if not already present" do
@@ -27,25 +27,25 @@ describe "bundle install" do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      should_not_be_installed "bundler #{Bundler::VERSION}"
+      should_not_be_installed "carat #{Bundler::VERSION}"
     end
 
     it "causes a conflict if explicitly requesting a different version" do
       install_gemfile <<-G
         source "file://#{gem_repo2}"
         gem "rails", "3.0"
-        gem "bundler", "0.9.2"
+        gem "carat", "0.9.2"
       G
 
       nice_error = <<-E.strip.gsub(/^ {8}/, '')
         Fetching source index from file:#{gem_repo2}/
         Resolving dependencies...
-        Bundler could not find compatible versions for gem "bundler":
+        Bundler could not find compatible versions for gem "carat":
           In Gemfile:
-            bundler (= 0.9.2) ruby
+            carat (= 0.9.2) ruby
 
           Current Bundler version:
-            bundler (#{Bundler::VERSION})
+            carat (#{Bundler::VERSION})
         E
       expect(out).to include(nice_error)
     end
@@ -68,23 +68,23 @@ describe "bundle install" do
       should_be_installed "multiple_versioned_deps 1.0.0"
     end
 
-    it "includes bundler in the bundle when it's a child dependency" do
+    it "includes carat in the bundle when it's a child dependency" do
       install_gemfile <<-G
         source "file://#{gem_repo2}"
         gem "rails", "3.0"
       G
 
-      run "begin; gem 'bundler'; puts 'WIN'; rescue Gem::LoadError; puts 'FAIL'; end"
+      run "begin; gem 'carat'; puts 'WIN'; rescue Gem::LoadError; puts 'FAIL'; end"
       expect(out).to eq("WIN")
     end
 
-    it "allows gem 'bundler' when Bundler is not in the Gemfile or its dependencies" do
+    it "allows gem 'carat' when Bundler is not in the Gemfile or its dependencies" do
       install_gemfile <<-G
         source "file://#{gem_repo2}"
         gem "rack"
       G
 
-      run "begin; gem 'bundler'; puts 'WIN'; rescue Gem::LoadError => e; puts e.backtrace; end"
+      run "begin; gem 'carat'; puts 'WIN'; rescue Gem::LoadError => e; puts e.backtrace; end"
       expect(out).to eq("WIN")
     end
 
@@ -129,13 +129,13 @@ describe "bundle install" do
       expect(out).to eq(nice_error)
     end
 
-    it "can install dependencies with newer bundler version" do
+    it "can install dependencies with newer carat version" do
       install_gemfile <<-G
         source "file://#{gem_repo2}"
         gem "rails", "3.0"
       G
 
-      simulate_bundler_version "10.0.0"
+      simulate_carat_version "10.0.0"
       #simulate_new_machine
 
       bundle "check"

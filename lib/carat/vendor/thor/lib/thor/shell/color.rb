@@ -1,4 +1,4 @@
-require "bundler/vendor/thor/lib/thor/shell/basic"
+require "carat/vendor/thor/lib/thor/shell/basic"
 
 class Bundler::Thor
   module Shell

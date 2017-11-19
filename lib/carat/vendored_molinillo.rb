@@ -1,2 +1,2 @@
 module Bundler; end
-require 'bundler/vendor/molinillo/lib/molinillo'
+require 'carat/vendor/molinillo/lib/molinillo'

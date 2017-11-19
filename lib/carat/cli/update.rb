@@ -24,7 +24,7 @@ module Bundler
         names = Bundler.locked_gems.specs.map{ |s| s.name }
         gems.each do |g|
           next if names.include?(g)
-          require "bundler/cli/common"
+          require "carat/cli/common"
           raise GemNotFound, Bundler::CLI::Common.gem_not_found_message(g, names)
         end
 
@@ -52,7 +52,7 @@ module Bundler
       Bundler.load.cache if Bundler.app_cache.exist?
 
       if Bundler.settings[:clean] && Bundler.settings[:path]
-        require "bundler/cli/clean"
+        require "carat/cli/clean"
         Bundler::CLI::Clean.new(options).run
       end
 
@@ -64,7 +64,7 @@ module Bundler
 
     def without_groups_messages
       if Bundler.settings.without.any?
-        require "bundler/cli/common"
+        require "carat/cli/common"
         Bundler.ui.confirm Bundler::CLI::Common.without_groups_message
       end
     end

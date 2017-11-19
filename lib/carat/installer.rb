@@ -1,6 +1,6 @@
 require 'erb'
 require 'rubygems/dependency_installer'
-require 'bundler/worker'
+require 'carat/worker'
 
 module Bundler
   class Installer < Environment
@@ -118,9 +118,9 @@ module Bundler
       Bundler.ui.debug "#{worker}:  #{spec.name} (#{spec.version}) from #{spec.loaded_from}"
 
       if Bundler.settings[:bin] && standalone
-        generate_standalone_bundler_executable_stubs(spec)
+        generate_standalone_carat_executable_stubs(spec)
       elsif Bundler.settings[:bin]
-        generate_bundler_executable_stubs(spec, :force => true)
+        generate_carat_executable_stubs(spec, :force => true)
       end
 
       post_install_message
@@ -145,7 +145,7 @@ module Bundler
       raise Bundler::InstallError, msg
     end
 
-    def generate_bundler_executable_stubs(spec, options = {})
+    def generate_carat_executable_stubs(spec, options = {})
       if options[:binstubs_cmd] && spec.executables.empty?
         options = {}
         spec.runtime_dependencies.each do |dep|
@@ -211,7 +211,7 @@ module Bundler
       end
     end
 
-    def generate_standalone_bundler_executable_stubs(spec)
+    def generate_standalone_carat_executable_stubs(spec)
       # double-assignment to avoid warnings about variables that will be used by ERB
       bin_path = Bundler.bin_path
       template = File.read(File.expand_path('../templates/Executable.standalone', __FILE__))
@@ -229,8 +229,8 @@ module Bundler
 
     def generate_standalone(groups)
       standalone_path = Bundler.settings[:path]
-      bundler_path = File.join(standalone_path, "bundler")
-      FileUtils.mkdir_p(bundler_path)
+      carat_path = File.join(standalone_path, "carat")
+      FileUtils.mkdir_p(carat_path)
 
       paths = []
 
@@ -241,18 +241,18 @@ module Bundler
       end
 
       specs.each do |spec|
-        next if spec.name == "bundler"
+        next if spec.name == "carat"
         next if spec.require_paths.nil? # builtin gems
 
         spec.require_paths.each do |path|
           full_path = File.join(spec.full_gem_path, path)
-          gem_path = Pathname.new(full_path).relative_path_from(Bundler.root.join(bundler_path))
+          gem_path = Pathname.new(full_path).relative_path_from(Bundler.root.join(carat_path))
           paths << gem_path.to_s.sub("#{Bundler.ruby_version.engine}/#{RbConfig::CONFIG['ruby_version']}", '#{ruby_engine}/#{ruby_version}')
         end
       end
 
 
-      File.open File.join(bundler_path, "setup.rb"), "w" do |file|
+      File.open File.join(carat_path, "setup.rb"), "w" do |file|
         file.puts "require 'rbconfig'"
         file.puts "# ruby 1.8.7 doesn't define RUBY_ENGINE"
         file.puts "ruby_engine = defined?(RUBY_ENGINE) ? RUBY_ENGINE : 'ruby'"

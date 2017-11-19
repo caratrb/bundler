@@ -9,8 +9,8 @@ describe "bundle open" do
   end
 
   it "opens the gem with BUNDLER_EDITOR as highest priority" do
-    bundle "open rails", :env => {"EDITOR" => "echo editor", "VISUAL" => "echo visual", "BUNDLER_EDITOR" => "echo bundler_editor"}
-    expect(out).to eq("bundler_editor #{default_bundle_path('gems', 'rails-2.3.2')}")
+    bundle "open rails", :env => {"EDITOR" => "echo editor", "VISUAL" => "echo visual", "BUNDLER_EDITOR" => "echo carat_editor"}
+    expect(out).to eq("carat_editor #{default_bundle_path('gems', 'rails-2.3.2')}")
   end
 
   it "opens the gem with VISUAL as 2nd highest priority" do
@@ -43,7 +43,7 @@ describe "bundle open" do
     G
 
     bundle "open foo", :env => {"EDITOR" => "echo editor", "VISUAL" => "", "BUNDLER_EDITOR" => ""}
-    expect(out).to match("editor #{default_bundle_path.join("bundler/gems/foo-1.0-#{ref}")}")
+    expect(out).to match("editor #{default_bundle_path.join("carat/gems/foo-1.0-#{ref}")}")
   end
 
   it "suggests alternatives for similar-sounding gems" do
@@ -52,18 +52,18 @@ describe "bundle open" do
   end
 
   it "opens the gem with short words" do
-    bundle "open rec" , :env => {"EDITOR" => "echo editor", "VISUAL" => "echo visual", "BUNDLER_EDITOR" => "echo bundler_editor"}
+    bundle "open rec" , :env => {"EDITOR" => "echo editor", "VISUAL" => "echo visual", "BUNDLER_EDITOR" => "echo carat_editor"}
 
-    expect(out).to eq("bundler_editor #{default_bundle_path('gems', 'activerecord-2.3.2')}")
+    expect(out).to eq("carat_editor #{default_bundle_path('gems', 'activerecord-2.3.2')}")
   end
 
   it "select the gem from many match gems" do
-    env = {"EDITOR" => "echo editor", "VISUAL" => "echo visual", "BUNDLER_EDITOR" => "echo bundler_editor"}
+    env = {"EDITOR" => "echo editor", "VISUAL" => "echo visual", "BUNDLER_EDITOR" => "echo carat_editor"}
     bundle "open active" , :env => env do |input|
       input.puts '2'
     end
 
-    expect(out).to match(/bundler_editor #{default_bundle_path('gems', 'activerecord-2.3.2')}\z/)
+    expect(out).to match(/carat_editor #{default_bundle_path('gems', 'activerecord-2.3.2')}\z/)
   end
 
   it "performs an automatic bundle install" do

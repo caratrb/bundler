@@ -26,7 +26,7 @@ module Bundler
 
           You can override any of these defaults by setting the variables shown below.
 
-          N.B. bundle_roles must be defined before you require 'bundler/#{context_name}' \
+          N.B. bundle_roles must be defined before you require 'carat/#{context_name}' \
           in your deploy.rb file.
 
             set :bundle_gemfile,  "Gemfile"

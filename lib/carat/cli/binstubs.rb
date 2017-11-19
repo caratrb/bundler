@@ -1,4 +1,4 @@
-require "bundler/cli/common"
+require "carat/cli/common"
 
 module Bundler
   class CLI::Binstubs
@@ -26,10 +26,10 @@ module Bundler
             gem_name, Bundler.definition.specs)
         end
 
-        if spec.name == "bundler"
+        if spec.name == "carat"
           Bundler.ui.warn "Sorry, Bundler can only be run via Rubygems."
         else
-          installer.generate_bundler_executable_stubs(spec, :force => options[:force], :binstubs_cmd => true)
+          installer.generate_carat_executable_stubs(spec, :force => options[:force], :binstubs_cmd => true)
         end
       end
     end

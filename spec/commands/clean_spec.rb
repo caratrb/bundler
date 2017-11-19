@@ -142,7 +142,7 @@ describe "bundle clean" do
     bundle :clean
 
     digest = Digest::SHA1.hexdigest(git_path.to_s)
-    expect(vendored_gems("cache/bundler/git/foo-1.0-#{digest}")).to exist
+    expect(vendored_gems("cache/carat/git/foo-1.0-#{digest}")).to exist
   end
 
   it "removes unused git gems" do
@@ -173,9 +173,9 @@ describe "bundle clean" do
     expect(out).to eq("Removing foo (#{revision[0..11]})")
 
     expect(vendored_gems("gems/rack-1.0.0")).to exist
-    expect(vendored_gems("bundler/gems/foo-#{revision[0..11]}")).not_to exist
+    expect(vendored_gems("carat/gems/foo-#{revision[0..11]}")).not_to exist
     digest = Digest::SHA1.hexdigest(git_path.to_s)
-    expect(vendored_gems("cache/bundler/git/foo-#{digest}")).not_to exist
+    expect(vendored_gems("cache/carat/git/foo-#{digest}")).not_to exist
 
     expect(vendored_gems("specifications/rack-1.0.0.gemspec")).to exist
 
@@ -206,8 +206,8 @@ describe "bundle clean" do
     expect(out).to eq("Removing foo-bar (#{revision[0..11]})")
 
     expect(vendored_gems("gems/rack-1.0.0")).to exist
-    expect(vendored_gems("bundler/gems/foo-bar-#{revision[0..11]}")).not_to exist
-    expect(vendored_gems("bundler/gems/foo-bar-#{revision2[0..11]}")).to exist
+    expect(vendored_gems("carat/gems/foo-bar-#{revision[0..11]}")).not_to exist
+    expect(vendored_gems("carat/gems/foo-bar-#{revision2[0..11]}")).to exist
 
     expect(vendored_gems("specifications/rack-1.0.0.gemspec")).to exist
 
@@ -229,7 +229,7 @@ describe "bundle clean" do
     bundle :clean
     expect(out).to eq("")
 
-    expect(vendored_gems("bundler/gems/rails-#{revision[0..11]}")).to exist
+    expect(vendored_gems("carat/gems/rails-#{revision[0..11]}")).to exist
   end
 
   it "does not remove git sources that are in without groups" do
@@ -252,9 +252,9 @@ describe "bundle clean" do
     bundle :clean
 
     expect(out).to eq("")
-    expect(vendored_gems("bundler/gems/foo-#{revision[0..11]}")).to exist
+    expect(vendored_gems("carat/gems/foo-#{revision[0..11]}")).to exist
     digest = Digest::SHA1.hexdigest(git_path.to_s)
-    expect(vendored_gems("cache/bundler/git/foo-#{digest}")).to_not exist
+    expect(vendored_gems("cache/carat/git/foo-#{digest}")).to_not exist
   end
 
   it "does not blow up when using without groups" do
@@ -484,7 +484,7 @@ describe "bundle clean" do
 
     expect(out).not_to include("Removing foo (1.0 #{revision[0..6]})")
 
-    expect(vendored_gems("bundler/gems/foo-1.0-#{revision[0..6]}")).to exist
+    expect(vendored_gems("carat/gems/foo-1.0-#{revision[0..6]}")).to exist
   end
 
   it "when using --force on system gems, it doesn't remove binaries" do
