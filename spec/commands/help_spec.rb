@@ -29,7 +29,7 @@ describe "carat help" do
     kill_path!
 
     carat "help install", :expect_err => true
-    expect(out).to match(/BUNDLE-INSTALL/)
+    expect(out).to match(/CARAT-INSTALL/)
   end
 
   it "still outputs the old help for commands that do not have man pages yet" do
