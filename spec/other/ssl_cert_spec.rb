@@ -1,19 +1,14 @@
-require 'spec_helper'
-require 'bundler/ssl_certs/certificate_manager'
+# frozen_string_literal: true
 
-describe "SSL Certificates", :rubygems_master do
-  it "are up to date with Rubygems" do
-    rubygems = File.expand_path("../../../tmp/rubygems", __FILE__)
-    manager = Bundler::SSLCerts::CertificateManager.new(rubygems)
-    expect(manager).to be_up_to_date
-  end
+require "bundler/ssl_certs/certificate_manager"
 
-  hosts = %w(
-    d2chzxaqi4y7f8.cloudfront.net
+RSpec.describe "SSL Certificates", :rubygems_master do
+  hosts = %w[
     rubygems.org
-    s3.amazonaws.com
+    index.rubygems.org
+    rubygems.global.ssl.fastly.net
     staging.rubygems.org
-  )
+  ]
 
   hosts.each do |host|
     it "can securely connect to #{host}", :realworld do
