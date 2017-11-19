@@ -2,9 +2,9 @@
 
 Signal.trap("INT") { exit 1 }
 
-require 'bundler/ruby_version'
-require 'bundler/ruby_dsl'
-require 'bundler/shared_helpers'
+require 'carat/ruby_version'
+require 'carat/ruby_dsl'
+require 'carat/shared_helpers'
 
 module Carat
   class GemfileError < RuntimeError; end
