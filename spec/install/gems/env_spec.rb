@@ -6,7 +6,7 @@ describe "bundle install with ENV conditionals" do
       gemfile <<-G
         source "file://#{gem_repo1}"
 
-        env "BUNDLER_TEST" do
+        env "CARAT_TEST" do
           gem "rack"
         end
       G
@@ -18,7 +18,7 @@ describe "bundle install with ENV conditionals" do
     end
 
     it "includes the gems when the ENV variable is set" do
-      ENV['BUNDLER_TEST'] = '1'
+      ENV['CARAT_TEST'] = '1'
       bundle :install
       should_be_installed "rack 1.0"
     end
@@ -29,7 +29,7 @@ describe "bundle install with ENV conditionals" do
       gemfile <<-G
         source "file://#{gem_repo1}"
 
-        env :BUNDLER_TEST do
+        env :CARAT_TEST do
           gem "rack"
         end
       G
@@ -41,7 +41,7 @@ describe "bundle install with ENV conditionals" do
     end
 
     it "includes the gems when the ENV variable is set" do
-      ENV['BUNDLER_TEST'] = '1'
+      ENV['CARAT_TEST'] = '1'
       bundle :install
       should_be_installed "rack 1.0"
     end
@@ -52,7 +52,7 @@ describe "bundle install with ENV conditionals" do
       gemfile <<-G
         source "file://#{gem_repo1}"
 
-        env "BUNDLER_TEST" => "foo" do
+        env "CARAT_TEST" => "foo" do
           gem "rack"
         end
       G
@@ -64,13 +64,13 @@ describe "bundle install with ENV conditionals" do
     end
 
     it "excludes the gems when the ENV variable is set but does not match the condition" do
-      ENV['BUNDLER_TEST'] = '1'
+      ENV['CARAT_TEST'] = '1'
       bundle :install
       should_not_be_installed "rack"
     end
 
     it "includes the gems when the ENV variable is set and matches the condition" do
-      ENV['BUNDLER_TEST'] = 'foo'
+      ENV['CARAT_TEST'] = 'foo'
       bundle :install
       should_be_installed "rack 1.0"
     end
@@ -81,7 +81,7 @@ describe "bundle install with ENV conditionals" do
       gemfile <<-G
         source "file://#{gem_repo1}"
 
-        env "BUNDLER_TEST" => /foo/ do
+        env "CARAT_TEST" => /foo/ do
           gem "rack"
         end
       G
@@ -93,13 +93,13 @@ describe "bundle install with ENV conditionals" do
     end
 
     it "excludes the gems when the ENV variable is set but does not match the condition" do
-      ENV['BUNDLER_TEST'] = 'fo'
+      ENV['CARAT_TEST'] = 'fo'
       bundle :install
       should_not_be_installed "rack"
     end
 
     it "includes the gems when the ENV variable is set and matches the condition" do
-      ENV['BUNDLER_TEST'] = 'foobar'
+      ENV['CARAT_TEST'] = 'foobar'
       bundle :install
       should_be_installed "rack 1.0"
     end

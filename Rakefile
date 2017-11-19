@@ -4,7 +4,7 @@ require 'shellwords'
 require 'benchmark'
 
 RUBYGEMS_REPO = File.expand_path("tmp/rubygems")
-BUNDLER_SPEC = Gem::Specification.load("bundler.gemspec")
+CARAT_SPEC = Gem::Specification.load("bundler.gemspec")
 
 def safe_task(&block)
   yield
@@ -87,7 +87,7 @@ end
 namespace :spec do
   desc "Ensure spec dependencies are installed"
   task :deps do
-    deps = Hash[BUNDLER_SPEC.development_dependencies.map do |d|
+    deps = Hash[CARAT_SPEC.development_dependencies.map do |d|
       [d.name, d.requirement.to_s]
     end]
 
@@ -124,7 +124,7 @@ namespace :spec do
 end
 
 begin
-  rspec = BUNDLER_SPEC.development_dependencies.find{|d| d.name == "rspec" }
+  rspec = CARAT_SPEC.development_dependencies.find{|d| d.name == "rspec" }
   gem 'rspec', rspec.requirement.to_s
   require 'rspec/core/rake_task'
 
@@ -141,14 +141,14 @@ begin
     task :realworld => ["set_realworld", "spec"]
 
     task :set_realworld do
-      ENV['BUNDLER_REALWORLD_TESTS'] = '1'
+      ENV['CARAT_REALWORLD_TESTS'] = '1'
     end
 
     desc "Run the spec suite with the sudo tests"
     task :sudo => ["set_sudo", "spec", "clean_sudo"]
 
     task :set_sudo do
-      ENV['BUNDLER_SUDO_TESTS'] = '1'
+      ENV['CARAT_SUDO_TESTS'] = '1'
     end
 
     task :clean_sudo do

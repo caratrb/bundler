@@ -54,13 +54,13 @@ RSpec.configure do |config|
   config.include Spec::Sudo
   config.include Spec::Permissions
 
-  if ENV['BUNDLER_SUDO_TESTS'] && Spec::Sudo.present?
+  if ENV['CARAT_SUDO_TESTS'] && Spec::Sudo.present?
     config.filter_run :sudo => true
   else
     config.filter_run_excluding :sudo => true
   end
 
-  if ENV['BUNDLER_REALWORLD_TESTS']
+  if ENV['CARAT_REALWORLD_TESTS']
     config.filter_run :realworld => true
   else
     config.filter_run_excluding :realworld => true
@@ -107,8 +107,8 @@ RSpec.configure do |config|
     ENV['BUNDLE_GEMFILE']        = nil
     ENV['BUNDLE_FROZEN']         = nil
     ENV['BUNDLE_APP_CONFIG']     = nil
-    ENV['BUNDLER_TEST']          = nil
-    ENV['BUNDLER_SPEC_PLATFORM'] = nil
-    ENV['BUNDLER_SPEC_VERSION']  = nil
+    ENV['CARAT_TEST']          = nil
+    ENV['CARAT_SPEC_PLATFORM'] = nil
+    ENV['CARAT_SPEC_VERSION']  = nil
   end
 end

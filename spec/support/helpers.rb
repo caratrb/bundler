@@ -4,7 +4,7 @@ module Spec
       @in_p, @out_p, @err_p = nil, nil, nil
       Dir["#{tmp}/{gems/*,*}"].each do |dir|
         next if %(base remote1 gems rubygems).include?(File.basename(dir))
-        if ENV['BUNDLER_SUDO_TESTS']
+        if ENV['CARAT_SUDO_TESTS']
           `sudo rm -rf #{dir}`
         else
           FileUtils.rm_rf(dir)
@@ -297,28 +297,28 @@ module Spec
     end
 
     def simulate_platform(platform)
-      old, ENV['BUNDLER_SPEC_PLATFORM'] = ENV['BUNDLER_SPEC_PLATFORM'], platform.to_s
+      old, ENV['CARAT_SPEC_PLATFORM'] = ENV['CARAT_SPEC_PLATFORM'], platform.to_s
       yield if block_given?
     ensure
-      ENV['BUNDLER_SPEC_PLATFORM'] = old if block_given?
+      ENV['CARAT_SPEC_PLATFORM'] = old if block_given?
     end
 
     def simulate_ruby_engine(engine, version = "1.6.0")
       return if engine == local_ruby_engine
 
-      old, ENV['BUNDLER_SPEC_RUBY_ENGINE'] = ENV['BUNDLER_SPEC_RUBY_ENGINE'], engine
-      old_version, ENV['BUNDLER_SPEC_RUBY_ENGINE_VERSION'] = ENV['BUNDLER_SPEC_RUBY_ENGINE_VERSION'], version
+      old, ENV['CARAT_SPEC_RUBY_ENGINE'] = ENV['CARAT_SPEC_RUBY_ENGINE'], engine
+      old_version, ENV['CARAT_SPEC_RUBY_ENGINE_VERSION'] = ENV['CARAT_SPEC_RUBY_ENGINE_VERSION'], version
       yield if block_given?
     ensure
-      ENV['BUNDLER_SPEC_RUBY_ENGINE'] = old if block_given?
-      ENV['BUNDLER_SPEC_RUBY_ENGINE_VERSION'] = old_version if block_given?
+      ENV['CARAT_SPEC_RUBY_ENGINE'] = old if block_given?
+      ENV['CARAT_SPEC_RUBY_ENGINE_VERSION'] = old_version if block_given?
     end
 
     def simulate_carat_version(version)
-      old, ENV['BUNDLER_SPEC_VERSION'] = ENV['BUNDLER_SPEC_VERSION'], version.to_s
+      old, ENV['CARAT_SPEC_VERSION'] = ENV['CARAT_SPEC_VERSION'], version.to_s
       yield if block_given?
     ensure
-      ENV['BUNDLER_SPEC_VERSION'] = old if block_given?
+      ENV['CARAT_SPEC_VERSION'] = old if block_given?
     end
 
     def revision_for(path)

@@ -3,7 +3,7 @@ require 'carat/shared_helpers'
 if Bundler::SharedHelpers.in_bundle?
   require 'carat'
 
-  if STDOUT.tty? || ENV['BUNDLER_FORCE_TTY']
+  if STDOUT.tty? || ENV['CARAT_FORCE_TTY']
     begin
       Bundler.setup
     rescue Bundler::BundlerError => e
