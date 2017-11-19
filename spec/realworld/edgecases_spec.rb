@@ -74,14 +74,14 @@ describe "real world edgecases", :realworld => true do
     gemfile <<-G
       source :rubygems
 
-      gem 'activerecord',  :github => 'carlhuda/rails-carat-test', :branch => 'master'
-      gem 'activesupport', :github => 'carlhuda/rails-carat-test', :branch => 'master'
-      gem 'actionpack',    :github => 'carlhuda/rails-carat-test', :branch => 'master'
+      gem 'activerecord',  :github => 'carlhuda/rails-bundler-test', :branch => 'master'
+      gem 'activesupport', :github => 'carlhuda/rails-bundler-test', :branch => 'master'
+      gem 'actionpack',    :github => 'carlhuda/rails-bundler-test', :branch => 'master'
     G
 
     lockfile <<-L
       GIT
-        remote: git://github.com/carlhuda/rails-carat-test.git
+        remote: git://github.com/carlhuda/rails-bundler-test.git
         revision: 369e28a87419565f1940815219ea9200474589d4
         branch: master
         specs:
@@ -108,7 +108,7 @@ describe "real world edgecases", :realworld => true do
             multi_json (~> 1.0)
 
       GIT
-        remote: git://github.com/carlhuda/rails-carat-test.git
+        remote: git://github.com/carlhuda/rails-bundler-test.git
         revision: 369e28a87419565f1940815219ea9200474589d4
         branch: master
         specs:
@@ -135,7 +135,7 @@ describe "real world edgecases", :realworld => true do
             multi_json (~> 1.0)
 
       GIT
-        remote: git://github.com/carlhuda/rails-carat-test.git
+        remote: git://github.com/carlhuda/rails-bundler-test.git
         revision: 369e28a87419565f1940815219ea9200474589d4
         branch: master
         specs:
