@@ -1,6 +1,6 @@
-## Bundler 0.9 to 1.0 and above
+## Carat 0.9 to 1.0 and above
 
-Upgrading from Bundler 0.9 to 1.0 is relatively painless. The
+Upgrading from Carat 0.9 to 1.0 is relatively painless. The
 Gemfile API is the same, so your old Gemfiles should continue
 to work.
 
@@ -19,16 +19,16 @@ Running `bundle install` no longer updates the versions of your gems.
 If you need to update just one gem, run `bundle update GEMNAME`. To
 update all gems to the newest versions possible, run `bundle update`.
 
-Bundler now supports multiple platforms, using a block syntax to
+Carat now supports multiple platforms, using a block syntax to
 declare platform-specific gems:
 
     platform :jruby do
       gem "jruby-maven-plugins"
     end
 
-Deploying using Bundler is even easier than it was before, as Bundler
+Deploying using Carat is even easier than it was before, as Carat
 now includes a Capistrano recipe. Simply add this line to the top of
-your deploy.rb file to run Bundler automatically as part of deploying:
+your deploy.rb file to run Carat automatically as part of deploying:
 
     require 'bundler/capistrano'
 
@@ -36,41 +36,41 @@ For more details on deploying using bundler, see the documentation
 for the bundler cap task, and the [documentation on deploying](http://bundler.io/deploying.html).
 
 
-## Bundler 0.8 to 0.9 and above
+## Carat 0.8 to 0.9 and above
 
-Upgrading to Bundler 0.9 from Bundler 0.8 requires upgrading several
+Upgrading to Carat 0.9 from Carat 0.8 requires upgrading several
 API calls in your Gemfile, and some workarounds if you are using Rails 2.3.
 
 ### Gemfile Removals
 
-Bundler 0.9 removes the following Bundler 0.8 Gemfile APIs:
+Carat 0.9 removes the following Carat 0.8 Gemfile APIs:
 
 1. `disable_system_gems`: This is now the default (and only) option
-   for bundler. Bundler uses the system gems you have specified
+   for bundler. Carat uses the system gems you have specified
    in the Gemfile, and only the system gems you have specified
    (and their dependencies)
 2. `disable_rubygems`: This is no longer supported. We are looking
    into ways to get the fastest performance out of each supported
    scenario, and we will make speed the default where possible.
-3. `clear_sources`: Bundler now defaults to an empty source
+3. `clear_sources`: Carat now defaults to an empty source
    list. If you want to include Rubygems, you can add the source
    via source "http://gemcutter.org". If you use bundle init, this
    source will be automatically added for you in the generated
    Gemfile
 4. `bundle_path`: You can specify this setting when installing
-   via `bundle install /path/to/bundle`. Bundler will remember
+   via `bundle install /path/to/bundle`. Carat will remember
    where you installed the dependencies to on a particular
    machine for future installs, loads, setups, etc.
-5. `bin_path`: Bundler no longer generates executables in the root
+5. `bin_path`: Carat no longer generates executables in the root
    of your app. You should use `bundle exec` to execute executables
    in the current context.
 
 ### Gemfile Changes
 
-Bundler 0.9 changes the following Bundler 0.8 Gemfile APIs:
+Carat 0.9 changes the following Carat 0.8 Gemfile APIs:
 
-1. Bundler 0.8 supported :only and :except as APIs for describing
-   groups of gems. Bundler 0.9 supports a single `group` method,
+1. Carat 0.8 supported :only and :except as APIs for describing
+   groups of gems. Carat 0.9 supports a single `group` method,
    which you can use to group gems together. See the above "Group"
    section for more information.
 
@@ -89,15 +89,15 @@ Bundler 0.9 changes the following Bundler 0.8 Gemfile APIs:
 
 ### API Changes
 
-1. `Bundler.require_env(:environment)` becomes
-   `Bundler.require(:multiple, :groups)`. You must
+1. `Carat.require_env(:environment)` becomes
+   `Carat.require(:multiple, :groups)`. You must
    now specify the default group (the default group is the
    group made up of the gems not assigned to any group)
-   explicitly. So `Bundler.require_env(:test)` becomes
-   `Bundler.require(:default, :test)`
+   explicitly. So `Carat.require_env(:test)` becomes
+   `Carat.require(:default, :test)`
 
 2. `require 'vendor/gems/environment'`: In unlocked
    mode, where using system gems, this becomes
-   `Bundler.setup(:multiple, :groups)`. If you don't
+   `Carat.setup(:multiple, :groups)`. If you don't
    specify any groups, this puts all groups on the load
    path. In locked mode, it becomes `require '.bundle/environment'`

@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class AnonymizableURI
     attr_reader :original_uri,
                 :without_credentials

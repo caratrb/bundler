@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   # used for Creating Specifications from the Gemcutter Endpoint
   class EndpointSpecification < Gem::Specification
     include MatchPlatform

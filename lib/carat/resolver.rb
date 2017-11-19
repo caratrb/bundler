@@ -6,7 +6,7 @@ require 'set'
 # The actual implementation of the algorithm is not as good as it could be yet, but that
 # can come later.
 
-module Bundler
+module Carat
   class Resolver
 
     require 'carat/vendored_molinillo'
@@ -22,7 +22,7 @@ module Bundler
 
       def message
         conflicts.values.flatten.reduce('') do |o, conflict|
-          o << %(Bundler could not find compatible versions for gem "#{conflict.requirement.name}":\n)
+          o << %(Carat could not find compatible versions for gem "#{conflict.requirement.name}":\n)
           if conflict.locked_requirement
             o << %(  In snapshot (Gemfile.lock):\n)
             o << %(    #{clean_req conflict.locked_requirement}\n)
@@ -42,14 +42,14 @@ module Bundler
           end.join("\n")
 
           if conflict.requirement.name == 'carat'
-            o << %(\n  Current Bundler version:\n    carat (#{Bundler::VERSION}))
-            other_carat_required = !conflict.requirement.requirement.satisfied_by?(Gem::Version.new Bundler::VERSION)
+            o << %(\n  Current Carat version:\n    carat (#{Carat::VERSION}))
+            other_carat_required = !conflict.requirement.requirement.satisfied_by?(Gem::Version.new Carat::VERSION)
           end
 
           if conflict.requirement.name == "carat" && other_carat_required
             o << "\n"
-            o << "This Gemfile requires a different version of Bundler.\n"
-            o << "Perhaps you need to update Bundler by running `gem install carat`?\n"
+            o << "This Gemfile requires a different version of Carat.\n"
+            o << "Perhaps you need to update Carat by running `gem install carat`?\n"
           end
           if conflict.locked_requirement
             o << "\n"
@@ -68,7 +68,7 @@ module Bundler
       end
     end
 
-    ALL = Bundler::Dependency::PLATFORM_MAP.values.uniq.freeze
+    ALL = Carat::Dependency::PLATFORM_MAP.values.uniq.freeze
 
     class SpecGroup < Array
       include GemHelpers
@@ -228,15 +228,15 @@ module Bundler
     end
 
     def before_resolution
-      Bundler.ui.info 'Resolving dependencies...', false
+      Carat.ui.info 'Resolving dependencies...', false
     end
 
     def after_resolution
-      Bundler.ui.info ''
+      Carat.ui.info ''
     end
 
     def indicate_progress
-      Bundler.ui.info '.', false
+      Carat.ui.info '.', false
     end
 
     private

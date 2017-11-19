@@ -2,35 +2,35 @@
 require "cgi"
 require "carat/vendored_thor"
 
-module Bundler
+module Carat
   def self.with_friendly_errors
     yield
-  rescue Bundler::BundlerError => e
-    Bundler.ui.error e.message, :wrap => true
-    Bundler.ui.trace e
+  rescue Carat::CaratError => e
+    Carat.ui.error e.message, :wrap => true
+    Carat.ui.trace e
     exit e.status_code
   rescue Thor::AmbiguousTaskError => e
-    Bundler.ui.error e.message
+    Carat.ui.error e.message
     exit 15
   rescue Thor::UndefinedTaskError => e
-    Bundler.ui.error e.message
+    Carat.ui.error e.message
     exit 15
   rescue Thor::Error => e
-    Bundler.ui.error e.message
+    Carat.ui.error e.message
     exit 1
   rescue LoadError => e
     raise e unless e.message =~ /cannot load such file -- openssl|openssl.so|libcrypto.so/
-    Bundler.ui.error "\nCould not load OpenSSL."
-    Bundler.ui.warn <<-WARN, :wrap => true
+    Carat.ui.error "\nCould not load OpenSSL."
+    Carat.ui.warn <<-WARN, :wrap => true
       You must recompile Ruby with OpenSSL support or change the sources in your \
       Gemfile from 'https' to 'http'. Instructions for compiling with OpenSSL \
       using RVM are available at http://rvm.io/packages/openssl.
     WARN
-    Bundler.ui.trace e
+    Carat.ui.trace e
     exit 1
   rescue Interrupt => e
-    Bundler.ui.error "\nQuitting..."
-    Bundler.ui.trace e
+    Carat.ui.error "\nQuitting..."
+    Carat.ui.trace e
     exit 1
   rescue SystemExit => e
     exit e.status
@@ -40,7 +40,7 @@ module Bundler
   end
 
   def self.request_issue_report_for(e)
-    Bundler.ui.info <<-EOS.gsub(/^ {6}/, '')
+    Carat.ui.info <<-EOS.gsub(/^ {6}/, '')
       #{'--- ERROR REPORT TEMPLATE -------------------------------------------------------'}
       - What did you do?
 
@@ -48,7 +48,7 @@ module Bundler
 
       - What did you expect to happen?
 
-        I expected Bundler to...
+        I expected Carat to...
 
       - What happened instead?
 
@@ -60,14 +60,14 @@ module Bundler
           #{e.class}: #{e.message}
             #{e.backtrace.join("\n            ")}
 
-      #{Bundler::Env.new.report(:print_gemfile => false).gsub(/\n/, "\n      ").strip}
+      #{Carat::Env.new.report(:print_gemfile => false).gsub(/\n/, "\n      ").strip}
       #{'--- TEMPLATE END ----------------------------------------------------------------'}
 
     EOS
 
-    Bundler.ui.error "Unfortunately, an unexpected error occurred, and Bundler cannot continue."
+    Carat.ui.error "Unfortunately, an unexpected error occurred, and Carat cannot continue."
 
-    Bundler.ui.warn <<-EOS.gsub(/^ {6}/, '')
+    Carat.ui.warn <<-EOS.gsub(/^ {6}/, '')
 
       First, try this link to see if there are any existing issue reports for this error:
       #{issues_url(e)}

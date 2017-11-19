@@ -42,7 +42,7 @@ describe "installing a gem with C extensions" do
 
     expect(out).not_to include("extconf.rb failed")
 
-    run "Bundler.require; puts CExtension.new.its_true"
+    run "Carat.require; puts CExtension.new.its_true"
     expect(out).to eq("true")
   end
 end

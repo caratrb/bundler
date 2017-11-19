@@ -1,4 +1,4 @@
-module Bundler::Molinillo
+module Carat::Molinillo
   class Resolver
     # A specific resolution from a given {Resolver}
     class Resolution

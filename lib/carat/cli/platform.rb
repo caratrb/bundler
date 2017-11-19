@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class CLI::Platform
     attr_reader :options
     def initialize(options)
@@ -6,9 +6,9 @@ module Bundler
     end
 
     def run
-      platforms, ruby_version = Bundler.ui.silence do
-        [ Bundler.definition.platforms.map {|p| "* #{p}" },
-          Bundler.definition.ruby_version ]
+      platforms, ruby_version = Carat.ui.silence do
+        [ Carat.definition.platforms.map {|p| "* #{p}" },
+          Carat.definition.ruby_version ]
       end
       output = []
 
@@ -26,7 +26,7 @@ module Bundler
           output << "Your Gemfile specifies a Ruby version requirement:\n* #{ruby_version}"
 
           begin
-            Bundler.definition.validate_ruby!
+            Carat.definition.validate_ruby!
             output << "Your current platform satisfies the Ruby version requirement."
           rescue RubyVersionMismatch => e
             output << e.message
@@ -36,7 +36,7 @@ module Bundler
         end
       end
 
-      Bundler.ui.info output.join("\n\n")
+      Carat.ui.info output.join("\n\n")
     end
 
   end

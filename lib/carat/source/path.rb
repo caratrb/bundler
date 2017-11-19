@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class Source
 
     class Path < Source
@@ -76,8 +76,8 @@ module Bundler
 
       def cache(spec, custom_path = nil)
         app_cache_path = app_cache_path(custom_path)
-        return unless Bundler.settings[:cache_all]
-        return if expand(@original_path).to_s.index(Bundler.root.to_s) == 0
+        return unless Carat.settings[:cache_all]
+        return if expand(@original_path).to_s.index(Carat.root.to_s) == 0
 
         unless @original_path.exist?
           raise GemNotFound, "Can't cache gem #{version_message(spec)} because #{to_s} is missing!"
@@ -111,15 +111,15 @@ module Bundler
       end
 
       def expand(somepath)
-        somepath.expand_path(Bundler.root)
+        somepath.expand_path(Carat.root)
       rescue ArgumentError => e
-        Bundler.ui.debug(e)
+        Carat.ui.debug(e)
         raise PathError, "There was an error while trying to use the path " \
           "`#{somepath}`.\nThe error message was: #{e.message}."
       end
 
       def app_cache_path(custom_path = nil)
-        @app_cache_path ||= Bundler.app_cache(custom_path).join(app_cache_dirname)
+        @app_cache_path ||= Carat.app_cache(custom_path).join(app_cache_dirname)
       end
 
       def has_app_cache?
@@ -132,7 +132,7 @@ module Bundler
         if File.directory?(expanded_path)
           # We sort depth-first since `<<` will override the earlier-found specs
           Dir["#{expanded_path}/#{@glob}"].sort_by { |p| -p.split(File::SEPARATOR).size }.each do |file|
-            spec = Bundler.load_gemspec(file)
+            spec = Carat.load_gemspec(file)
             if spec
               spec.loaded_from = file.to_s
               spec.source = self
@@ -166,8 +166,8 @@ module Bundler
       end
 
       def relative_path
-        if path.to_s.match(%r{^#{Regexp.escape Bundler.root.to_s}})
-          return path.relative_path_from(Bundler.root)
+        if path.to_s.match(%r{^#{Regexp.escape Carat.root.to_s}})
+          return path.relative_path_from(Carat.root)
         end
         path
       end
@@ -195,17 +195,17 @@ module Bundler
           run_hooks(:post_install, installer)
         end
       rescue Gem::InvalidSpecificationException => e
-        Bundler.ui.warn "\n#{spec.name} at #{spec.full_gem_path} did not have a valid gemspec.\n" \
+        Carat.ui.warn "\n#{spec.name} at #{spec.full_gem_path} did not have a valid gemspec.\n" \
                         "This prevents carat from installing bins or native extensions, but " \
                         "that may not affect its functionality."
 
         if !spec.extensions.empty? && !spec.email.empty?
-          Bundler.ui.warn "If you need to use this package without installing it from a gem " \
+          Carat.ui.warn "If you need to use this package without installing it from a gem " \
                           "repository, please contact #{spec.email} and ask them " \
                           "to modify their .gemspec so it can work with `gem build`."
         end
 
-        Bundler.ui.warn "The validation message from Rubygems was:\n  #{e.message}"
+        Carat.ui.warn "The validation message from Rubygems was:\n  #{e.message}"
       end
 
       def run_hooks(type, installer)

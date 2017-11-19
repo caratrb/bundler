@@ -1,9 +1,9 @@
 require "carat/vendor/thor/lib/thor/shell/basic"
 
-class Bundler::Thor
+class Carat::Thor
   module Shell
-    # Inherit from Bundler::Thor::Shell::Basic and add set_color behavior. Check
-    # Bundler::Thor::Shell::Basic to see all available methods.
+    # Inherit from Carat::Thor::Shell::Basic and add set_color behavior. Check
+    # Carat::Thor::Shell::Basic to see all available methods.
     #
     class HTML < Basic
       # The start of an HTML bold sequence.
@@ -66,9 +66,9 @@ class Bundler::Thor
       # ==== Example
       # ask("What is your name?")
       #
-      # TODO: Implement #ask for Bundler::Thor::Shell::HTML
+      # TODO: Implement #ask for Carat::Thor::Shell::HTML
       def ask(statement, color = nil)
-        fail NotImplementedError, "Implement #ask for Bundler::Thor::Shell::HTML"
+        fail NotImplementedError, "Implement #ask for Carat::Thor::Shell::HTML"
       end
 
     protected

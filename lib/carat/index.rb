@@ -1,6 +1,6 @@
 require "set"
 
-module Bundler
+module Carat
   class Index
     include Enumerable
 

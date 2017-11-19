@@ -208,7 +208,7 @@ describe "gemcutter's dependency API" do
     should_be_installed "rack 1.0.0"
   end
 
-  it "timeouts when Bundler::Fetcher redirects too much" do
+  it "timeouts when Carat::Fetcher redirects too much" do
     gemfile <<-G
       source "#{source_uri}"
       gem "rack"
@@ -333,7 +333,7 @@ describe "gemcutter's dependency API" do
       end
       build_gem "missing"
       # need to hit the limit
-      1.upto(Bundler::Source::Rubygems::API_REQUEST_LIMIT) do |i|
+      1.upto(Carat::Source::Rubygems::API_REQUEST_LIMIT) do |i|
         build_gem "gem#{i}"
       end
 

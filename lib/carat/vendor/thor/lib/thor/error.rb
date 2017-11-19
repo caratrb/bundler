@@ -1,9 +1,9 @@
-class Bundler::Thor
-  # Bundler::Thor::Error is raised when it's caused by wrong usage of thor classes. Those
+class Carat::Thor
+  # Carat::Thor::Error is raised when it's caused by wrong usage of thor classes. Those
   # errors have their backtrace suppressed and are nicely shown to the user.
   #
   # Errors that are caused by the developer, like declaring a method which
-  # overwrites a thor keyword, it SHOULD NOT raise a Bundler::Thor::Error. This way, we
+  # overwrites a thor keyword, it SHOULD NOT raise a Carat::Thor::Error. This way, we
   # ensure that developer errors are shown with full backtrace.
   class Error < StandardError
   end

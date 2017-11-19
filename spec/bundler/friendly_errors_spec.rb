@@ -2,10 +2,10 @@ require "spec_helper"
 require "carat"
 require "carat/friendly_errors"
 
-describe Bundler, "friendly errors" do
+describe Carat, "friendly errors" do
   it "rescues Thor::AmbiguousTaskError and raises SystemExit" do
     expect {
-      Bundler.with_friendly_errors do
+      Carat.with_friendly_errors do
         raise Thor::AmbiguousTaskError.new("")
       end
     }.to raise_error(SystemExit)
@@ -15,7 +15,7 @@ describe Bundler, "friendly errors" do
     it "generates a search URL for the exception message" do
       exception = Exception.new("Exception message")
 
-      expect(Bundler.issues_url(exception)).to eq("https://github.com/caratrb/carat/search?q=Exception+message&type=Issues")
+      expect(Carat.issues_url(exception)).to eq("https://github.com/caratrb/carat/search?q=Exception+message&type=Issues")
     end
 
     it "generates a search URL for only the first line of a multi-line exception message" do
@@ -24,7 +24,7 @@ First line of the exception message
 Second line of the exception message
 END
 
-      expect(Bundler.issues_url(exception)).to eq("https://github.com/caratrb/carat/search?q=First+line+of+the+exception+message&type=Issues")
+      expect(Carat.issues_url(exception)).to eq("https://github.com/caratrb/carat/search?q=First+line+of+the+exception+message&type=Issues")
     end
   end
 end

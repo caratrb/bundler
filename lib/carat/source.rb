@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class Source
     autoload :Rubygems, 'carat/source/rubygems'
     autoload :Path,     'carat/source/path'
@@ -8,7 +8,7 @@ module Bundler
       uri = URI(uri.to_s) unless uri.is_a?(URI)
 
       # Settings keys are all downcased
-      mirrors = Bundler.settings.gem_mirrors
+      mirrors = Carat.settings.gem_mirrors
       normalized_key = URI(uri.to_s.downcase)
 
       mirrors[normalized_key] || uri
@@ -23,8 +23,8 @@ module Bundler
     def version_message(spec)
       message = "#{spec.name} #{spec.version}"
 
-      if Bundler.locked_gems
-        locked_spec = Bundler.locked_gems.specs.find { |s| s.name == spec.name }
+      if Carat.locked_gems
+        locked_spec = Carat.locked_gems.specs.find { |s| s.name == spec.name }
         locked_spec_version = locked_spec.version if locked_spec
         if locked_spec_version && spec.version != locked_spec_version
           message << " (was #{locked_spec_version})"

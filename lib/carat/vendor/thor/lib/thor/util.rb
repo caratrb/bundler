@@ -1,6 +1,6 @@
 require "rbconfig"
 
-class Bundler::Thor
+class Carat::Thor
   module Sandbox #:nodoc:
   end
 
@@ -8,30 +8,30 @@ class Bundler::Thor
   #
   # 1) Methods to convert thor namespaces to constants and vice-versa.
   #
-  #   Bundler::Thor::Util.namespace_from_thor_class(Foo::Bar::Baz) #=> "foo:bar:baz"
+  #   Carat::Thor::Util.namespace_from_thor_class(Foo::Bar::Baz) #=> "foo:bar:baz"
   #
   # 2) Loading thor files and sandboxing:
   #
-  #   Bundler::Thor::Util.load_thorfile("~/.thor/foo")
+  #   Carat::Thor::Util.load_thorfile("~/.thor/foo")
   #
   module Util
     class << self
-      # Receives a namespace and search for it in the Bundler::Thor::Base subclasses.
+      # Receives a namespace and search for it in the Carat::Thor::Base subclasses.
       #
       # ==== Parameters
       # namespace<String>:: The namespace to search for.
       #
       def find_by_namespace(namespace)
         namespace = "default#{namespace}" if namespace.empty? || namespace =~ /^:/
-        Bundler::Thor::Base.subclasses.detect { |klass| klass.namespace == namespace }
+        Carat::Thor::Base.subclasses.detect { |klass| klass.namespace == namespace }
       end
 
-      # Receives a constant and converts it to a Bundler::Thor namespace. Since Bundler::Thor
+      # Receives a constant and converts it to a Carat::Thor namespace. Since Carat::Thor
       # commands can be added to a sandbox, this method is also responsable for
       # removing the sandbox namespace.
       #
       # This method should not be used in general because it's used to deal with
-      # older versions of Bundler::Thor. On current versions, if you need to get the
+      # older versions of Carat::Thor. On current versions, if you need to get the
       # namespace from a class, just call namespace on it.
       #
       # ==== Parameters
@@ -41,7 +41,7 @@ class Bundler::Thor
       # String:: If we receive Foo::Bar::Baz it returns "foo:bar:baz"
       #
       def namespace_from_thor_class(constant)
-        constant = constant.to_s.gsub(/^Bundler::Thor::Sandbox::/, "")
+        constant = constant.to_s.gsub(/^Carat::Thor::Sandbox::/, "")
         constant = snake_case(constant).squeeze(":")
         constant
       end
@@ -56,13 +56,13 @@ class Bundler::Thor
       # Array[Object]
       #
       def namespaces_in_content(contents, file = __FILE__)
-        old_constants = Bundler::Thor::Base.subclasses.dup
-        Bundler::Thor::Base.subclasses.clear
+        old_constants = Carat::Thor::Base.subclasses.dup
+        Carat::Thor::Base.subclasses.clear
 
         load_thorfile(file, contents)
 
-        new_constants = Bundler::Thor::Base.subclasses.dup
-        Bundler::Thor::Base.subclasses.replace(old_constants)
+        new_constants = Carat::Thor::Base.subclasses.dup
+        Carat::Thor::Base.subclasses.replace(old_constants)
 
         new_constants.map! { |c| c.namespace }
         new_constants.compact!
@@ -73,7 +73,7 @@ class Bundler::Thor
       #
       def thor_classes_in(klass)
         stringfied_constants = klass.constants.map { |c| c.to_s }
-        Bundler::Thor::Base.subclasses.select do |subclass|
+        Carat::Thor::Base.subclasses.select do |subclass|
           next unless subclass.name
           stringfied_constants.include?(subclass.name.gsub("#{klass.name}::", ""))
         end
@@ -106,24 +106,24 @@ class Bundler::Thor
         str.split("_").map { |i| i.capitalize }.join
       end
 
-      # Receives a namespace and tries to retrieve a Bundler::Thor or Bundler::Thor::Group class
+      # Receives a namespace and tries to retrieve a Carat::Thor or Carat::Thor::Group class
       # from it. It first searches for a class using the all the given namespace,
       # if it's not found, removes the highest entry and searches for the class
       # again. If found, returns the highest entry as the class name.
       #
       # ==== Examples
       #
-      #   class Foo::Bar < Bundler::Thor
+      #   class Foo::Bar < Carat::Thor
       #     def baz
       #     end
       #   end
       #
-      #   class Baz::Foo < Bundler::Thor::Group
+      #   class Baz::Foo < Carat::Thor::Group
       #   end
       #
-      #   Bundler::Thor::Util.namespace_to_thor_class("foo:bar")     #=> Foo::Bar, nil # will invoke default command
-      #   Bundler::Thor::Util.namespace_to_thor_class("baz:foo")     #=> Baz::Foo, nil
-      #   Bundler::Thor::Util.namespace_to_thor_class("foo:bar:baz") #=> Foo::Bar, "baz"
+      #   Carat::Thor::Util.namespace_to_thor_class("foo:bar")     #=> Foo::Bar, nil # will invoke default command
+      #   Carat::Thor::Util.namespace_to_thor_class("baz:foo")     #=> Baz::Foo, nil
+      #   Carat::Thor::Util.namespace_to_thor_class("foo:bar:baz") #=> Foo::Bar, "baz"
       #
       # ==== Parameters
       # namespace<String>
@@ -132,14 +132,14 @@ class Bundler::Thor
         if namespace.include?(":") # look for a namespaced command
           pieces  = namespace.split(":")
           command = pieces.pop
-          klass   = Bundler::Thor::Util.find_by_namespace(pieces.join(":"))
+          klass   = Carat::Thor::Util.find_by_namespace(pieces.join(":"))
         end
-        unless klass # look for a Bundler::Thor::Group with the right name
-          klass, command = Bundler::Thor::Util.find_by_namespace(namespace), nil
+        unless klass # look for a Carat::Thor::Group with the right name
+          klass, command = Carat::Thor::Util.find_by_namespace(namespace), nil
         end
         if !klass && fallback # try a command in the default namespace
           command = namespace
-          klass   = Bundler::Thor::Util.find_by_namespace("")
+          klass   = Carat::Thor::Util.find_by_namespace("")
         end
         [klass, command]
       end
@@ -152,7 +152,7 @@ class Bundler::Thor
         content ||= File.binread(path)
 
         begin
-          Bundler::Thor::Sandbox.class_eval(content, path)
+          Carat::Thor::Sandbox.class_eval(content, path)
         rescue StandardError => e
           $stderr.puts("WARNING: unable to load thorfile #{path.inspect}: #{e.message}")
           if debug
@@ -206,11 +206,11 @@ class Bundler::Thor
         end
       end
 
-      # Where to look for Bundler::Thor files.
+      # Where to look for Carat::Thor files.
       #
       def globs_for(path)
         path = escape_globs(path)
-        ["#{path}/Bundler::Thorfile", "#{path}/*.thor", "#{path}/tasks/*.thor", "#{path}/lib/tasks/*.thor"]
+        ["#{path}/Carat::Thorfile", "#{path}/*.thor", "#{path}/tasks/*.thor", "#{path}/lib/tasks/*.thor"]
       end
 
       # Return the path to the ruby interpreter taking into account multiple
@@ -251,7 +251,7 @@ class Bundler::Thor
       #
       # ==== Examples
       #
-      #   Bundler::Thor::Util.escape_globs('[apps]')   # => '\[apps\]'
+      #   Carat::Thor::Util.escape_globs('[apps]')   # => '\[apps\]'
       #
       # ==== Parameters
       # String

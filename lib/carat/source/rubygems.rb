@@ -2,7 +2,7 @@ require 'uri'
 require 'rubygems/user_interaction'
 require 'rubygems/spec_fetcher'
 
-module Bundler
+module Carat
   class Source
     class Rubygems < Source
       # Use the API when installing less than X gems
@@ -18,7 +18,7 @@ module Bundler
         @dependency_names = []
         @allow_remote = false
         @allow_cached = false
-        @caches = [Bundler.app_cache, *Bundler.rubygems.gem_cache]
+        @caches = [Carat.app_cache, *Carat.rubygems.gem_cache]
 
         Array(options["remotes"] || []).reverse_each{|r| add_remote(r) }
       end
@@ -95,23 +95,23 @@ module Bundler
           uris.uniq!
           Installer.ambiguous_gems << [spec.name, *uris] if uris.length > 1
 
-          s = Bundler.rubygems.spec_from_gem(fetch_gem(spec), Bundler.settings["trust-policy"])
+          s = Carat.rubygems.spec_from_gem(fetch_gem(spec), Carat.settings["trust-policy"])
           spec.__swap__(s)
         end
 
-        unless Bundler.settings[:no_install]
+        unless Carat.settings[:no_install]
           path = cached_gem(spec)
-          if Bundler.requires_sudo?
-            install_path = Bundler.tmp(spec.full_name)
+          if Carat.requires_sudo?
+            install_path = Carat.tmp(spec.full_name)
             bin_path     = install_path.join("bin")
           else
-            install_path = Bundler.rubygems.gem_dir
-            bin_path     = Bundler.system_bindir
+            install_path = Carat.rubygems.gem_dir
+            bin_path     = Carat.system_bindir
           end
 
           installed_spec = nil
-          Bundler.rubygems.preserve_paths do
-            installed_spec = Bundler::GemInstaller.new(path,
+          Carat.rubygems.preserve_paths do
+            installed_spec = Carat::GemInstaller.new(path,
               :install_dir         => install_path.to_s,
               :bin_dir             => bin_path.to_s,
               :ignore_dependencies => true,
@@ -121,23 +121,23 @@ module Bundler
           end
 
           # SUDO HAX
-          if Bundler.requires_sudo?
-            Bundler.rubygems.repository_subdirectories.each do |name|
+          if Carat.requires_sudo?
+            Carat.rubygems.repository_subdirectories.each do |name|
               src = File.join(install_path, name, "*")
-              dst = File.join(Bundler.rubygems.gem_dir, name)
+              dst = File.join(Carat.rubygems.gem_dir, name)
               if name == "extensions" && Dir.glob(src).any?
                 src = File.join(src, "*/*")
                 ext_src = Dir.glob(src).first
                 ext_src.gsub!(src[0..-6], '')
                 dst = File.dirname(File.join(dst, ext_src))
               end
-              Bundler.mkdir_p dst
-              Bundler.sudo "cp -R #{src} #{dst}" if Dir[src].any?
+              Carat.mkdir_p dst
+              Carat.sudo "cp -R #{src} #{dst}" if Dir[src].any?
             end
 
             spec.executables.each do |exe|
-              Bundler.mkdir_p Bundler.system_bindir
-              Bundler.sudo "cp -R #{install_path}/bin/#{exe} #{Bundler.system_bindir}/"
+              Carat.mkdir_p Carat.system_bindir
+              Carat.sudo "cp -R #{install_path}/bin/#{exe} #{Carat.system_bindir}/"
             end
           end
           installed_spec.loaded_from = loaded_from(spec)
@@ -145,7 +145,7 @@ module Bundler
         spec.loaded_from = loaded_from(spec)
         ["Installing #{version_message(spec)}", spec.post_install_message]
       ensure
-        Bundler.rm_rf(install_path) if Bundler.requires_sudo?
+        Carat.rm_rf(install_path) if Carat.requires_sudo?
       end
 
       def cache(spec, custom_path = nil)
@@ -155,11 +155,11 @@ module Bundler
           cached_path = cached_gem(spec)
         end
         raise GemNotFound, "Missing gem file '#{spec.full_name}.gem'." unless cached_path
-        return if File.dirname(cached_path) == Bundler.app_cache.to_s
-        Bundler.ui.info "  * #{File.basename(cached_path)}"
-        FileUtils.cp(cached_path, Bundler.app_cache(custom_path))
+        return if File.dirname(cached_path) == Carat.app_cache.to_s
+        Carat.ui.info "  * #{File.basename(cached_path)}"
+        FileUtils.cp(cached_path, Carat.app_cache(custom_path))
       rescue Errno::EACCES => e
-        Bundler.ui.debug(e)
+        Carat.ui.debug(e)
         raise InstallError, e.message
       end
 
@@ -196,7 +196,7 @@ module Bundler
 
       def fetchers
         @fetchers ||= remotes.map do |uri|
-            Bundler::Fetcher.new(uri)
+            Carat::Fetcher.new(uri)
         end
       end
 
@@ -216,13 +216,13 @@ module Bundler
       end
 
       def loaded_from(spec)
-        "#{Bundler.rubygems.gem_dir}/specifications/#{spec.full_name}.gemspec"
+        "#{Carat.rubygems.gem_dir}/specifications/#{spec.full_name}.gemspec"
       end
 
       def cached_gem(spec)
         cached_gem = cached_path(spec)
         unless cached_gem
-          raise Bundler::GemNotFound, "Could not find #{spec.file_name} for installation"
+          raise Carat::GemNotFound, "Could not find #{spec.file_name} for installation"
         end
         cached_gem
       end
@@ -242,7 +242,7 @@ module Bundler
 
       def suppress_configured_credentials(remote)
         remote_nouser = remote.dup.tap { |uri| uri.user = uri.password = nil }.to_s
-        if remote.userinfo && remote.userinfo == Bundler.settings[remote_nouser]
+        if remote.userinfo && remote.userinfo == Carat.settings[remote_nouser]
           remote_nouser
         else
           remote
@@ -253,7 +253,7 @@ module Bundler
         @installed_specs ||= begin
           idx = Index.new
           have_carat = false
-          Bundler.rubygems.all_specs.reverse.each do |spec|
+          Carat.rubygems.all_specs.reverse.each do |spec|
             next if spec.name == 'carat' && spec.version.to_s != VERSION
             have_carat = true if spec.name == 'carat'
             spec.source = self
@@ -283,10 +283,10 @@ module Bundler
         @cached_specs ||= begin
           idx = installed_specs.dup
 
-          path = Bundler.app_cache
+          path = Carat.app_cache
           Dir["#{path}/*.gem"].each do |gemfile|
             next if gemfile =~ /^carat\-[\d\.]+?\.gem/
-            s ||= Bundler.rubygems.spec_from_gem(gemfile)
+            s ||= Carat.rubygems.spec_from_gem(gemfile)
             s.source = self
             idx << s
           end
@@ -305,7 +305,7 @@ module Bundler
 
           # gather lists from non-api sites
           index_fetchers.each do |f|
-            Bundler.ui.info "Fetching source index from #{f.uri}"
+            Carat.ui.info "Fetching source index from #{f.uri}"
             idx.use f.specs(nil, self)
           end
 
@@ -313,14 +313,14 @@ module Bundler
           # the gemspecs of those gems, if the non-api sites contain more than
           # about 100 gems, we just treat all sites as non-api for speed.
           allow_api = idx.size < API_REQUEST_LIMIT && dependency_names.size < API_REQUEST_LIMIT
-          Bundler.ui.debug "Need to query more than #{API_REQUEST_LIMIT} gems." \
+          Carat.ui.debug "Need to query more than #{API_REQUEST_LIMIT} gems." \
             " Downloading full index instead..." unless allow_api
 
           if allow_api
             api_fetchers.each do |f|
-              Bundler.ui.info "Fetching gem metadata from #{f.uri}", Bundler.ui.debug?
+              Carat.ui.info "Fetching gem metadata from #{f.uri}", Carat.ui.debug?
               idx.use f.specs(dependency_names, self)
-              Bundler.ui.info "" if !Bundler.ui.debug? # new line now that the dots are over
+              Carat.ui.info "" if !Carat.ui.debug? # new line now that the dots are over
             end
 
             # Suppose the gem Foo depends on the gem Bar.  Foo exists in Source A.  Bar has some versions that exist in both
@@ -331,9 +331,9 @@ module Bundler
             begin
               idxcount = idx.size
               api_fetchers.each do |f|
-                Bundler.ui.info "Fetching version metadata from #{f.uri}", Bundler.ui.debug?
+                Carat.ui.info "Fetching version metadata from #{f.uri}", Carat.ui.debug?
                 idx.use f.specs(idx.dependency_names, self), true
-                Bundler.ui.info "" if !Bundler.ui.debug? # new line now that the dots are over
+                Carat.ui.info "" if !Carat.ui.debug? # new line now that the dots are over
               end
             end until idxcount == idx.size
 
@@ -345,9 +345,9 @@ module Bundler
 
               # if there are any cross-site gems we missed, get them now
               api_fetchers.each do |f|
-                Bundler.ui.info "Fetching dependency metadata from #{f.uri}", Bundler.ui.debug?
+                Carat.ui.info "Fetching dependency metadata from #{f.uri}", Carat.ui.debug?
                 idx.use f.specs(unmet, self)
-                Bundler.ui.info "" if !Bundler.ui.debug? # new line now that the dots are over
+                Carat.ui.info "" if !Carat.ui.debug? # new line now that the dots are over
               end if unmet.any?
             else
               allow_api = false
@@ -356,7 +356,7 @@ module Bundler
 
           if !allow_api
             api_fetchers.each do |f|
-              Bundler.ui.info "Fetching source index from #{f.uri}"
+              Carat.ui.info "Fetching source index from #{f.uri}"
               idx.use f.specs(nil, self)
             end
           end

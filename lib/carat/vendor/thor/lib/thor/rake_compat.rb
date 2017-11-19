@@ -1,15 +1,15 @@
 require "rake"
 require "rake/dsl_definition"
 
-class Bundler::Thor
-  # Adds a compatibility layer to your Bundler::Thor classes which allows you to use
+class Carat::Thor
+  # Adds a compatibility layer to your Carat::Thor classes which allows you to use
   # rake package tasks. For example, to use rspec rake tasks, one can do:
   #
   #   require 'carat/vendor/thor/lib/thor/rake_compat'
   #   require 'rspec/core/rake_task'
   #
-  #   class Default < Bundler::Thor
-  #     include Bundler::Thor::RakeCompat
+  #   class Default < Carat::Thor
+  #     include Carat::Thor::RakeCompat
   #
   #     RSpec::Core::RakeTask.new(:spec) do |t|
   #       t.spec_opts = ['--options', './.rspec']
@@ -40,7 +40,7 @@ instance_eval do
   def task(*)
     task = super
 
-    if klass = Bundler::Thor::RakeCompat.rake_classes.last # rubocop:disable AssignmentInCondition
+    if klass = Carat::Thor::RakeCompat.rake_classes.last # rubocop:disable AssignmentInCondition
       non_namespaced_name = task.name.split(":").last
 
       description = non_namespaced_name
@@ -58,14 +58,14 @@ instance_eval do
   end
 
   def namespace(name)
-    if klass = Bundler::Thor::RakeCompat.rake_classes.last # rubocop:disable AssignmentInCondition
-      const_name = Bundler::Thor::Util.camel_case(name.to_s).to_sym
-      klass.const_set(const_name, Class.new(Bundler::Thor))
+    if klass = Carat::Thor::RakeCompat.rake_classes.last # rubocop:disable AssignmentInCondition
+      const_name = Carat::Thor::Util.camel_case(name.to_s).to_sym
+      klass.const_set(const_name, Class.new(Carat::Thor))
       new_klass = klass.const_get(const_name)
-      Bundler::Thor::RakeCompat.rake_classes << new_klass
+      Carat::Thor::RakeCompat.rake_classes << new_klass
     end
 
     super
-    Bundler::Thor::RakeCompat.rake_classes.pop
+    Carat::Thor::RakeCompat.rake_classes.pop
   end
 end

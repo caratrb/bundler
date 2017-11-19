@@ -58,7 +58,7 @@ describe "bundle check" do
     G
 
     bundle :check
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
   it "prints a generic error if a Gemfile.lock does not exist and a toplevel dependency does not exist" do
@@ -69,7 +69,7 @@ describe "bundle check" do
 
     bundle :check
     expect(exitstatus).to be > 0 if exitstatus
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
   it "prints a generic message if you changed your lockfile" do
@@ -89,7 +89,7 @@ describe "bundle check" do
     G
 
     bundle :check
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
   it "remembers --without option from install" do

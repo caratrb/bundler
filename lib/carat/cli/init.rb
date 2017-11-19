@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class CLI::Init
     attr_reader :options
     def initialize(options)
@@ -7,14 +7,14 @@ module Bundler
 
     def run
       if File.exist?("Gemfile")
-        Bundler.ui.error "Gemfile already exists at #{Dir.pwd}/Gemfile"
+        Carat.ui.error "Gemfile already exists at #{Dir.pwd}/Gemfile"
         exit 1
       end
 
       if options[:gemspec]
         gemspec = File.expand_path(options[:gemspec])
         unless File.exist?(gemspec)
-          Bundler.ui.error "Gem specification #{gemspec} doesn't exist"
+          Carat.ui.error "Gem specification #{gemspec} doesn't exist"
           exit 1
         end
         spec = Gem::Specification.load(gemspec)

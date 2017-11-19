@@ -1,6 +1,6 @@
 require 'carat/gem_helpers'
 
-module Bundler
+module Carat
   module MatchPlatform
     include GemHelpers
 

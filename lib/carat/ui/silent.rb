@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   module UI
     class Silent
       def info(message, newline = nil)

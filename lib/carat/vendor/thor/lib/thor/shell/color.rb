@@ -1,9 +1,9 @@
 require "carat/vendor/thor/lib/thor/shell/basic"
 
-class Bundler::Thor
+class Carat::Thor
   module Shell
-    # Inherit from Bundler::Thor::Shell::Basic and add set_color behavior. Check
-    # Bundler::Thor::Shell::Basic to see all available methods.
+    # Inherit from Carat::Thor::Shell::Basic and add set_color behavior. Check
+    # Carat::Thor::Shell::Basic to see all available methods.
     #
     class Color < Basic
       # Embed in a String to clear all previous ANSI sequences.

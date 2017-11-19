@@ -79,7 +79,7 @@ describe "Running bin/* commands" do
   end
 
   it "don't bundle da bundla" do
-    build_gem "carat", Bundler::VERSION, :to_system => true do |s|
+    build_gem "carat", Carat::VERSION, :to_system => true do |s|
       s.executables = "bundle"
     end
 

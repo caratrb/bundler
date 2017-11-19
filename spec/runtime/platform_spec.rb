@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Bundler.setup with multi platform stuff" do
+describe "Carat.setup with multi platform stuff" do
   it "raises a friendly error when gems are missing locally" do
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -23,8 +23,8 @@ describe "Bundler.setup with multi platform stuff" do
     ruby <<-R
       begin
         require 'carat'
-        Bundler.setup
-      rescue Bundler::GemNotFound => e
+        Carat.setup
+      rescue Carat::GemNotFound => e
         puts "WIN"
       end
     R

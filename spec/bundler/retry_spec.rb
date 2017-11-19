@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Bundler::Retry do
+describe Carat::Retry do
   it "return successful result if no errors" do
     attempts = 0
-    result = Bundler::Retry.new(nil, nil, 3).attempt do
+    result = Carat::Retry.new(nil, nil, 3).attempt do
       attempts += 1
       :success
     end
@@ -14,7 +14,7 @@ describe Bundler::Retry do
   it "defaults to retrying twice" do
     attempts = 0
     expect {
-      Bundler::Retry.new(nil).attempt do
+      Carat::Retry.new(nil).attempt do
         attempts += 1
         raise "nope"
       end
@@ -25,7 +25,7 @@ describe Bundler::Retry do
   it "returns the first valid result" do
     jobs = [Proc.new{ raise "foo" }, Proc.new{ :bar }, Proc.new{ raise "foo" }]
     attempts = 0
-    result = Bundler::Retry.new(nil, nil, 3).attempt do
+    result = Carat::Retry.new(nil, nil, 3).attempt do
       attempts += 1
       jobs.shift.call
     end
@@ -34,22 +34,22 @@ describe Bundler::Retry do
   end
 
   it "raises the last error" do
-    errors = [StandardError, StandardError, StandardError, Bundler::GemfileNotFound]
+    errors = [StandardError, StandardError, StandardError, Carat::GemfileNotFound]
     attempts = 0
     expect {
-      Bundler::Retry.new(nil, nil, 3).attempt do
+      Carat::Retry.new(nil, nil, 3).attempt do
         attempts += 1
         raise errors.shift
       end
-    }.to raise_error(Bundler::GemfileNotFound)
+    }.to raise_error(Carat::GemfileNotFound)
     expect(attempts).to eq(4)
   end
 
   it "raises exceptions" do
-    error = Bundler::GemfileNotFound
+    error = Carat::GemfileNotFound
     attempts = 0
     expect {
-      Bundler::Retry.new(nil, error).attempt do
+      Carat::Retry.new(nil, error).attempt do
         attempts += 1
         raise error
       end

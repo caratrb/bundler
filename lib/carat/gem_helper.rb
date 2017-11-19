@@ -1,7 +1,7 @@
 require 'carat/vendored_thor' unless defined?(Thor)
 require 'carat'
 
-module Bundler
+module Carat
   class GemHelper
     include Rake::DSL if defined? Rake::DSL
 
@@ -23,12 +23,12 @@ module Bundler
     attr_reader :spec_path, :base, :gemspec
 
     def initialize(base = nil, name = nil)
-      Bundler.ui = UI::Shell.new
+      Carat.ui = UI::Shell.new
       @base = (base ||= SharedHelpers.pwd)
       gemspecs = name ? [File.join(base, "#{name}.gemspec")] : Dir[File.join(base, "{,*}.gemspec")]
       raise "Unable to determine name from existing gemspec. Use :name => 'gemname' in #install_tasks to manually set it." unless gemspecs.size == 1
       @spec_path = gemspecs.first
-      @gemspec = Bundler.load_gemspec(@spec_path)
+      @gemspec = Carat.load_gemspec(@spec_path)
     end
 
     def install
@@ -76,7 +76,7 @@ module Bundler
         file_name = File.basename(built_gem_path)
         FileUtils.mkdir_p(File.join(base, 'pkg'))
         FileUtils.mv(built_gem_path, 'pkg')
-        Bundler.ui.confirm "#{name} #{version} built to pkg/#{file_name}."
+        Carat.ui.confirm "#{name} #{version} built to pkg/#{file_name}."
       }
       File.join(base, 'pkg', file_name)
     end
@@ -85,14 +85,14 @@ module Bundler
       built_gem_path ||= build_gem
       out, _ = sh_with_code("gem install '#{built_gem_path}'#{' --local' if local}")
       raise "Couldn't install gem, run `gem install #{built_gem_path}' for more detailed output" unless out[/Successfully installed/]
-      Bundler.ui.confirm "#{name} (#{version}) installed."
+      Carat.ui.confirm "#{name} (#{version}) installed."
     end
 
     protected
     def rubygem_push(path)
       if Pathname.new("~/.gem/credentials").expand_path.exist?
         sh("gem push '#{path}'")
-        Bundler.ui.confirm "Pushed #{name} #{version} to rubygems.org."
+        Carat.ui.confirm "Pushed #{name} #{version} to rubygems.org."
       else
         raise "Your rubygems.org credentials aren't set. Run `gem push` to set them."
       end
@@ -105,7 +105,7 @@ module Bundler
     def git_push
       perform_git_push
       perform_git_push ' --tags'
-      Bundler.ui.confirm "Pushed git commits and tags."
+      Carat.ui.confirm "Pushed git commits and tags."
     end
 
     def perform_git_push(options = '')
@@ -116,7 +116,7 @@ module Bundler
 
     def already_tagged?
       if sh('git tag').split(/\n/).include?(version_tag)
-        Bundler.ui.confirm "Tag #{version_tag} has already been created."
+        Carat.ui.confirm "Tag #{version_tag} has already been created."
         true
       end
     end
@@ -135,10 +135,10 @@ module Bundler
 
     def tag_version
       sh "git tag -a -m \"Version #{version}\" #{version_tag}"
-      Bundler.ui.confirm "Tagged #{version_tag}."
+      Carat.ui.confirm "Tagged #{version_tag}."
       yield if block_given?
     rescue
-      Bundler.ui.error "Untagging #{version_tag} due to error."
+      Carat.ui.error "Untagging #{version_tag} due to error."
       sh_with_code "git tag -d #{version_tag}"
       raise
     end
@@ -163,7 +163,7 @@ module Bundler
     def sh_with_code(cmd, &block)
       cmd << " 2>&1"
       outbuf = ''
-      Bundler.ui.debug(cmd)
+      Carat.ui.debug(cmd)
       SharedHelpers.chdir(base) {
         outbuf = `#{cmd}`
         if $? == 0

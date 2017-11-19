@@ -917,7 +917,7 @@ describe "bundle install with git sources" do
       s.executables = "xxxxxxbar"
     end
 
-    Bundler::SharedHelpers.with_clean_git_env do
+    Carat::SharedHelpers.with_clean_git_env do
       ENV['GIT_DIR']       = 'bar'
       ENV['GIT_WORK_TREE'] = 'bar'
 

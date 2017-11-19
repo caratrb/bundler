@@ -1,6 +1,6 @@
 require 'thread'
 
-module Bundler
+module Carat
   class Worker
     POISON = Object.new
 

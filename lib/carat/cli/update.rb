@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class CLI::Update
     attr_reader :options, :gems
     def initialize(options, gems)
@@ -7,65 +7,65 @@ module Bundler
     end
 
     def run
-      Bundler.ui.level = "error" if options[:quiet]
+      Carat.ui.level = "error" if options[:quiet]
 
       sources = Array(options[:source])
       groups  = Array(options[:group]).map(&:to_sym)
 
       if gems.empty? && sources.empty? && groups.empty?
         # We're doing a full update
-        Bundler.definition(true)
+        Carat.definition(true)
       else
-        unless Bundler.default_lockfile.exist?
+        unless Carat.default_lockfile.exist?
           raise GemfileLockNotFound, "This Bundle hasn't been installed yet. " \
             "Run `bundle install` to update and install the bundled gems."
         end
         # cycle through the requested gems, just to make sure they exist
-        names = Bundler.locked_gems.specs.map{ |s| s.name }
+        names = Carat.locked_gems.specs.map{ |s| s.name }
         gems.each do |g|
           next if names.include?(g)
           require "carat/cli/common"
-          raise GemNotFound, Bundler::CLI::Common.gem_not_found_message(g, names)
+          raise GemNotFound, Carat::CLI::Common.gem_not_found_message(g, names)
         end
 
         if groups.any?
-          specs = Bundler.definition.specs_for groups
+          specs = Carat.definition.specs_for groups
           sources.concat(specs.map(&:name))
         end
 
-        Bundler.definition(:gems => gems, :sources => sources)
+        Carat.definition(:gems => gems, :sources => sources)
       end
 
-      Bundler::Fetcher.disable_endpoint = options["full-index"]
+      Carat::Fetcher.disable_endpoint = options["full-index"]
 
       opts = options.dup
       opts["update"] = true
       opts["local"] = options[:local]
 
-      Bundler.settings[:jobs] = opts["jobs"] if opts["jobs"]
+      Carat.settings[:jobs] = opts["jobs"] if opts["jobs"]
 
       # rubygems plugins sometimes hook into the gem install process
       Gem.load_env_plugins if Gem.respond_to?(:load_env_plugins)
 
-      Bundler.definition.validate_ruby!
-      Installer.install Bundler.root, Bundler.definition, opts
-      Bundler.load.cache if Bundler.app_cache.exist?
+      Carat.definition.validate_ruby!
+      Installer.install Carat.root, Carat.definition, opts
+      Carat.load.cache if Carat.app_cache.exist?
 
-      if Bundler.settings[:clean] && Bundler.settings[:path]
+      if Carat.settings[:clean] && Carat.settings[:path]
         require "carat/cli/clean"
-        Bundler::CLI::Clean.new(options).run
+        Carat::CLI::Clean.new(options).run
       end
 
-      Bundler.ui.confirm "Bundle updated!"
+      Carat.ui.confirm "Bundle updated!"
       without_groups_messages
     end
 
   private
 
     def without_groups_messages
-      if Bundler.settings.without.any?
+      if Carat.settings.without.any?
         require "carat/cli/common"
-        Bundler.ui.confirm Bundler::CLI::Common.without_groups_message
+        Carat.ui.confirm Carat::CLI::Common.without_groups_message
       end
     end
 

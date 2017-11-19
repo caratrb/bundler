@@ -1,6 +1,6 @@
 require 'uri'
 
-module Bundler
+module Carat
   class Settings
     BOOL_KEYS = %w(frozen cache_all no_prune disable_local_branch_check gem.mit gem.coc).freeze
 
@@ -110,9 +110,9 @@ module Bundler
       return path if path && !@local_config.key?(key)
 
       if path = self[:path]
-        "#{path}/#{Bundler.ruby_scope}"
+        "#{path}/#{Carat.ruby_scope}"
       else
-        Bundler.rubygems.gem_dir
+        Carat.rubygems.gem_dir
       end
     end
 
@@ -164,7 +164,7 @@ module Bundler
     end
 
     def global_config_file
-      file = ENV["BUNDLE_CONFIG"] || File.join(Bundler.rubygems.user_home, ".bundle/config")
+      file = ENV["BUNDLE_CONFIG"] || File.join(Carat.rubygems.user_home, ".bundle/config")
       Pathname.new(file)
     end
 

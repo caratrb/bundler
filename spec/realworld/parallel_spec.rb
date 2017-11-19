@@ -11,7 +11,7 @@ describe "parallel", :realworld => true do
 
     bundle :install, :jobs => 4, :env => {"DEBUG" => "1"}
 
-    if Bundler.rubygems.provides?(">= 2.1.0")
+    if Carat.rubygems.provides?(">= 2.1.0")
       expect(out).to match(/[1-3]: /)
     else
       expect(out).to include("is not threadsafe")
@@ -43,7 +43,7 @@ describe "parallel", :realworld => true do
 
     bundle :update, :jobs => 4, :env => {"DEBUG" => "1"}
 
-    if Bundler.rubygems.provides?(">= 2.1.0")
+    if Carat.rubygems.provides?(">= 2.1.0")
       expect(out).to match(/[1-3]: /)
     else
       expect(out).to include("is not threadsafe")

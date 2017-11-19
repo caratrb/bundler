@@ -971,7 +971,7 @@ G
     end
   end
 
-  context "Bundler.setup" do
+  context "Carat.setup" do
     before do
       install_gemfile <<-G
         source "file://#{gem_repo1}"

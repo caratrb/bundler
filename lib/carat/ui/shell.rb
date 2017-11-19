@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   module UI
     class Shell
       LEVELS = %w(silent error warn confirm info debug)

@@ -8,7 +8,7 @@ require 'carat/version'
 require 'carat/constants'
 require 'carat/current_ruby'
 
-module Bundler
+module Carat
   preserve_gem_path
   ORIGINAL_ENV = ENV.to_hash
 
@@ -47,32 +47,32 @@ module Bundler
   autoload :SystemRubyVersion,     'carat/ruby_version'
   autoload :UI,                    'carat/ui'
 
-  class BundlerError < StandardError
+  class CaratError < StandardError
     def self.status_code(code)
       define_method(:status_code) { code }
     end
   end
 
-  class GemfileNotFound       < BundlerError; status_code(10) ; end
-  class GemNotFound           < BundlerError; status_code(7)  ; end
-  class GemfileError          < BundlerError; status_code(4)  ; end
-  class InstallError          < BundlerError; status_code(5)  ; end
-  class InstallHookError      < BundlerError; status_code(8)  ; end
-  class PathError             < BundlerError; status_code(13) ; end
-  class GitError              < BundlerError; status_code(11) ; end
-  class DeprecatedError       < BundlerError; status_code(12) ; end
-  class GemspecError          < BundlerError; status_code(14) ; end
-  class InvalidOption         < BundlerError; status_code(15) ; end
-  class ProductionError       < BundlerError; status_code(16) ; end
-  class HTTPError             < BundlerError; status_code(17) ; end
-  class RubyVersionMismatch   < BundlerError; status_code(18) ; end
-  class SecurityError         < BundlerError; status_code(19) ; end
-  class LockfileError         < BundlerError; status_code(20) ; end
-  class CyclicDependencyError < BundlerError; status_code(21) ; end
-  class GemfileLockNotFound   < BundlerError; status_code(22) ; end
+  class GemfileNotFound       < CaratError; status_code(10) ; end
+  class GemNotFound           < CaratError; status_code(7)  ; end
+  class GemfileError          < CaratError; status_code(4)  ; end
+  class InstallError          < CaratError; status_code(5)  ; end
+  class InstallHookError      < CaratError; status_code(8)  ; end
+  class PathError             < CaratError; status_code(13) ; end
+  class GitError              < CaratError; status_code(11) ; end
+  class DeprecatedError       < CaratError; status_code(12) ; end
+  class GemspecError          < CaratError; status_code(14) ; end
+  class InvalidOption         < CaratError; status_code(15) ; end
+  class ProductionError       < CaratError; status_code(16) ; end
+  class HTTPError             < CaratError; status_code(17) ; end
+  class RubyVersionMismatch   < CaratError; status_code(18) ; end
+  class SecurityError         < CaratError; status_code(19) ; end
+  class LockfileError         < CaratError; status_code(20) ; end
+  class CyclicDependencyError < CaratError; status_code(21) ; end
+  class GemfileLockNotFound   < CaratError; status_code(22) ; end
 
   # Internal errors, should be rescued
-  class VersionConflict  < BundlerError
+  class VersionConflict  < CaratError
     attr_reader :conflicts
 
     def initialize(conflicts, msg = nil)
@@ -139,14 +139,14 @@ module Bundler
     end
 
     def environment
-      Bundler::Environment.new(root, definition)
+      Carat::Environment.new(root, definition)
     end
 
-    # Returns an instance of Bundler::Definition for given Gemfile and lockfile
+    # Returns an instance of Carat::Definition for given Gemfile and lockfile
     #
     # @param unlock [Hash, Boolean, nil] Gems that have been requested
     #   to be updated or true if all gems should be updated
-    # @return [Bundler::Definition]
+    # @return [Carat::Definition]
     def definition(unlock = nil)
       @definition = nil if unlock
       @definition ||= begin
@@ -158,8 +158,8 @@ module Bundler
 
     def locked_gems
       return @locked_gems if defined?(@locked_gems)
-      if Bundler.default_lockfile.exist?
-        lock = Bundler.read_file(Bundler.default_lockfile)
+      if Carat.default_lockfile.exist?
+        lock = Carat.read_file(Carat.default_lockfile)
         @locked_gems = LockfileParser.new(lock)
       else
         @locked_gems = nil
@@ -167,11 +167,11 @@ module Bundler
     end
 
     def ruby_scope
-      "#{Bundler.rubygems.ruby_engine}/#{Bundler.rubygems.config_map[:ruby_version]}"
+      "#{Carat.rubygems.ruby_engine}/#{Carat.rubygems.config_map[:ruby_version]}"
     end
 
     def user_bundle_path
-      Pathname.new(Bundler.rubygems.user_home).join(".carat")
+      Pathname.new(Carat.rubygems.user_home).join(".carat")
     end
 
     def home
@@ -272,7 +272,7 @@ module Bundler
       # install binstubs there instead. Unfortunately, Rubygems doesn't expose
       # that directory at all, so rather than parse .gemrc ourselves, we allow
       # the directory to be set as well, via `bundle config bindir foo`.
-      Bundler.settings[:system_bindir] || Bundler.rubygems.gem_bindir
+      Carat.settings[:system_bindir] || Carat.rubygems.gem_bindir
     end
 
     def requires_sudo?
@@ -289,7 +289,7 @@ module Bundler
         path = path.parent until path.exist?
 
         # bins are written to a different location on OS X
-        bin_dir = Pathname.new(Bundler.system_bindir)
+        bin_dir = Pathname.new(Carat.system_bindir)
         bin_dir = bin_dir.parent until bin_dir.exist?
 
         # if any directory is not writable, we need sudo
@@ -376,7 +376,7 @@ module Bundler
 
     def git_present?
       return @git_present if defined?(@git_present)
-      @git_present = Bundler.which("git") || Bundler.which("git.exe")
+      @git_present = Carat.which("git") || Carat.which("git.exe")
     end
 
     def ruby_version
@@ -416,8 +416,8 @@ module Bundler
       blank_home = ENV['GEM_HOME'].nil? || ENV['GEM_HOME'].empty?
       if settings[:disable_shared_gems]
         ENV['GEM_PATH'] = ''
-      elsif blank_home || Bundler.rubygems.gem_dir != bundle_path.to_s
-        possibles = [Bundler.rubygems.gem_dir, Bundler.rubygems.gem_path]
+      elsif blank_home || Carat.rubygems.gem_dir != bundle_path.to_s
+        possibles = [Carat.rubygems.gem_dir, Carat.rubygems.gem_path]
         paths = possibles.flatten.compact.uniq.reject { |p| p.empty? }
         ENV["GEM_PATH"] = paths.join(File::PATH_SEPARATOR)
       end
@@ -431,13 +431,13 @@ module Bundler
       FileUtils.mkdir_p bundle_path.to_s rescue nil
 
       ENV['GEM_HOME'] = File.expand_path(bundle_path, root)
-      Bundler.rubygems.clear_paths
+      Carat.rubygems.clear_paths
     end
 
     def upgrade_lockfile
       lockfile = default_lockfile
       if lockfile.exist? && lockfile.read(3) == "---"
-        Bundler.ui.warn "Detected Gemfile.lock generated by 0.9, deleting..."
+        Carat.ui.warn "Detected Gemfile.lock generated by 0.9, deleting..."
         lockfile.rmtree
       end
     end

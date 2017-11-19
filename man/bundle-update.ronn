@@ -80,7 +80,7 @@ all of the dependencies, all the way down, and install what you need:
     Use `bundle show [gemname]` to see where a bundled gem is installed.
 
 As you can see, even though you have just two gems in the Gemfile(5), your application
-actually needs 26 different gems in order to run. Bundler remembers the exact versions
+actually needs 26 different gems in order to run. Carat remembers the exact versions
 it installed in `Gemfile.lock`. The next time you run [bundle install(1)][bundle-install], bundler skips
 the dependency resolution and installs the same gems as it installed last time.
 
@@ -106,7 +106,7 @@ For instance, in the scenario above, imagine that `nokogiri` releases version `1
 you want to update it _without_ updating Rails and all of its dependencies. To do this,
 run `bundle update nokogiri`.
 
-Bundler will update `nokogiri` and any of its dependencies, but leave alone Rails and
+Carat will update `nokogiri` and any of its dependencies, but leave alone Rails and
 its dependencies.
 
 ## OVERLAPPING DEPENDENCIES

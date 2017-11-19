@@ -8,15 +8,15 @@ require "yaml"
 require "digest/md5"
 require "pathname"
 
-class Bundler::Thor::Runner < Bundler::Thor #:nodoc: # rubocop:disable ClassLength
+class Carat::Thor::Runner < Carat::Thor #:nodoc: # rubocop:disable ClassLength
   map "-T" => :list, "-i" => :install, "-u" => :update, "-v" => :version
 
-  # Override Bundler::Thor#help so it can give information about any class and any method.
+  # Override Carat::Thor#help so it can give information about any class and any method.
   #
   def help(meth = nil)
     if meth && !self.respond_to?(meth)
       initialize_thorfiles(meth)
-      klass, command = Bundler::Thor::Util.find_class_and_command_by_namespace(meth)
+      klass, command = Carat::Thor::Util.find_class_and_command_by_namespace(meth)
       self.class.handle_no_command_error(command, false) if klass.nil?
       klass.start(["-h", command].compact, :shell => shell)
     else
@@ -24,19 +24,19 @@ class Bundler::Thor::Runner < Bundler::Thor #:nodoc: # rubocop:disable ClassLeng
     end
   end
 
-  # If a command is not found on Bundler::Thor::Runner, method missing is invoked and
-  # Bundler::Thor::Runner is then responsible for finding the command in all classes.
+  # If a command is not found on Carat::Thor::Runner, method missing is invoked and
+  # Carat::Thor::Runner is then responsible for finding the command in all classes.
   #
   def method_missing(meth, *args)
     meth = meth.to_s
     initialize_thorfiles(meth)
-    klass, command = Bundler::Thor::Util.find_class_and_command_by_namespace(meth)
+    klass, command = Carat::Thor::Util.find_class_and_command_by_namespace(meth)
     self.class.handle_no_command_error(command, false) if klass.nil?
     args.unshift(command) if command
     klass.start(args, :shell => shell)
   end
 
-  desc "install NAME", "Install an optionally named Bundler::Thor file into your system commands"
+  desc "install NAME", "Install an optionally named Carat::Thor file into your system commands"
   method_options :as => :string, :relative => :boolean, :force => :boolean
   def install(name) # rubocop:disable MethodLength
     initialize_thorfiles
@@ -57,7 +57,7 @@ class Bundler::Thor::Runner < Bundler::Thor #:nodoc: # rubocop:disable ClassLeng
       fail Error, "Error opening file '#{name}'"
     end
 
-    say "Your Bundler::Thorfile contains:"
+    say "Your Carat::Thorfile contains:"
     say contents
 
     unless options["force"]
@@ -84,7 +84,7 @@ class Bundler::Thor::Runner < Bundler::Thor #:nodoc: # rubocop:disable ClassLeng
     thor_yaml[as] = {
       :filename   => Digest::MD5.hexdigest(name + as),
       :location   => location,
-      :namespaces => Bundler::Thor::Util.namespaces_in_content(contents, base)
+      :namespaces => Carat::Thor::Util.namespaces_in_content(contents, base)
     }
 
     save_yaml(thor_yaml)
@@ -100,13 +100,13 @@ class Bundler::Thor::Runner < Bundler::Thor #:nodoc: # rubocop:disable ClassLeng
     thor_yaml[as][:filename] # Indicate success
   end
 
-  desc "version", "Show Bundler::Thor version"
+  desc "version", "Show Carat::Thor version"
   def version
     require "carat/vendor/thor/lib/thor/version"
-    say "Bundler::Thor #{Bundler::Thor::VERSION}"
+    say "Carat::Thor #{Carat::Thor::VERSION}"
   end
 
-  desc "uninstall NAME", "Uninstall a named Bundler::Thor module"
+  desc "uninstall NAME", "Uninstall a named Carat::Thor module"
   def uninstall(name)
     fail Error, "Can't find module '#{name}'" unless thor_yaml[name]
     say "Uninstalling #{name}."
@@ -118,7 +118,7 @@ class Bundler::Thor::Runner < Bundler::Thor #:nodoc: # rubocop:disable ClassLeng
     puts "Done."
   end
 
-  desc "update NAME", "Update a Bundler::Thor file from its original location"
+  desc "update NAME", "Update a Carat::Thor file from its original location"
   def update(name)
     fail Error, "Can't find module '#{name}'" if !thor_yaml[name] || !thor_yaml[name][:location]
 
@@ -143,7 +143,7 @@ class Bundler::Thor::Runner < Bundler::Thor #:nodoc: # rubocop:disable ClassLeng
     end
   end
 
-  desc "installed", "List the installed Bundler::Thor modules and commands"
+  desc "installed", "List the installed Carat::Thor modules and commands"
   method_options :internal => :boolean
   def installed
     initialize_thorfiles(nil, true)
@@ -159,7 +159,7 @@ class Bundler::Thor::Runner < Bundler::Thor #:nodoc: # rubocop:disable ClassLeng
     search = /^#{search}.*/i
     group  = options[:group] || "standard"
 
-    klasses = Bundler::Thor::Base.subclasses.select do |k|
+    klasses = Carat::Thor::Base.subclasses.select do |k|
       (options[:all] || k.group == group) && k.namespace =~ search
     end
 
@@ -173,7 +173,7 @@ private
   end
 
   def thor_root
-    Bundler::Thor::Util.thor_root
+    Carat::Thor::Util.thor_root
   end
 
   def thor_yaml
@@ -202,24 +202,24 @@ private
     true
   end
 
-  # Load the Bundler::Thorfiles. If relevant_to is supplied, looks for specific files
+  # Load the Carat::Thorfiles. If relevant_to is supplied, looks for specific files
   # in the thor_root instead of loading them all.
   #
-  # By default, it also traverses the current path until find Bundler::Thor files, as
+  # By default, it also traverses the current path until find Carat::Thor files, as
   # described in thorfiles. This look up can be skipped by supplying
   # skip_lookup true.
   #
   def initialize_thorfiles(relevant_to = nil, skip_lookup = false)
     thorfiles(relevant_to, skip_lookup).each do |f|
-      Bundler::Thor::Util.load_thorfile(f, nil, options[:debug]) unless Bundler::Thor::Base.subclass_files.keys.include?(File.expand_path(f))
+      Carat::Thor::Util.load_thorfile(f, nil, options[:debug]) unless Carat::Thor::Base.subclass_files.keys.include?(File.expand_path(f))
     end
   end
 
-  # Finds Bundler::Thorfiles by traversing from your current directory down to the root
-  # directory of your system. If at any time we find a Bundler::Thor file, we stop.
+  # Finds Carat::Thorfiles by traversing from your current directory down to the root
+  # directory of your system. If at any time we find a Carat::Thor file, we stop.
   #
-  # We also ensure that system-wide Bundler::Thorfiles are loaded first, so local
-  # Bundler::Thorfiles can override them.
+  # We also ensure that system-wide Carat::Thorfiles are loaded first, so local
+  # Carat::Thorfiles can override them.
   #
   # ==== Example
   #
@@ -227,7 +227,7 @@ private
   #
   # 1. /Users/wycats/dev/thor
   # 2. /Users/wycats/dev
-  # 3. /Users/wycats <-- we find a Bundler::Thorfile here, so we stop
+  # 3. /Users/wycats <-- we find a Carat::Thorfile here, so we stop
   #
   # Suppose we start at c:\Documents and Settings\james\dev\thor ...
   #
@@ -235,19 +235,19 @@ private
   # 2. c:\Documents and Settings\james\dev
   # 3. c:\Documents and Settings\james
   # 4. c:\Documents and Settings
-  # 5. c:\ <-- no Bundler::Thorfiles found!
+  # 5. c:\ <-- no Carat::Thorfiles found!
   #
   def thorfiles(relevant_to = nil, skip_lookup = false)
     thorfiles = []
 
     unless skip_lookup
       Pathname.pwd.ascend do |path|
-        thorfiles = Bundler::Thor::Util.globs_for(path).map { |g| Dir[g] }.flatten
+        thorfiles = Carat::Thor::Util.globs_for(path).map { |g| Dir[g] }.flatten
         break unless thorfiles.empty?
       end
     end
 
-    files  = (relevant_to ? thorfiles_relevant_to(relevant_to) : Bundler::Thor::Util.thor_root_glob)
+    files  = (relevant_to ? thorfiles_relevant_to(relevant_to) : Carat::Thor::Util.thor_root_glob)
     files += thorfiles
     files -= ["#{thor_root}/thor.yml"]
 
@@ -256,7 +256,7 @@ private
     end
   end
 
-  # Load Bundler::Thorfiles relevant to the given method. If you provide "foo:bar" it
+  # Load Carat::Thorfiles relevant to the given method. If you provide "foo:bar" it
   # will load all thor files in the thor.yaml that has "foo" e "foo:bar"
   # namespaces registered.
   #
@@ -273,19 +273,19 @@ private
   # Display information about the given klasses. If with_module is given,
   # it shows a table with information extracted from the yaml file.
   #
-  def display_klasses(with_modules = false, show_internal = false, klasses = Bundler::Thor::Base.subclasses)
-    klasses -= [Bundler::Thor, Bundler::Thor::Runner, Bundler::Thor::Group] unless show_internal
+  def display_klasses(with_modules = false, show_internal = false, klasses = Carat::Thor::Base.subclasses)
+    klasses -= [Carat::Thor, Carat::Thor::Runner, Carat::Thor::Group] unless show_internal
 
-    fail Error, "No Bundler::Thor commands available" if klasses.empty?
+    fail Error, "No Carat::Thor commands available" if klasses.empty?
     show_modules if with_modules && !thor_yaml.empty?
 
     list = Hash.new { |h, k| h[k] = [] }
-    groups = klasses.select { |k| k.ancestors.include?(Bundler::Thor::Group) }
+    groups = klasses.select { |k| k.ancestors.include?(Carat::Thor::Group) }
 
-    # Get classes which inherit from Bundler::Thor
+    # Get classes which inherit from Carat::Thor
     (klasses - groups).each { |k| list[k.namespace.split(":").first] += k.printable_commands(false) }
 
-    # Get classes which inherit from Bundler::Thor::Base
+    # Get classes which inherit from Carat::Thor::Base
     groups.map! { |k| k.printable_commands(false).first }
     list["root"] = groups
 

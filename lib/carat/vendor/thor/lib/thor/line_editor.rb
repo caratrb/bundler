@@ -1,7 +1,7 @@
 require "carat/vendor/thor/lib/thor/line_editor/basic"
 require "carat/vendor/thor/lib/thor/line_editor/readline"
 
-class Bundler::Thor
+class Carat::Thor
   module LineEditor
     def self.readline(prompt, options = {})
       best_available.new(prompt, options).readline
@@ -9,8 +9,8 @@ class Bundler::Thor
 
     def self.best_available
       [
-        Bundler::Thor::LineEditor::Readline,
-        Bundler::Thor::LineEditor::Basic
+        Carat::Thor::LineEditor::Readline,
+        Carat::Thor::LineEditor::Basic
       ].detect(&:available?)
     end
   end

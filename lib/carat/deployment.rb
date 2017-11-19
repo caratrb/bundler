@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class Deployment
     def self.define_task(context, task_method = :task, opts = {})
       if defined?(Capistrano) && context.is_a?(Capistrano::Configuration)
@@ -16,7 +16,7 @@ module Bundler
 
       context.send :namespace, :bundle do
         send :desc, <<-DESC
-          Install the current Bundler environment. By default, gems will be \
+          Install the current Carat environment. By default, gems will be \
           installed to the shared/bundle path. Gems in the development and \
           test group will not be installed. The install command is executed \
           with the --deployment and --quiet flags. If the bundle cmd cannot \

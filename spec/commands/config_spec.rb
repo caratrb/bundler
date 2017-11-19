@@ -45,13 +45,13 @@ describe ".bundle/config" do
 
     it "is the default" do
       bundle "config foo global"
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq("global")
     end
 
     it "can also be set explicitly" do
       bundle "config --global foo global"
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq("global")
     end
 
@@ -61,7 +61,7 @@ describe ".bundle/config" do
       bundle "config --global foo global"
       expect(out).to match(/Your application has set foo to "local"/)
 
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq("local")
     end
 
@@ -72,7 +72,7 @@ describe ".bundle/config" do
         bundle "config --global foo global"
         expect(out).to match(/You have a carat environment variable for foo set to "env"/)
 
-        run "puts Bundler.settings[:foo]"
+        run "puts Carat.settings[:foo]"
         expect(out).to eq("env")
       ensure
         ENV.delete("BUNDLE_FOO")
@@ -83,7 +83,7 @@ describe ".bundle/config" do
       bundle "config --global foo global"
       bundle "config --delete foo"
 
-      run "puts Bundler.settings[:foo] == nil"
+      run "puts Carat.settings[:foo] == nil"
       expect(out).to eq("true")
     end
 
@@ -92,13 +92,13 @@ describe ".bundle/config" do
       bundle "config --global foo global"
       expect(out).to match(/You are replacing the current global value of foo/)
 
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq("global")
     end
 
     it "expands the path at time of setting" do
       bundle "config --global local.foo .."
-      run "puts Bundler.settings['local.foo']"
+      run "puts Carat.settings['local.foo']"
       expect(out).to eq(File.expand_path(Dir.pwd + "/.."))
     end
   end
@@ -108,7 +108,7 @@ describe ".bundle/config" do
 
     it "can also be set explicitly" do
       bundle "config --local foo local"
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq("local")
     end
 
@@ -117,7 +117,7 @@ describe ".bundle/config" do
         ENV["BUNDLE_FOO"] = "env"
         bundle "config --local foo local"
 
-        run "puts Bundler.settings[:foo]"
+        run "puts Carat.settings[:foo]"
         expect(out).to eq("local")
       ensure
         ENV.delete("BUNDLE_FOO")
@@ -128,7 +128,7 @@ describe ".bundle/config" do
       bundle "config --local foo local"
       bundle "config --delete foo"
 
-      run "puts Bundler.settings[:foo] == nil"
+      run "puts Carat.settings[:foo] == nil"
       expect(out).to eq("true")
     end
 
@@ -137,13 +137,13 @@ describe ".bundle/config" do
       bundle "config --local foo local"
       expect(out).to match(/You are replacing the current local value of foo/)
 
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq("local")
     end
 
     it "expands the path at time of setting" do
       bundle "config --local local.foo .."
-      run "puts Bundler.settings['local.foo']"
+      run "puts Carat.settings['local.foo']"
       expect(out).to eq(File.expand_path(Dir.pwd + "/.."))
     end
   end
@@ -154,34 +154,34 @@ describe ".bundle/config" do
     it "can set boolean properties via the environment" do
       ENV["BUNDLE_FROZEN"] = "true"
 
-      run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
+      run "if Carat.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("true")
     end
 
     it "can set negative boolean properties via the environment" do
-      run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
+      run "if Carat.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("false")
 
       ENV["BUNDLE_FROZEN"] = "false"
 
-      run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
+      run "if Carat.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("false")
 
       ENV["BUNDLE_FROZEN"] = "0"
 
-      run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
+      run "if Carat.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("false")
 
       ENV["BUNDLE_FROZEN"] = ""
 
-      run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
+      run "if Carat.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("false")
     end
 
     it "can set properties with periods via the environment" do
       ENV["BUNDLE_FOO__BAR"] = "baz"
 
-      run "puts Bundler.settings['foo.bar']"
+      run "puts Carat.settings['foo.bar']"
       expect(out).to eq("baz")
      end
   end
@@ -192,7 +192,7 @@ describe ".bundle/config" do
     it "configures mirrors using keys with `mirror.`" do
       bundle "config --local mirror.http://gems.example.org http://gem-mirror.example.org"
       run(<<-E)
-Bundler.settings.gem_mirrors.each do |k, v|
+Carat.settings.gem_mirrors.each do |k, v|
   puts "\#{k} => \#{v}"
 end
 E
@@ -209,15 +209,15 @@ E
 
     it "saves quotes" do
       bundle "config foo something\\'"
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq("something'")
     end
 
     it "doesn't return quotes around values", :ruby => "1.9" do
       bundle "config foo '1'"
-      run "puts Bundler.settings.send(:global_config_file).read"
+      run "puts Carat.settings.send(:global_config_file).read"
       expect(out).to include("'1'")
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq("1")
     end
 
@@ -228,7 +228,7 @@ E
       end
 
       bundle "config bar baz"
-      run "puts Bundler.settings.send(:local_config_file).read"
+      run "puts Carat.settings.send(:local_config_file).read"
 
       # Starting in Ruby 2.1, YAML automatically adds double quotes
       # around some values, including $ and newlines.
@@ -238,12 +238,12 @@ E
     it "doesn't duplicate quotes around long wrapped values" do
       bundle "config foo #{long_string}"
 
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq(long_string)
 
       bundle "config bar baz"
 
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to eq(long_string)
     end
   end
@@ -264,13 +264,13 @@ E
 
     it "doesn't wrap values" do
       bundle "config foo #{long_string}"
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to match(long_string)
     end
 
     it "can read wrapped unquoted values" do
       bundle "config foo #{long_string_without_special_characters}"
-      run "puts Bundler.settings[:foo]"
+      run "puts Carat.settings[:foo]"
       expect(out).to match(long_string_without_special_characters)
     end
   end

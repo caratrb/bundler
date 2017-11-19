@@ -3,7 +3,7 @@ begin
 rescue LoadError
 end
 
-class Bundler::Thor
+class Carat::Thor
   module LineEditor
     class Readline < Basic
       def self.available?

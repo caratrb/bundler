@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class SimilarityDetector
     SimilarityScore = Struct.new(:string, :distance)
 

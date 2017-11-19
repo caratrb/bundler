@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class CLI::Console
     attr_reader :options, :group
     def initialize(options, group)
@@ -7,10 +7,10 @@ module Bundler
     end
 
     def run
-      group ? Bundler.require(:default, *(group.split.map! {|g| g.to_sym })) : Bundler.require
+      group ? Carat.require(:default, *(group.split.map! {|g| g.to_sym })) : Carat.require
       ARGV.clear
 
-      console = get_console(Bundler.settings[:console] || 'irb')
+      console = get_console(Carat.settings[:console] || 'irb')
       console.start
     end
 
@@ -18,7 +18,7 @@ module Bundler
       require name
       get_constant(name)
     rescue LoadError
-      Bundler.ui.error "Couldn't load console #{name}"
+      Carat.ui.error "Couldn't load console #{name}"
       get_constant('irb')
     end
 
@@ -30,7 +30,7 @@ module Bundler
       }[name]
       Object.const_get(const_name)
     rescue NameError
-      Bundler.ui.error "Could not find constant #{const_name}"
+      Carat.ui.error "Could not find constant #{const_name}"
       exit 1
     end
 

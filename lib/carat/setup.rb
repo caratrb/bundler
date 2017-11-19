@@ -1,21 +1,21 @@
 require 'carat/shared_helpers'
 
-if Bundler::SharedHelpers.in_bundle?
+if Carat::SharedHelpers.in_bundle?
   require 'carat'
 
   if STDOUT.tty? || ENV['CARAT_FORCE_TTY']
     begin
-      Bundler.setup
-    rescue Bundler::BundlerError => e
+      Carat.setup
+    rescue Carat::CaratError => e
       puts "\e[31m#{e.message}\e[0m"
       puts e.backtrace.join("\n") if ENV["DEBUG"]
-      if e.is_a?(Bundler::GemNotFound)
+      if e.is_a?(Carat::GemNotFound)
         puts "\e[33mRun `bundle install` to install missing gems.\e[0m"
       end
       exit e.status_code
     end
   else
-    Bundler.setup
+    Carat.setup
   end
 
   # Add carat to the load path after disabling system gems

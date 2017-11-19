@@ -1,4 +1,4 @@
-module Bundler::Molinillo
+module Carat::Molinillo
   # A state that a {Resolution} can be in
   # @attr [String] name
   # @attr [Array<Object>] requirements

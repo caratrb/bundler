@@ -1,20 +1,20 @@
 require "rbconfig"
 
-class Bundler::Thor
+class Carat::Thor
   module Base
     class << self
       attr_writer :shell
 
-      # Returns the shell used in all Bundler::Thor classes. If you are in a Unix platform
+      # Returns the shell used in all Carat::Thor classes. If you are in a Unix platform
       # it will use a colored log, otherwise it will use a basic one without color.
       #
       def shell
         @shell ||= if ENV["THOR_SHELL"] && ENV["THOR_SHELL"].size > 0
-          Bundler::Thor::Shell.const_get(ENV["THOR_SHELL"])
+          Carat::Thor::Shell.const_get(ENV["THOR_SHELL"])
         elsif RbConfig::CONFIG["host_os"] =~ /mswin|mingw/ && !ENV["ANSICON"]
-          Bundler::Thor::Shell::Basic
+          Carat::Thor::Shell::Basic
         else
-          Bundler::Thor::Shell::Color
+          Carat::Thor::Shell::Color
         end
       end
     end
@@ -35,11 +35,11 @@ class Bundler::Thor
     #
     # ==== Examples
     #
-    #   class MyScript < Bundler::Thor
+    #   class MyScript < Carat::Thor
     #     argument :first, :type => :numeric
     #   end
     #
-    #   MyScript.new [1.0], { :foo => :bar }, :shell => Bundler::Thor::Shell::Basic.new
+    #   MyScript.new [1.0], { :foo => :bar }, :shell => Carat::Thor::Shell::Basic.new
     #
     def initialize(args = [], options = {}, config = {})
       super
@@ -47,10 +47,10 @@ class Bundler::Thor
       shell.base ||= self if shell.respond_to?(:base)
     end
 
-    # Holds the shell for the given Bundler::Thor instance. If no shell is given,
-    # it gets a default shell from Bundler::Thor::Base.shell.
+    # Holds the shell for the given Carat::Thor instance. If no shell is given,
+    # it gets a default shell from Carat::Thor::Base.shell.
     def shell
-      @shell ||= Bundler::Thor::Base.shell.new
+      @shell ||= Carat::Thor::Base.shell.new
     end
 
     # Common methods that are delegated to the shell.

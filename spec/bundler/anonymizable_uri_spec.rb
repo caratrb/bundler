@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'carat/anonymizable_uri'
 
-describe Bundler::AnonymizableURI do
+describe Carat::AnonymizableURI do
   def auri(uri, auth = nil)
-    Bundler::AnonymizableURI.new(uri, auth)
+    Carat::AnonymizableURI.new(uri, auth)
   end
 
   describe "#without_credentials" do

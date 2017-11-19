@@ -1,8 +1,8 @@
-module Bundler
+module Carat
   class Injector
     def self.inject(new_deps)
       injector = new(new_deps)
-      injector.inject(Bundler.default_gemfile, Bundler.default_lockfile)
+      injector.inject(Carat.default_gemfile, Carat.default_lockfile)
     end
 
     def initialize(new_deps)
@@ -10,11 +10,11 @@ module Bundler
     end
 
     def inject(gemfile_path, lockfile_path)
-      if Bundler.settings[:frozen]
+      if Carat.settings[:frozen]
         # ensure the lock and Gemfile are synced
-        Bundler.definition.ensure_equivalent_gemfile_and_lockfile(true)
+        Carat.definition.ensure_equivalent_gemfile_and_lockfile(true)
         # temporarily remove frozen while we inject
-        frozen = Bundler.settings.delete(:frozen)
+        frozen = Carat.settings.delete(:frozen)
       end
 
       # evaluate the Gemfile we have now
@@ -35,12 +35,12 @@ module Bundler
       append_to(gemfile_path) if @new_deps.any?
 
       # since we resolved successfully, write out the lockfile
-      definition.lock(Bundler.default_lockfile)
+      definition.lock(Carat.default_lockfile)
 
       # return an array of the deps that we added
       return @new_deps
     ensure
-      Bundler.settings[:frozen] = '1' if frozen
+      Carat.settings[:frozen] = '1' if frozen
     end
 
   private

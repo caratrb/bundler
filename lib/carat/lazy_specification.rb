@@ -2,7 +2,7 @@ require "uri"
 require "rubygems/spec_fetcher"
 require "carat/match_platform"
 
-module Bundler
+module Carat
   class LazySpecification
     include MatchPlatform
 

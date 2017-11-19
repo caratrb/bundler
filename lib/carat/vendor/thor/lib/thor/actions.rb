@@ -8,7 +8,7 @@ require "carat/vendor/thor/lib/thor/actions/empty_directory"
 require "carat/vendor/thor/lib/thor/actions/file_manipulation"
 require "carat/vendor/thor/lib/thor/actions/inject_into_file"
 
-class Bundler::Thor
+class Carat::Thor
   module Actions
     attr_accessor :behavior
 
@@ -17,7 +17,7 @@ class Bundler::Thor
     end
 
     module ClassMethods
-      # Hold source paths for one Bundler::Thor instance. source_paths_for_search is the
+      # Hold source paths for one Carat::Thor instance. source_paths_for_search is the
       # method responsible to gather source_paths from this current class,
       # inherited paths and the source root.
       #
@@ -263,7 +263,7 @@ class Bundler::Thor
     #
     def run_ruby_script(command, config = {})
       return unless behavior == :invoke
-      run command, config.merge(:with => Bundler::Thor::Util.ruby_command)
+      run command, config.merge(:with => Carat::Thor::Util.ruby_command)
     end
 
     # Run a thor command. A hash of options can be given and it's converted to
@@ -273,7 +273,7 @@ class Bundler::Thor
     # command<String>:: the command to be invoked
     # args<Array>:: arguments to the command
     # config<Hash>:: give :verbose => false to not log the status, :capture => true to hide to output.
-    #                Other options are given as parameter to Bundler::Thor.
+    #                Other options are given as parameter to Carat::Thor.
     #
     #
     # ==== Examples
@@ -291,7 +291,7 @@ class Bundler::Thor
       capture = config.key?(:capture) ? config.delete(:capture) : false
 
       args.unshift(command)
-      args.push Bundler::Thor::Options.to_switches(config)
+      args.push Carat::Thor::Options.to_switches(config)
       command = args.join(" ").strip
 
       run command, :with => :thor, :verbose => verbose, :pretend => pretend, :capture => capture

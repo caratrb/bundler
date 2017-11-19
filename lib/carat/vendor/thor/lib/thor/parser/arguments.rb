@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   class Arguments #:nodoc: # rubocop:disable ClassLength
     NUMERIC = /(\d*\.\d+|\d+)/
 
@@ -21,7 +21,7 @@ class Bundler::Thor
       new(*args).parse(to_parse)
     end
 
-    # Takes an array of Bundler::Thor::Argument objects.
+    # Takes an array of Carat::Thor::Argument objects.
     #
     def initialize(arguments = [])
       @assigns, @non_assigned_required = {}, []

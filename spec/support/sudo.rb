@@ -1,7 +1,7 @@
 module Spec
   module Sudo
     def self.present?
-      @which_sudo ||= Bundler.which("sudo")
+      @which_sudo ||= Carat.which("sudo")
     end
 
     def sudo(cmd)

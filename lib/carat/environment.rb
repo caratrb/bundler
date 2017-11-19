@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class Environment
     attr_reader :root
 
@@ -6,7 +6,7 @@ module Bundler
       @root = root
       @definition = definition
 
-      env_file = Bundler.app_config_path.join('environment.rb')
+      env_file = Carat.app_config_path.join('environment.rb')
       env_file.rmtree if env_file.exist?
     end
 
@@ -31,7 +31,7 @@ module Bundler
     end
 
     def lock
-      @definition.lock(Bundler.default_lockfile)
+      @definition.lock(Carat.default_lockfile)
     end
 
     def update(*gems)

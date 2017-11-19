@@ -145,7 +145,7 @@ describe "bundle update when a gem depends on a newer version of carat" do
   before(:each) do
     build_repo2 do
       build_gem "rails", "3.0.1" do |s|
-        s.add_dependency "carat", Bundler::VERSION.succ
+        s.add_dependency "carat", Carat::VERSION.succ
       end
     end
 
@@ -163,7 +163,7 @@ describe "bundle update when a gem depends on a newer version of carat" do
   it "should explain that carat conflicted" do
     bundle "update"
     expect(out).not_to match(/in snapshot/i)
-    expect(out).to match(/current Bundler version/i)
+    expect(out).to match(/current Carat version/i)
     expect(out).to match(/perhaps you need to update carat/i)
   end
 end

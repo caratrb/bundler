@@ -1,7 +1,7 @@
 require 'carat/ui'
 require 'rubygems/user_interaction'
 
-module Bundler
+module Carat
   module UI
     class RGProxy < ::Gem::SilentUI
       def initialize(ui)

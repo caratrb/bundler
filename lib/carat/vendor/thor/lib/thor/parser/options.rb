@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   class Options < Arguments #:nodoc: # rubocop:disable ClassLength
     LONG_RE     = /^(--\w+(?:-\w+)*)$/
     SHORT_RE    = /^(-[a-z])$/i
@@ -25,7 +25,7 @@ class Bundler::Thor
       end.join(" ")
     end
 
-    # Takes a hash of Bundler::Thor::Option and a hash with defaults.
+    # Takes a hash of Carat::Thor::Option and a hash with defaults.
     #
     # If +stop_on_unknown+ is true, #parse will stop as soon as it encounters
     # an unknown option or a regular argument.
@@ -111,7 +111,7 @@ class Bundler::Thor
 
       check_requirement!
 
-      assigns = Bundler::Thor::CoreExt::HashWithIndifferentAccess.new(@assigns)
+      assigns = Carat::Thor::CoreExt::HashWithIndifferentAccess.new(@assigns)
       assigns.freeze
       assigns
     end

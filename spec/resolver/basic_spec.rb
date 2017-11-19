@@ -50,7 +50,7 @@ describe "Resolving" do
     dep "chef_app_error"
     expect {
       resolve
-    }.to raise_error(Bundler::VersionConflict)
+    }.to raise_error(Carat::VersionConflict)
   end
 
   it "should throw error in case of circular dependencies" do
@@ -59,7 +59,7 @@ describe "Resolving" do
 
     expect {
       resolve
-    }.to raise_error(Bundler::CyclicDependencyError, /please remove either gem 'bar' or gem 'foo'/i)
+    }.to raise_error(Carat::CyclicDependencyError, /please remove either gem 'bar' or gem 'foo'/i)
   end
 
   # Issue #3459

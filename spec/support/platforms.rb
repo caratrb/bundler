@@ -1,6 +1,6 @@
 module Spec
   module Platforms
-    include Bundler::GemHelpers
+    include Carat::GemHelpers
 
     def rb
       Gem::Platform::RUBY
@@ -69,7 +69,7 @@ module Spec
       when "jruby"
         JRUBY_VERSION
       else
-        raise BundlerError, "That RUBY_ENGINE is not recognized"
+        raise CaratError, "That RUBY_ENGINE is not recognized"
         nil
       end
     end

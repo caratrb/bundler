@@ -23,7 +23,7 @@ module Gem
 
     def full_gem_path
       source.respond_to?(:path) ?
-        Pathname.new(loaded_from).dirname.expand_path(Bundler.root).to_s.untaint :
+        Pathname.new(loaded_from).dirname.expand_path(Carat.root).to_s.untaint :
         rg_full_gem_path
     end
 
@@ -67,7 +67,7 @@ module Gem
     end
 
     def git_version
-      return unless loaded_from && source.is_a?(Bundler::Source::Git)
+      return unless loaded_from && source.is_a?(Carat::Source::Git)
       " #{source.revision[0..6]}"
     end
 
@@ -165,6 +165,6 @@ end
 
 module Gem
   class Specification
-    include ::Bundler::MatchPlatform
+    include ::Carat::MatchPlatform
   end
 end

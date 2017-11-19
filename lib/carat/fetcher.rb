@@ -2,7 +2,7 @@ require 'carat/vendored_persistent'
 require 'securerandom'
 require 'cgi'
 
-module Bundler
+module Carat
 
   # Handles all the fetching with the rubygems server
   class Fetcher
@@ -56,27 +56,27 @@ module Bundler
       def download_gem_from_uri(spec, uri)
         spec.fetch_platform
 
-        download_path = Bundler.requires_sudo? ? Bundler.tmp(spec.full_name) : Bundler.rubygems.gem_dir
-        gem_path = "#{Bundler.rubygems.gem_dir}/cache/#{spec.full_name}.gem"
+        download_path = Carat.requires_sudo? ? Carat.tmp(spec.full_name) : Carat.rubygems.gem_dir
+        gem_path = "#{Carat.rubygems.gem_dir}/cache/#{spec.full_name}.gem"
 
         FileUtils.mkdir_p("#{download_path}/cache")
-        Bundler.rubygems.download_gem(spec, uri, download_path)
+        Carat.rubygems.download_gem(spec, uri, download_path)
 
-        if Bundler.requires_sudo?
-          Bundler.mkdir_p "#{Bundler.rubygems.gem_dir}/cache"
-          Bundler.sudo "mv #{download_path}/cache/#{spec.full_name}.gem #{gem_path}"
+        if Carat.requires_sudo?
+          Carat.mkdir_p "#{Carat.rubygems.gem_dir}/cache"
+          Carat.sudo "mv #{download_path}/cache/#{spec.full_name}.gem #{gem_path}"
         end
 
         gem_path
       ensure
-        Bundler.rm_rf(download_path) if Bundler.requires_sudo?
+        Carat.rm_rf(download_path) if Carat.requires_sudo?
       end
 
       def user_agent
         @user_agent ||= begin
-          ruby = Bundler.ruby_version
+          ruby = Carat.ruby_version
 
-          agent = "carat/#{Bundler::VERSION}"
+          agent = "carat/#{Carat::VERSION}"
           agent << " rubygems/#{Gem::VERSION}"
           agent << " ruby/#{ruby.version}"
           agent << " (#{ruby.host})"
@@ -88,13 +88,13 @@ module Bundler
             agent << " #{ruby.engine}/#{engine_version}"
           end
 
-          agent << " options/#{Bundler.settings.all.join(",")}"
+          agent << " options/#{Carat.settings.all.join(",")}"
 
           # add a random ID so we can consolidate runs server-side
           agent << " " << SecureRandom.hex(8)
 
           # add any user agent strings set in the config
-          extra_ua = Bundler.settings[:user_agent]
+          extra_ua = Carat.settings[:user_agent]
           agent << " " << extra_ua if extra_ua
 
           agent
@@ -117,20 +117,20 @@ module Bundler
     def connection
       @connection ||= begin
         needs_ssl = remote_uri.scheme == "https" ||
-          Bundler.settings[:ssl_verify_mode] ||
-          Bundler.settings[:ssl_client_cert]
+          Carat.settings[:ssl_verify_mode] ||
+          Carat.settings[:ssl_client_cert]
         raise SSLError if needs_ssl && !defined?(OpenSSL::SSL)
 
         con = Net::HTTP::Persistent.new 'carat', :ENV
 
         if remote_uri.scheme == "https"
-          con.verify_mode = (Bundler.settings[:ssl_verify_mode] ||
+          con.verify_mode = (Carat.settings[:ssl_verify_mode] ||
             OpenSSL::SSL::VERIFY_PEER)
           con.cert_store = carat_cert_store
         end
 
-        if Bundler.settings[:ssl_client_cert]
-          pem = File.read(Bundler.settings[:ssl_client_cert])
+        if Carat.settings[:ssl_client_cert]
+          pem = File.read(Carat.settings[:ssl_client_cert])
           con.cert = OpenSSL::X509::Certificate.new(pem)
           con.key  = OpenSSL::PKey::RSA.new(pem)
         end
@@ -152,11 +152,11 @@ module Bundler
 
       uri = URI.parse("#{remote_uri}#{Gem::MARSHAL_SPEC_DIR}#{spec_file_name}.rz")
       if uri.scheme == 'file'
-        Bundler.load_marshal Gem.inflate(Gem.read_binary(uri.path))
+        Carat.load_marshal Gem.inflate(Gem.read_binary(uri.path))
       elsif cached_spec_path = gemspec_cached_path(spec_file_name)
-        Bundler.load_gemspec(cached_spec_path)
+        Carat.load_gemspec(cached_spec_path)
       else
-        Bundler.load_marshal Gem.inflate(fetch(uri))
+        Carat.load_marshal Gem.inflate(fetch(uri))
       end
     rescue MarshalError
       raise HTTPError, "Gemspec #{spec} contained invalid data.\n" \
@@ -165,14 +165,14 @@ module Bundler
 
     # cached gem specification path, if one exists
     def gemspec_cached_path spec_file_name
-      paths = Bundler.rubygems.spec_cache_dirs.map { |dir| File.join(dir, spec_file_name) }
+      paths = Carat.rubygems.spec_cache_dirs.map { |dir| File.join(dir, spec_file_name) }
       paths = paths.select {|path| File.file? path }
       paths.first
     end
 
     # return the specs in the carat format as an index
     def specs(gem_names, source)
-      old = Bundler.rubygems.sources
+      old = Carat.rubygems.sources
       index = Index.new
 
       if gem_names && use_api
@@ -183,7 +183,7 @@ module Bundler
         # API errors mean we should treat this as a non-API source
         @use_api = false
 
-        specs = Bundler::Retry.new("source fetch", AUTH_ERRORS).attempts do
+        specs = Carat::Retry.new("source fetch", AUTH_ERRORS).attempts do
           fetch_all_remote_specs
         end
       end
@@ -203,10 +203,10 @@ module Bundler
 
       index
     rescue CertificateFailureError => e
-      Bundler.ui.info "" if gem_names && use_api # newline after dots
+      Carat.ui.info "" if gem_names && use_api # newline after dots
       raise e
     ensure
-      Bundler.rubygems.sources = old
+      Carat.rubygems.sources = old
     end
 
     # fetch index
@@ -214,15 +214,15 @@ module Bundler
       query_list = gem_names - full_dependency_list
 
       # only display the message on the first run
-      if Bundler.ui.debug?
-        Bundler.ui.debug "Query List: #{query_list.inspect}"
+      if Carat.ui.debug?
+        Carat.ui.debug "Query List: #{query_list.inspect}"
       else
-        Bundler.ui.info ".", false
+        Carat.ui.info ".", false
       end
 
       return {remote_uri => last_spec_list} if query_list.empty?
 
-      remote_specs = Bundler::Retry.new("dependency api", AUTH_ERRORS).attempts do
+      remote_specs = Carat::Retry.new("dependency api", AUTH_ERRORS).attempts do
         fetch_dependency_remote_specs(query_list)
       end
 
@@ -230,8 +230,8 @@ module Bundler
       returned_gems = spec_list.map {|spec| spec.first }.uniq
       fetch_remote_specs(deps_list, full_dependency_list + returned_gems, spec_list + last_spec_list)
     rescue HTTPError, MarshalError, GemspecError
-      Bundler.ui.info "" unless Bundler.ui.debug? # new line now that the dots are over
-      Bundler.ui.debug "could not fetch from the dependency API, trying the full index"
+      Carat.ui.info "" unless Carat.ui.debug? # new line now that the dots are over
+      Carat.ui.debug "could not fetch from the dependency API, trying the full index"
       @use_api = false
       return nil
     end
@@ -239,7 +239,7 @@ module Bundler
     def use_api
       return @use_api if defined?(@use_api)
 
-      if remote_uri.scheme == "file" || Bundler::Fetcher.disable_endpoint
+      if remote_uri.scheme == "file" || Carat::Fetcher.disable_endpoint
         @use_api = false
       elsif fetch(dependency_api_uri)
         @use_api = true
@@ -270,7 +270,7 @@ module Bundler
       raise HTTPError, "Too many redirects" if counter >= @redirect_limit
 
       response = request(uri)
-      Bundler.ui.debug("HTTP #{response.code} #{response.message}")
+      Carat.ui.debug("HTTP #{response.code} #{response.message}")
 
       case response
       when Net::HTTPRedirection
@@ -292,7 +292,7 @@ module Bundler
     end
 
     def request(uri)
-      Bundler.ui.debug "HTTP GET #{uri}"
+      Carat.ui.debug "HTTP GET #{uri}"
       req = Net::HTTP::Get.new uri.request_uri
       if uri.user
         user = CGI.unescape(uri.user)
@@ -303,7 +303,7 @@ module Bundler
     rescue OpenSSL::SSL::SSLError
       raise CertificateFailureError.new(uri)
     rescue *HTTP_ERRORS => e
-      Bundler.ui.trace e
+      Carat.ui.trace e
       case e.message
       when /host down:/, /getaddrinfo: nodename nor servname provided/
         raise NetworkDownError, "Could not reach host #{uri.host}. Check your network " \
@@ -321,13 +321,13 @@ module Bundler
 
     # fetch from Gemcutter Dependency Endpoint API
     def fetch_dependency_remote_specs(gem_names)
-      Bundler.ui.debug "Query Gemcutter Dependency Endpoint API: #{gem_names.join(',')}"
+      Carat.ui.debug "Query Gemcutter Dependency Endpoint API: #{gem_names.join(',')}"
       gem_list = []
       deps_list = []
 
       gem_names.each_slice(Source::Rubygems::API_REQUEST_SIZE) do |names|
         marshalled_deps = fetch dependency_api_uri(names)
-        gem_list += Bundler.load_marshal(marshalled_deps)
+        gem_list += Carat.load_marshal(marshalled_deps)
       end
 
       spec_list = gem_list.map do |s|
@@ -345,9 +345,9 @@ module Bundler
 
     # fetch from modern index: specs.4.8.gz
     def fetch_all_remote_specs
-      old_sources = Bundler.rubygems.sources
-      Bundler.rubygems.sources = [remote_uri.to_s]
-      Bundler.rubygems.fetch_all_remote_specs
+      old_sources = Carat.rubygems.sources
+      Carat.rubygems.sources = [remote_uri.to_s]
+      Carat.rubygems.fetch_all_remote_specs
     rescue Gem::RemoteFetcher::FetchError, OpenSSL::SSL::SSLError => e
       case e.message
       when /certificate verify failed/
@@ -361,11 +361,11 @@ module Bundler
           raise AuthenticationRequiredError, remote_uri
         end
       else
-        Bundler.ui.trace e
+        Carat.ui.trace e
         raise HTTPError, "Could not fetch specs from #{uri}"
       end
     ensure
-      Bundler.rubygems.sources = old_sources
+      Carat.rubygems.sources = old_sources
     end
 
     def well_formed_dependency(name, *requirements)
@@ -382,11 +382,11 @@ module Bundler
 
     def carat_cert_store
       store = OpenSSL::X509::Store.new
-      if Bundler.settings[:ssl_ca_cert]
-        if File.directory? Bundler.settings[:ssl_ca_cert]
-          store.add_path Bundler.settings[:ssl_ca_cert]
+      if Carat.settings[:ssl_ca_cert]
+        if File.directory? Carat.settings[:ssl_ca_cert]
+          store.add_path Carat.settings[:ssl_ca_cert]
         else
-          store.add_file Bundler.settings[:ssl_ca_cert]
+          store.add_file Carat.settings[:ssl_ca_cert]
         end
       else
         store.set_default_paths
@@ -399,8 +399,8 @@ module Bundler
   private
 
     def configured_uri_for(uri)
-      uri = Bundler::Source.mirror_for(uri)
-      config_auth = Bundler.settings[uri.to_s] || Bundler.settings[uri.host]
+      uri = Carat::Source.mirror_for(uri)
+      config_auth = Carat.settings[uri.to_s] || Carat.settings[uri.host]
       AnonymizableURI.new(uri, config_auth)
     end
 

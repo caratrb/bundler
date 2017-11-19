@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   class Argument #:nodoc:
     VALID_TYPES = [:numeric, :hash, :array, :string]
 

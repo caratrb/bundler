@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Bundler::SourceList do
+describe Carat::SourceList do
   before do
-    allow(Bundler).to receive(:root) { Pathname.new '/' }
+    allow(Carat).to receive(:root) { Pathname.new '/' }
   end
 
-  subject(:source_list) { Bundler::SourceList.new }
+  subject(:source_list) { Carat::SourceList.new }
 
-  let(:rubygems_aggregate) { Bundler::Source::Rubygems.new }
+  let(:rubygems_aggregate) { Carat::Source::Rubygems.new }
 
   describe "adding sources" do
     before do
@@ -23,7 +23,7 @@ describe Bundler::SourceList do
       end
 
       it "returns the new path source" do
-        expect(@new_source).to be_instance_of(Bundler::Source::Path)
+        expect(@new_source).to be_instance_of(Carat::Source::Path)
       end
 
       it "passes the provided options to the new source" do
@@ -46,7 +46,7 @@ describe Bundler::SourceList do
       end
 
       it "returns the new git source" do
-        expect(@new_source).to be_instance_of(Bundler::Source::Git)
+        expect(@new_source).to be_instance_of(Carat::Source::Git)
       end
 
       it "passes the provided options to the new source" do
@@ -69,7 +69,7 @@ describe Bundler::SourceList do
       end
 
       it "returns the new rubygems source" do
-        expect(@new_source).to be_instance_of(Bundler::Source::Rubygems)
+        expect(@new_source).to be_instance_of(Carat::Source::Rubygems)
       end
 
       it "passes the provided options to the new source" do
@@ -91,7 +91,7 @@ describe Bundler::SourceList do
       end
 
       it "returns the aggregate rubygems source" do
-        expect(@returned_source).to be_instance_of(Bundler::Source::Rubygems)
+        expect(@returned_source).to be_instance_of(Carat::Source::Rubygems)
       end
 
       it "adds the provided remote to the beginning of the aggregate source" do
@@ -131,17 +131,17 @@ describe Bundler::SourceList do
       source_list.add_git_source('uri' => 'git://first-git.org/path.git')
 
       expect(source_list.all_sources).to eq [
-        Bundler::Source::Path.new('path' => '/first/path/to/gem'),
-        Bundler::Source::Path.new('path' => '/second/path/to/gem'),
-        Bundler::Source::Path.new('path' => '/third/path/to/gem'),
-        Bundler::Source::Git.new('uri' => 'git://first-git.org/path.git'),
-        Bundler::Source::Git.new('uri' => 'git://second-git.org/path.git'),
-        Bundler::Source::Git.new('uri' => 'git://third-git.org/path.git'),
-        Bundler::Source::Rubygems.new('remotes' => ['https://first-rubygems.org']),
-        Bundler::Source::Rubygems.new('remotes' => ['https://second-rubygems.org']),
-        Bundler::Source::Rubygems.new('remotes' => ['https://third-rubygems.org']),
-        Bundler::Source::Rubygems.new('remotes' => ['https://fourth-rubygems.org']),
-        Bundler::Source::Rubygems.new('remotes' => ['https://fifth-rubygems.org']),
+        Carat::Source::Path.new('path' => '/first/path/to/gem'),
+        Carat::Source::Path.new('path' => '/second/path/to/gem'),
+        Carat::Source::Path.new('path' => '/third/path/to/gem'),
+        Carat::Source::Git.new('uri' => 'git://first-git.org/path.git'),
+        Carat::Source::Git.new('uri' => 'git://second-git.org/path.git'),
+        Carat::Source::Git.new('uri' => 'git://third-git.org/path.git'),
+        Carat::Source::Rubygems.new('remotes' => ['https://first-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://second-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://third-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://fourth-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://fifth-rubygems.org']),
         rubygems_aggregate,
       ]
     end
@@ -168,9 +168,9 @@ describe Bundler::SourceList do
       source_list.add_git_source('uri' => 'git://first-git.org/path.git')
 
       expect(source_list.path_sources).to eq [
-        Bundler::Source::Path.new('path' => '/first/path/to/gem'),
-        Bundler::Source::Path.new('path' => '/second/path/to/gem'),
-        Bundler::Source::Path.new('path' => '/third/path/to/gem'),
+        Carat::Source::Path.new('path' => '/first/path/to/gem'),
+        Carat::Source::Path.new('path' => '/second/path/to/gem'),
+        Carat::Source::Path.new('path' => '/third/path/to/gem'),
       ]
     end
   end
@@ -197,9 +197,9 @@ describe Bundler::SourceList do
       source_list.add_git_source('uri' => 'git://first-git.org/path.git')
 
       expect(source_list.git_sources).to eq [
-        Bundler::Source::Git.new('uri' => 'git://first-git.org/path.git'),
-        Bundler::Source::Git.new('uri' => 'git://second-git.org/path.git'),
-        Bundler::Source::Git.new('uri' => 'git://third-git.org/path.git'),
+        Carat::Source::Git.new('uri' => 'git://first-git.org/path.git'),
+        Carat::Source::Git.new('uri' => 'git://second-git.org/path.git'),
+        Carat::Source::Git.new('uri' => 'git://third-git.org/path.git'),
       ]
     end
   end
@@ -234,11 +234,11 @@ describe Bundler::SourceList do
       source_list.add_git_source('uri' => 'git://first-git.org/path.git')
 
       expect(source_list.rubygems_sources).to eq [
-        Bundler::Source::Rubygems.new('remotes' => ['https://first-rubygems.org']),
-        Bundler::Source::Rubygems.new('remotes' => ['https://second-rubygems.org']),
-        Bundler::Source::Rubygems.new('remotes' => ['https://third-rubygems.org']),
-        Bundler::Source::Rubygems.new('remotes' => ['https://fourth-rubygems.org']),
-        Bundler::Source::Rubygems.new('remotes' => ['https://fifth-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://first-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://second-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://third-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://fourth-rubygems.org']),
+        Carat::Source::Rubygems.new('remotes' => ['https://fifth-rubygems.org']),
         rubygems_aggregate,
       ]
     end
@@ -246,7 +246,7 @@ describe Bundler::SourceList do
 
   describe "#get" do
     context "when it includes an equal source" do
-      let(:rubygems_source) { Bundler::Source::Rubygems.new('remotes' => ['https://rubygems.org']) }
+      let(:rubygems_source) { Carat::Source::Rubygems.new('remotes' => ['https://rubygems.org']) }
       before { @equal_source = source_list.add_rubygems_remote('https://rubygems.org') }
 
       it "returns the equal source" do
@@ -255,7 +255,7 @@ describe Bundler::SourceList do
     end
 
     context "when it does not include an equal source" do
-      let(:path_source) { Bundler::Source::Path.new('path' => '/path/to/gem') }
+      let(:path_source) { Carat::Source::Path.new('path' => '/path/to/gem') }
 
       it "returns nil" do
         expect(source_list.get(path_source)).to be_nil
@@ -278,13 +278,13 @@ describe Bundler::SourceList do
       source_list.add_git_source('uri' => 'git://first-git.org/path.git')
 
       expect(source_list.lock_sources).to eq [
-        Bundler::Source::Git.new('uri' => 'git://first-git.org/path.git'),
-        Bundler::Source::Git.new('uri' => 'git://second-git.org/path.git'),
-        Bundler::Source::Git.new('uri' => 'git://third-git.org/path.git'),
-        Bundler::Source::Path.new('path' => '/first/path/to/gem'),
-        Bundler::Source::Path.new('path' => '/second/path/to/gem'),
-        Bundler::Source::Path.new('path' => '/third/path/to/gem'),
-        Bundler::Source::Rubygems.new('remotes' => [
+        Carat::Source::Git.new('uri' => 'git://first-git.org/path.git'),
+        Carat::Source::Git.new('uri' => 'git://second-git.org/path.git'),
+        Carat::Source::Git.new('uri' => 'git://third-git.org/path.git'),
+        Carat::Source::Path.new('path' => '/first/path/to/gem'),
+        Carat::Source::Path.new('path' => '/second/path/to/gem'),
+        Carat::Source::Path.new('path' => '/third/path/to/gem'),
+        Carat::Source::Rubygems.new('remotes' => [
           'https://duplicate-rubygems.org',
           'https://first-rubygems.org',
           'https://second-rubygems.org',
@@ -295,8 +295,8 @@ describe Bundler::SourceList do
   end
 
   describe "replace_sources!" do
-    let(:existing_locked_source) { Bundler::Source::Path.new('path' => '/existing/path') }
-    let(:removed_locked_source)  { Bundler::Source::Path.new('path' => '/removed/path') }
+    let(:existing_locked_source) { Carat::Source::Path.new('path' => '/existing/path') }
+    let(:removed_locked_source)  { Carat::Source::Path.new('path' => '/removed/path') }
 
     let(:locked_sources) { [existing_locked_source, removed_locked_source] }
 

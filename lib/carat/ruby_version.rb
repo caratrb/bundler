@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class RubyVersion
     attr_reader :version, :patchlevel, :engine, :engine_version
 
@@ -105,7 +105,7 @@ module Bundler
       when "jruby"
         JRUBY_VERSION.dup
       else
-        raise BundlerError, "RUBY_ENGINE value #{RUBY_ENGINE} is not recognized"
+        raise CaratError, "RUBY_ENGINE value #{RUBY_ENGINE} is not recognized"
         nil
       end
     end

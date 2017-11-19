@@ -22,11 +22,11 @@ the gems listed in the `Gemfile`.
 
     source "https://rubygems.org"
 
-It is possible, but not recommended as of Bundler 1.7, to add multiple global
+It is possible, but not recommended as of Carat 1.7, to add multiple global
 `source` lines. Each of these `source`s `MUST` be a valid Rubygems repository.
 
 Sources are checked for gems following the heuristics described in
-[SOURCE PRIORITY][]. If a gem is found in more than one global source, Bundler
+[SOURCE PRIORITY][]. If a gem is found in more than one global source, Carat
 will print a warning after installing the gem indicating which source was used,
 and listing the other sources where the gem is available. A specific source can
 be selected for gems that need to use a non-standard repository, suppressing
@@ -104,7 +104,7 @@ Each _gem_ `MAY` have one or more version specifiers.
 ### REQUIRE AS (:require)
 
 Each _gem_ `MAY` specify files that should be used when autorequiring via
-`Bundler.require`. You may pass an array with multiple files or `true` if file
+`Carat.require`. You may pass an array with multiple files or `true` if file
 you want `required` has same name as _gem_ or `false` to
 prevent any file from being autorequired.
 
@@ -126,23 +126,23 @@ not specify membership in any group is placed in the `default` group.
     gem "rspec", :group => :test
     gem "wirble", :groups => [:development, :test]
 
-The Bundler runtime allows its two main methods, `Bundler.setup` and
-`Bundler.require`, to limit their impact to particular groups.
+The Carat runtime allows its two main methods, `Carat.setup` and
+`Carat.require`, to limit their impact to particular groups.
 
     # setup adds gems to Ruby's load path
-    Bundler.setup                    # defaults to all groups
-    require "bundler/setup"          # same as Bundler.setup
-    Bundler.setup(:default)          # only set up the _default_ group
-    Bundler.setup(:test)             # only set up the _test_ group (but `not` _default_)
-    Bundler.setup(:default, :test)   # set up the _default_ and _test_ groups, but no others
+    Carat.setup                    # defaults to all groups
+    require "bundler/setup"          # same as Carat.setup
+    Carat.setup(:default)          # only set up the _default_ group
+    Carat.setup(:test)             # only set up the _test_ group (but `not` _default_)
+    Carat.setup(:default, :test)   # set up the _default_ and _test_ groups, but no others
 
     # require requires all of the gems in the specified groups
-    Bundler.require                  # defaults to just the _default_ group
-    Bundler.require(:default)        # identical
-    Bundler.require(:default, :test) # requires the _default_ and _test_ groups
-    Bundler.require(:test)           # requires just the _test_ group
+    Carat.require                  # defaults to just the _default_ group
+    Carat.require(:default)        # identical
+    Carat.require(:default, :test) # requires the _default_ and _test_ groups
+    Carat.require(:test)           # requires just the _test_ group
 
-The Bundler CLI allows you to specify a list of groups whose gems `bundle install` should
+The Carat CLI allows you to specify a list of groups whose gems `bundle install` should
 not install with the `--without` option. To specify multiple groups to ignore, specify a
 list of groups separated by spaces.
 
@@ -153,14 +153,14 @@ After running `bundle install --without test`, bundler will remember that you ex
 the test group in the last installation. The next time you run `bundle install`,
 without any `--without option`, bundler will recall it.
 
-Also, calling `Bundler.setup` with no parameters, or calling `require "bundler/setup"`
+Also, calling `Carat.setup` with no parameters, or calling `require "bundler/setup"`
 will setup all groups except for the ones you excluded via `--without` (since they
 are obviously not available).
 
 Note that on `bundle install`, bundler downloads and evaluates all gems, in order to
 create a single canonical list of all of the required gems and their dependencies.
 This means that you cannot list different versions of the same gems in different
-groups. For more details, see [Understanding Bundler](http://bundler.io/rationale.html).
+groups. For more details, see [Understanding Carat](http://bundler.io/rationale.html).
 
 ### PLATFORMS (:platforms)
 
@@ -228,8 +228,8 @@ As with groups, you can specify one or more platforms:
     gem "ruby-debug", :platforms => :mri_18
     gem "nokogiri",   :platforms => [:mri_18, :jruby]
 
-All operations involving groups (`bundle install`, `Bundler.setup`,
-`Bundler.require`) behave exactly the same as if any groups not
+All operations involving groups (`bundle install`, `Carat.setup`,
+`Carat.require`) behave exactly the same as if any groups not
 matching the current platform were explicitly excluded.
 
 ### SOURCE (:source)
@@ -243,7 +243,7 @@ This forces the gem to be loaded from this source and ignores any global sources
 declared at the top level of the file. If the gem does not exist in this source,
 it will not be installed.
 
-Bundler will search for child dependencies of this gem by first looking in the
+Carat will search for child dependencies of this gem by first looking in the
 source selected for the parent, but if they are not found there, it will fall
 back on global sources using the ordering described in [SOURCE PRIORITY][].
 
@@ -295,7 +295,7 @@ specifier. If not, bundler will print a warning.
     # repository's master branch specifies version 3.0.0
 
 If a git repository does `not` have a `.gemspec` for the gem you attached
-it to, a version specifier `MUST` be provided. Bundler will use this
+it to, a version specifier `MUST` be provided. Carat will use this
 version in the simple `.gemspec` it creates.
 
 Git repositories support a number of additional options.
@@ -340,7 +340,7 @@ In addition, if you wish to choose a specific branch:
 
 ### GITHUB (:github)
 
-`NOTE`: This shorthand should be avoided until Bundler 2.0, since it
+`NOTE`: This shorthand should be avoided until Carat 2.0, since it
 currently expands to an insecure `git://` URL. This allows a
 man-in-the-middle attacker to compromise your system.
 
@@ -441,14 +441,14 @@ all gems in the block will inherit those options.
 
 ## GEMSPEC (#gemspec)
 
-If you wish to use Bundler to help install dependencies for a gem while it is
+If you wish to use Carat to help install dependencies for a gem while it is
 being developed, use the `gemspec` method to pull in the dependencies listed in
 the `.gemspec` file.
 
 The `gemspec` method adds any runtime dependencies as gem requirements in the
 default group. It also adds development dependencies as gem requirements in the
 `development` group. Finally, it adds a gem requirement on your project (`:path
-=> '.'`). In conjunction with `Bundler.setup`, this allows you to require project
+=> '.'`). In conjunction with `Carat.setup`, this allows you to require project
 files in your test code as you would if the project were installed as a gem; you
 need not manipulate the load path manually or require project files via relative
 paths.

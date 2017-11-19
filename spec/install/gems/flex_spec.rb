@@ -195,7 +195,7 @@ describe "bundle flex_install" do
       nice_error = <<-E.strip.gsub(/^ {8}/, '')
         Fetching source index from file:#{gem_repo2}/
         Resolving dependencies...
-        Bundler could not find compatible versions for gem "rack":
+        Carat could not find compatible versions for gem "rack":
           In snapshot (Gemfile.lock):
             rack (= 0.9.1)
 

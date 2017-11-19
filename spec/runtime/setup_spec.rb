@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Bundler.setup" do
+describe "Carat.setup" do
   describe "with no arguments" do
     it "makes all groups available" do
       install_gemfile <<-G
@@ -11,7 +11,7 @@ describe "Bundler.setup" do
       ruby <<-RUBY
         require 'rubygems'
         require 'carat'
-        Bundler.setup
+        Carat.setup
 
         require 'rack'
         puts RACK
@@ -34,7 +34,7 @@ describe "Bundler.setup" do
       ruby <<-RUBY
         require 'rubygems'
         require 'carat'
-        Bundler.setup(:default)
+        Carat.setup(:default)
 
         begin
           require 'rack'
@@ -50,7 +50,7 @@ describe "Bundler.setup" do
       ruby <<-RUBY
         require 'rubygems'
         require 'carat'
-        Bundler.setup(:default, 'test')
+        Carat.setup(:default, 'test')
 
         require 'rack'
         puts RACK
@@ -63,8 +63,8 @@ describe "Bundler.setup" do
       ruby <<-RUBY
         require 'rubygems'
         require 'carat'
-        Bundler.setup
-        Bundler.setup(:default)
+        Carat.setup
+        Carat.setup(:default)
 
         require 'rack'
         puts RACK
@@ -77,8 +77,8 @@ describe "Bundler.setup" do
       ruby <<-RUBY
         require 'rubygems'
         require 'carat'
-        Bundler.setup(:default)
-        Bundler.setup(:default, :test)
+        Carat.setup(:default)
+        Carat.setup(:default, :test)
 
         begin
           require 'yard'
@@ -103,9 +103,9 @@ describe "Bundler.setup" do
       require 'carat'
 
       begin
-        Bundler.setup
+        Carat.setup
         puts "FAIL"
-      rescue Bundler::GemNotFound
+      rescue Carat::GemNotFound
         puts "WIN"
       end
     R
@@ -123,7 +123,7 @@ describe "Bundler.setup" do
       require 'rubygems'
       require 'carat'
 
-      Bundler.setup
+      Carat.setup
     R
 
     expect(bundled_app("Gemfile.lock")).not_to exist
@@ -147,7 +147,7 @@ describe "Bundler.setup" do
       require 'rubygems'
       require 'carat'
 
-      Bundler.setup
+      Carat.setup
     R
 
     expect(File.read(bundled_app("Gemfile.lock"))).to eq(lockfile)
@@ -271,7 +271,7 @@ describe "Bundler.setup" do
 
       it "removes system gems from Gem.source_index" do
         run "require 'yard'"
-        expect(out).to eq("carat-#{Bundler::VERSION}\nyard-1.0")
+        expect(out).to eq("carat-#{Carat::VERSION}\nyard-1.0")
       end
 
       context "when the ruby stdlib is a substring of Gem.path" do
@@ -327,7 +327,7 @@ describe "Bundler.setup" do
         require 'carat'
 
         begin
-          Bundler.setup
+          Carat.setup
           puts "WIN"
         rescue Exception => e
           puts "FAIL"
@@ -349,9 +349,9 @@ describe "Bundler.setup" do
         require "carat"
 
         begin
-          Bundler.setup
+          Carat.setup
           puts "FAIL"
-        rescue Bundler::GitError => e
+        rescue Carat::GitError => e
           puts e.message
         end
       R
@@ -378,7 +378,7 @@ describe "Bundler.setup" do
     it "finds git gem when default bundle path becomes read only" do
       bundle "install"
 
-      with_read_only("#{Bundler.bundle_path}/**/*") do
+      with_read_only("#{Carat.bundle_path}/**/*") do
         should_be_installed "rack 1.0.0"
       end
     end
@@ -487,7 +487,7 @@ describe "Bundler.setup" do
       should_be_installed "activesupport 2.3.2", :groups => :default
     end
 
-    it "remembers --without and does not bail on bare Bundler.setup" do
+    it "remembers --without and does not bail on bare Carat.setup" do
       install_gemfile <<-G, :without => :rails
         source "file://#{gem_repo1}"
         gem "activesupport"
@@ -502,7 +502,7 @@ describe "Bundler.setup" do
       should_be_installed "activesupport 2.3.2"
     end
 
-    it "remembers --without and does not include groups passed to Bundler.setup" do
+    it "remembers --without and does not include groups passed to Carat.setup" do
       install_gemfile <<-G, :without => :rails
         source "file://#{gem_repo1}"
         gem "activesupport"
@@ -540,7 +540,7 @@ describe "Bundler.setup" do
           gem "thin"
           require 'carat'
           begin
-            Bundler.setup
+            Carat.setup
             puts "FAIL"
           rescue Gem::LoadError => e
             puts e.message
@@ -565,7 +565,7 @@ describe "Bundler.setup" do
           gem "thin"
           require 'carat'
           begin
-            Bundler.setup
+            Carat.setup
             puts "FAIL"
           rescue Gem::LoadError => e
             puts e.message
@@ -637,9 +637,9 @@ describe "Bundler.setup" do
     G
 
     run <<-R
-      puts Bundler.rubygems.find_name("rack").inspect
+      puts Carat.rubygems.find_name("rack").inspect
       Gem.refresh
-      puts Bundler.rubygems.find_name("rack").inspect
+      puts Carat.rubygems.find_name("rack").inspect
     R
 
     expect(out).to eq("[]\n[]")
@@ -650,7 +650,7 @@ describe "Bundler.setup" do
       path = bundled_app(File.join('vendor', 'foo'))
       build_lib "foo", :path => path
 
-      # If the .gemspec exists, then Bundler handles the path differently.
+      # If the .gemspec exists, then Carat handles the path differently.
       # See Source::Path.load_spec_files for details.
       FileUtils.rm(File.join(path, 'foo.gemspec'))
 
@@ -666,13 +666,13 @@ describe "Bundler.setup" do
       expect(err).to eq("")
     end
 
-    it "should make sure the Bundler.root is really included in the path relative to the Gemfile" do
+    it "should make sure the Carat.root is really included in the path relative to the Gemfile" do
       relative_path = File.join('vendor', Dir.pwd[1..-1], 'foo')
       absolute_path = bundled_app(relative_path)
       FileUtils.mkdir_p(absolute_path)
       build_lib "foo", :path => absolute_path
 
-      # If the .gemspec exists, then Bundler handles the path differently.
+      # If the .gemspec exists, then Carat handles the path differently.
       # See Source::Path.load_spec_files for details.
       FileUtils.rm(File.join(absolute_path, 'foo.gemspec'))
 
@@ -828,10 +828,10 @@ describe "Bundler.setup" do
 
       ruby <<-RUBY
         require 'carat'
-        def Bundler.require(path)
+        def Carat.require(path)
           raise "LOSE"
         end
-        Bundler.load
+        Carat.load
       RUBY
 
       expect(err).to eq("")
@@ -839,13 +839,13 @@ describe "Bundler.setup" do
     end
   end
 
-  describe "when Bundler is bundled" do
+  describe "when Carat is bundled" do
     it "doesn't blow up" do
       install_gemfile <<-G
         gem "carat", :path => "#{File.expand_path("..", lib)}"
       G
 
-      bundle %|exec ruby -e "require 'carat'; Bundler.setup"|
+      bundle %|exec ruby -e "require 'carat'; Carat.setup"|
       expect(err).to be_empty
     end
   end

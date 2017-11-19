@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class CLI::Inject
     attr_reader :options, :name, :version, :gems
     def initialize(options, name, version, gems)
@@ -16,16 +16,16 @@ module Bundler
       # Build an array of Dependency objects out of the arguments
       deps = []
       gems.each_slice(2) do |gem_name, gem_version|
-        deps << Bundler::Dependency.new(gem_name, gem_version)
+        deps << Carat::Dependency.new(gem_name, gem_version)
       end
 
       added = Injector.inject(deps)
 
       if added.any?
-        Bundler.ui.confirm "Added to Gemfile:"
-        Bundler.ui.confirm added.map{ |g| "  #{g}" }.join("\n")
+        Carat.ui.confirm "Added to Gemfile:"
+        Carat.ui.confirm added.map{ |g| "  #{g}" }.join("\n")
       else
-        Bundler.ui.confirm "All injected gems were already present in the Gemfile"
+        Carat.ui.confirm "All injected gems were already present in the Gemfile"
       end
     end
 

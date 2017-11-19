@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   module Invocation
     def self.included(base) #:nodoc:
       base.extend ClassMethods
@@ -7,11 +7,11 @@ class Bundler::Thor
     module ClassMethods
       # This method is responsible for receiving a name and find the proper
       # class and command for it. The key is an optional parameter which is
-      # available only in class methods invocations (i.e. in Bundler::Thor::Group).
+      # available only in class methods invocations (i.e. in Carat::Thor::Group).
       def prepare_for_invocation(key, name) #:nodoc:
         case name
         when Symbol, String
-          Bundler::Thor::Util.find_class_and_command_by_namespace(name.to_s, !key)
+          Carat::Thor::Util.find_class_and_command_by_namespace(name.to_s, !key)
         else
           name
         end
@@ -25,13 +25,13 @@ class Bundler::Thor
       super
     end
 
-    # Make the current command chain accessible with in a Bundler::Thor-(sub)command
+    # Make the current command chain accessible with in a Carat::Thor-(sub)command
     def current_command_chain
       @_invocations.values.flatten.map(&:to_sym)
     end
 
     # Receives a name and invokes it. The name can be a string (either "command" or
-    # "namespace:command"), a Bundler::Thor::Command, a Class or a Bundler::Thor instance. If the
+    # "namespace:command"), a Carat::Thor::Command, a Class or a Carat::Thor instance. If the
     # command cannot be guessed by name, it can also be supplied as second argument.
     #
     # You can also supply the arguments, options and configuration values for
@@ -42,7 +42,7 @@ class Bundler::Thor
     #
     # ==== Examples
     #
-    #   class A < Bundler::Thor
+    #   class A < Carat::Thor
     #     def foo
     #       invoke :bar
     #       invoke "b:hello", ["Erik"]
@@ -53,7 +53,7 @@ class Bundler::Thor
     #     end
     #   end
     #
-    #   class B < Bundler::Thor
+    #   class B < Carat::Thor
     #     def hello(name)
     #       puts "hello #{name}"
     #     end
@@ -70,7 +70,7 @@ class Bundler::Thor
     # supplied to B. This allows lazy parse of options. Let's suppose you have
     # some rspec commands:
     #
-    #   class Rspec < Bundler::Thor::Group
+    #   class Rspec < Carat::Thor::Group
     #     class_option :mock_framework, :type => :string, :default => :rr
     #
     #     def invoke_mock_framework
@@ -81,7 +81,7 @@ class Bundler::Thor
     # As you noticed, it invokes the given mock framework, which might have its
     # own options:
     #
-    #   class Rspec::RR < Bundler::Thor::Group
+    #   class Rspec::RR < Carat::Thor::Group
     #     class_option :style, :type => :string, :default => :mock
     #   end
     #
@@ -100,7 +100,7 @@ class Bundler::Thor
     #
     def invoke(name = nil, *args)
       if name.nil?
-        warn "[Bundler::Thor] Calling invoke() without argument is deprecated. Please use invoke_all instead.\n#{caller.join("\n")}"
+        warn "[Carat::Thor] Calling invoke() without argument is deprecated. Please use invoke_all instead.\n#{caller.join("\n")}"
         return invoke_all
       end
 
@@ -108,8 +108,8 @@ class Bundler::Thor
       command, args, opts, config = args
 
       klass, command = _retrieve_class_and_command(name, command)
-      fail "Missing Bundler::Thor class for invoke #{name}" unless klass
-      fail "Expected Bundler::Thor class, got #{klass}" unless klass <= Bundler::Thor::Base
+      fail "Missing Carat::Thor class for invoke #{name}" unless klass
+      fail "Expected Carat::Thor class, got #{klass}" unless klass <= Carat::Thor::Base
 
       args, opts, config = _parse_initialization_options(args, opts, config)
       klass.send(:dispatch, command, args, opts, config) do |instance|

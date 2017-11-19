@@ -1,5 +1,5 @@
 require 'set'
-module Bundler
+module Carat
   class Graph
     GRAPH_NAME = :Gemfile
 
@@ -93,7 +93,7 @@ module Bundler
       # redefinition of matching_specs will also redefine to_spec and to_specs
       Gem::Dependency.class_eval do
         def matching_specs platform_only = false
-          matches = Bundler.load.specs.select { |spec|
+          matches = Carat.load.specs.select { |spec|
             self.name == spec.name and
               requirement.satisfied_by? spec.version
           }
@@ -153,11 +153,11 @@ module Bundler
 
         if @output_format.to_s == "debug"
           $stdout.puts g.output :none => String
-          Bundler.ui.info "debugging bundle viz..."
+          Carat.ui.info "debugging bundle viz..."
         else
           begin
             g.output @output_format.to_sym => "#{@output_file}.#{@output_format}"
-            Bundler.ui.info "#{@output_file}.#{@output_format}"
+            Carat.ui.info "#{@output_file}.#{@output_format}"
           rescue ArgumentError => e
             $stderr.puts "Unsupported output format. See Ruby-Graphviz/lib/graphviz/constants.rb"
             raise e

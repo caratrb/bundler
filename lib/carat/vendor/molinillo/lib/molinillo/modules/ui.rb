@@ -1,4 +1,4 @@
-module Bundler::Molinillo
+module Carat::Molinillo
   # Conveys information about the resolution process to a user.
   module UI
     # The {IO} object that should be used to print output. `STDOUT`, by default.

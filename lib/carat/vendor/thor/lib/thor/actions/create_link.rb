@@ -1,6 +1,6 @@
 require "carat/vendor/thor/lib/thor/actions/create_file"
 
-class Bundler::Thor
+class Carat::Thor
   module Actions
     # Create a new file relative to the destination root from the given source.
     #

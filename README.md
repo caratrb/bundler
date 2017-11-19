@@ -3,11 +3,11 @@
 [![Code Climate](https://img.shields.io/codeclimate/github/bundler/bundler.svg?style=flat)](https://codeclimate.com/github/bundler/bundler)
 [![Inline docs ](http://inch-ci.org/github/bundler/bundler.svg?style=flat)](http://inch-ci.org/github/bundler/bundler)
 
-# Bundler: a gem to bundle gems
+# Carat: a gem to bundle gems
 
-Bundler makes sure Ruby applications run the same code on every machine.
+Carat makes sure Ruby applications run the same code on every machine.
 
-It does this by managing the gems that the application depends on. Given a list of gems, it can automatically download and install those gems, as well as any other gems needed by the gems that are listed. Before installing gems, it checks the versions of every gem to make sure that they are compatible, and can all be loaded at the same time. After the gems have been installed, Bundler can help you update some or all of them when new versions become available. Finally, it records the exact versions that have been installed, so that others can install the exact same gems.
+It does this by managing the gems that the application depends on. Given a list of gems, it can automatically download and install those gems, as well as any other gems needed by the gems that are listed. Before installing gems, it checks the versions of every gem to make sure that they are compatible, and can all be loaded at the same time. After the gems have been installed, Carat can help you update some or all of them when new versions become available. Finally, it records the exact versions that have been installed, so that others can install the exact same gems.
 
 ### Installation and usage
 
@@ -27,10 +27,10 @@ For help with common problems, see [ISSUES](https://github.com/caratrb/carat/blo
 
 ### Other questions
 
-To see what has changed in recent versions of Bundler, see the [CHANGELOG](https://github.com/caratrb/carat/blob/master/CHANGELOG.md).
+To see what has changed in recent versions of Carat, see the [CHANGELOG](https://github.com/caratrb/carat/blob/master/CHANGELOG.md).
 
-Feel free to chat with the Bundler core team (and many other users) on IRC in the  [#bundler](irc://irc.freenode.net/bundler) channel on Freenode, or via email on the [Bundler mailing list](http://groups.google.com/group/ruby-bundler).
+Feel free to chat with the Carat core team (and many other users) on IRC in the  [#bundler](irc://irc.freenode.net/bundler) channel on Freenode, or via email on the [Carat mailing list](http://groups.google.com/group/ruby-bundler).
 
 ### Contributing
 
-If you'd like to contribute to Bundler, that's awesome, and we <3 you. There's a guide to contributing to Bundler (both code and general help) over in [DEVELOPMENT](https://github.com/caratrb/carat/blob/master/DEVELOPMENT.md)
+If you'd like to contribute to Carat, that's awesome, and we <3 you. There's a guide to contributing to Carat (both code and general help) over in [DEVELOPMENT](https://github.com/caratrb/carat/blob/master/DEVELOPMENT.md)

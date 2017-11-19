@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   module Actions
     # Creates an empty directory.
     #
@@ -26,7 +26,7 @@ class Bundler::Thor
       # Initializes given the source and destination.
       #
       # ==== Parameters
-      # base<Bundler::Thor::Base>:: A Bundler::Thor::Base instance
+      # base<Carat::Thor::Base>:: A Carat::Thor::Base instance
       # source<String>:: Relative path to the source of this file
       # destination<String>:: Relative path to the destination of this file
       # config<Hash>:: give :verbose => false to not log the status.

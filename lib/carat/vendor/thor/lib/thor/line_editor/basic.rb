@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   module LineEditor
     class Basic
       attr_reader :prompt, :options

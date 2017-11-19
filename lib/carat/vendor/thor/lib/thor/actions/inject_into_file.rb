@@ -1,6 +1,6 @@
 require "carat/vendor/thor/lib/thor/actions/empty_directory"
 
-class Bundler::Thor
+class Carat::Thor
   module Actions
     # Injects the given content into a file. Different from gsub_file, this
     # method is reversible.

@@ -1,6 +1,6 @@
 require 'carat/vendor/molinillo/lib/molinillo/dependency_graph'
 
-module Bundler::Molinillo
+module Carat::Molinillo
   # This class encapsulates a dependency resolver.
   # The resolver is responsible for determining which set of dependencies to
   # activate, with feedback from the the {#specification_provider}

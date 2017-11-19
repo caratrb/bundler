@@ -1,6 +1,6 @@
 require 'carat/cli/common'
 
-module Bundler
+module Carat
   class CLI::Outdated
     attr_reader :options, :gems
     def initialize(options, gems)
@@ -12,23 +12,23 @@ module Bundler
       sources = Array(options[:source])
 
       gems.each do |gem_name|
-        Bundler::CLI::Common.select_spec(gem_name)
+        Carat::CLI::Common.select_spec(gem_name)
       end
 
-      Bundler.definition.validate_ruby!
-      current_specs = Bundler.ui.silence { Bundler.load.specs }
+      Carat.definition.validate_ruby!
+      current_specs = Carat.ui.silence { Carat.load.specs }
       current_dependencies = {}
-      Bundler.ui.silence { Bundler.load.dependencies.each { |dep| current_dependencies[dep.name] = dep } }
+      Carat.ui.silence { Carat.load.dependencies.each { |dep| current_dependencies[dep.name] = dep } }
 
       if gems.empty? && sources.empty?
         # We're doing a full update
-        definition = Bundler.definition(true)
+        definition = Carat.definition(true)
       else
-        definition = Bundler.definition(:gems => gems, :sources => sources)
+        definition = Carat.definition(:gems => gems, :sources => sources)
       end
       options["local"] ? definition.resolve_with_cache! : definition.resolve_remotely!
 
-      Bundler.ui.info ""
+      Carat.ui.info ""
 
       out_count = 0
       # Loop through the current specs
@@ -54,23 +54,23 @@ module Bundler
         if gem_outdated || git_outdated
           if out_count == 0
             if options["pre"]
-              Bundler.ui.info "Outdated gems included in the bundle (including pre-releases):"
+              Carat.ui.info "Outdated gems included in the bundle (including pre-releases):"
             else
-              Bundler.ui.info "Outdated gems included in the bundle:"
+              Carat.ui.info "Outdated gems included in the bundle:"
             end
           end
 
           spec_version    = "#{active_spec.version}#{active_spec.git_version}"
           current_version = "#{current_spec.version}#{current_spec.git_version}"
           dependency_version = %|Gemfile specifies "#{dependency.requirement}"| if dependency && dependency.specific?
-          Bundler.ui.info "  * #{active_spec.name} (#{spec_version} > #{current_version}) #{dependency_version}".rstrip
+          Carat.ui.info "  * #{active_spec.name} (#{spec_version} > #{current_version}) #{dependency_version}".rstrip
           out_count += 1
         end
-        Bundler.ui.debug "from #{active_spec.loaded_from}"
+        Carat.ui.debug "from #{active_spec.loaded_from}"
       end
 
       if out_count.zero?
-        Bundler.ui.info "Bundle up to date!\n"
+        Carat.ui.info "Bundle up to date!\n"
       else
         exit 1
       end

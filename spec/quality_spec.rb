@@ -83,7 +83,7 @@ describe "The library itself" do
       expect($?).to eq(0)
 
       # clean up the .gem generated
-      system("rm carat-#{Bundler::VERSION}.gem")
+      system("rm carat-#{Carat::VERSION}.gem")
     end
   end
 

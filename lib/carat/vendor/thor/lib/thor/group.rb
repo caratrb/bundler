@@ -1,17 +1,17 @@
 require "carat/vendor/thor/lib/thor/base"
 
-# Bundler::Thor has a special class called Bundler::Thor::Group. The main difference to Bundler::Thor class
+# Carat::Thor has a special class called Carat::Thor::Group. The main difference to Carat::Thor class
 # is that it invokes all commands at once. It also include some methods that allows
-# invocations to be done at the class method, which are not available to Bundler::Thor
+# invocations to be done at the class method, which are not available to Carat::Thor
 # commands.
-class Bundler::Thor::Group # rubocop:disable ClassLength
+class Carat::Thor::Group # rubocop:disable ClassLength
   class << self
-    # The description for this Bundler::Thor::Group. If none is provided, but a source root
+    # The description for this Carat::Thor::Group. If none is provided, but a source root
     # exists, tries to find the USAGE one folder above it, otherwise searches
     # in the superclass.
     #
     # ==== Parameters
-    # description<String>:: The description for this Bundler::Thor::Group.
+    # description<String>:: The description for this Carat::Thor::Group.
     #
     def desc(description = nil)
       if description
@@ -83,7 +83,7 @@ class Bundler::Thor::Group # rubocop:disable ClassLength
     #
     # ==== Examples
     #
-    #   class GemGenerator < Bundler::Thor::Group
+    #   class GemGenerator < Carat::Thor::Group
     #     class_option :test_framework, :type => :string
     #     invoke_from_option :test_framework
     #   end
@@ -215,12 +215,12 @@ class Bundler::Thor::Group # rubocop:disable ClassLength
 
     # The method responsible for dispatching given the args.
     def dispatch(command, given_args, given_opts, config) #:nodoc:
-      if Bundler::Thor::HELP_MAPPINGS.include?(given_args.first)
+      if Carat::Thor::HELP_MAPPINGS.include?(given_args.first)
         help(config[:shell])
         return
       end
 
-      args, opts = Bundler::Thor::Options.split(given_args)
+      args, opts = Carat::Thor::Options.split(given_args)
       opts = given_opts || opts
 
       instance = new(args, opts, config)
@@ -234,29 +234,29 @@ class Bundler::Thor::Group # rubocop:disable ClassLength
     end
 
     # The banner for this class. You can customize it if you are invoking the
-    # thor class by another ways which is not the Bundler::Thor::Runner.
+    # thor class by another ways which is not the Carat::Thor::Runner.
     def banner
       "#{basename} #{self_command.formatted_usage(self, false)}"
     end
 
     # Represents the whole class as a command.
     def self_command #:nodoc:
-      Bundler::Thor::DynamicCommand.new(namespace, class_options)
+      Carat::Thor::DynamicCommand.new(namespace, class_options)
     end
     alias_method :self_task, :self_command
 
     def baseclass #:nodoc:
-      Bundler::Thor::Group
+      Carat::Thor::Group
     end
 
     def create_command(meth) #:nodoc:
-      commands[meth.to_s] = Bundler::Thor::Command.new(meth, nil, nil, nil, nil)
+      commands[meth.to_s] = Carat::Thor::Command.new(meth, nil, nil, nil, nil)
       true
     end
     alias_method :create_task, :create_command
   end
 
-  include Bundler::Thor::Base
+  include Carat::Thor::Base
 
 protected
 

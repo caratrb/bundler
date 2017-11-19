@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe Bundler::Source::Rubygems do
+describe Carat::Source::Rubygems do
   before do
-    allow(Bundler).to receive(:root){ Pathname.new("root") }
+    allow(Carat).to receive(:root){ Pathname.new("root") }
   end
 
   describe "caches" do
-    it "includes Bundler.app_cache" do
-      expect(subject.caches).to include(Bundler.app_cache)
+    it "includes Carat.app_cache" do
+      expect(subject.caches).to include(Carat.app_cache)
     end
 
     it "includes GEM_PATH entries" do

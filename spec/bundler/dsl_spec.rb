@@ -1,9 +1,9 @@
 require 'spec_helper'
 
-describe Bundler::Dsl do
+describe Carat::Dsl do
   before do
     @rubygems = double("rubygems")
-    allow(Bundler::Source::Rubygems).to receive(:new){ @rubygems }
+    allow(Carat::Source::Rubygems).to receive(:new){ @rubygems }
   end
 
   describe "#git_source" do
@@ -18,11 +18,11 @@ describe Bundler::Dsl do
     it "raises expection on invalid hostname" do
       expect {
         subject.git_source(:group){ |repo_name| "git@git.example.com:#{repo_name}.git" }
-      }.to raise_error(Bundler::InvalidOption)
+      }.to raise_error(Carat::InvalidOption)
     end
 
     it "expects block passed" do
-      expect{ subject.git_source(:example) }.to raise_error(Bundler::InvalidOption)
+      expect{ subject.git_source(:example) }.to raise_error(Carat::InvalidOption)
     end
 
     context "default hosts (git, gist)" do
@@ -66,21 +66,21 @@ describe Bundler::Dsl do
 
   describe "#method_missing" do
     it "raises an error for unknown DSL methods" do
-      expect(Bundler).to receive(:read_file).with("Gemfile").
+      expect(Carat).to receive(:read_file).with("Gemfile").
         and_return("unknown")
 
       error_msg = "Undefined local variable or method `unknown'" \
         " for Gemfile\\s+from Gemfile:1"
       expect { subject.eval_gemfile("Gemfile") }.
-        to raise_error(Bundler::GemfileError, Regexp.new(error_msg))
+        to raise_error(Carat::GemfileError, Regexp.new(error_msg))
     end
   end
 
   describe "#eval_gemfile" do
     it "handles syntax errors with a useful message" do
-      expect(Bundler).to receive(:read_file).with("Gemfile").and_return("}")
+      expect(Carat).to receive(:read_file).with("Gemfile").and_return("}")
       expect { subject.eval_gemfile("Gemfile") }.
-        to raise_error(Bundler::GemfileError, /Gemfile syntax error/)
+        to raise_error(Carat::GemfileError, /Gemfile syntax error/)
     end
   end
 
@@ -94,47 +94,47 @@ describe Bundler::Dsl do
 
     it "rejects invalid platforms" do
       expect { subject.gem("foo", :platform => :bogus) }.
-        to raise_error(Bundler::GemfileError, /is not a valid platform/)
+        to raise_error(Carat::GemfileError, /is not a valid platform/)
     end
 
     it "rejects with a leading space in the name" do
       expect { subject.gem(" foo") }.
-        to raise_error(Bundler::GemfileError, /' foo' is not a valid gem name because it contains whitespace/)
+        to raise_error(Carat::GemfileError, /' foo' is not a valid gem name because it contains whitespace/)
     end
 
     it "rejects with a trailing space in the name" do
       expect { subject.gem("foo ") }.
-        to raise_error(Bundler::GemfileError, /'foo ' is not a valid gem name because it contains whitespace/)
+        to raise_error(Carat::GemfileError, /'foo ' is not a valid gem name because it contains whitespace/)
     end
 
     it "rejects with a space in the gem name" do
       expect { subject.gem("fo o") }.
-        to raise_error(Bundler::GemfileError, /'fo o' is not a valid gem name because it contains whitespace/)
+        to raise_error(Carat::GemfileError, /'fo o' is not a valid gem name because it contains whitespace/)
     end
 
     it "rejects with a tab in the gem name" do
       expect { subject.gem("fo\to") }.
-        to raise_error(Bundler::GemfileError, /'fo\to' is not a valid gem name because it contains whitespace/)
+        to raise_error(Carat::GemfileError, /'fo\to' is not a valid gem name because it contains whitespace/)
     end
 
     it "rejects with a newline in the gem name" do
       expect { subject.gem("fo\no") }.
-        to raise_error(Bundler::GemfileError, /'fo\no' is not a valid gem name because it contains whitespace/)
+        to raise_error(Carat::GemfileError, /'fo\no' is not a valid gem name because it contains whitespace/)
     end
 
     it "rejects with a carriage return in the gem name" do
       expect { subject.gem("fo\ro") }.
-        to raise_error(Bundler::GemfileError, /'fo\ro' is not a valid gem name because it contains whitespace/)
+        to raise_error(Carat::GemfileError, /'fo\ro' is not a valid gem name because it contains whitespace/)
     end
 
     it "rejects with a form feed in the gem name" do
       expect { subject.gem("fo\fo") }.
-        to raise_error(Bundler::GemfileError, /'fo\fo' is not a valid gem name because it contains whitespace/)
+        to raise_error(Carat::GemfileError, /'fo\fo' is not a valid gem name because it contains whitespace/)
     end
 
     it "rejects symbols as gem name" do
       expect { subject.gem(:foo) }.
-        to raise_error(Bundler::GemfileError, /You need to specify gem names as Strings. Use 'gem "foo"' instead/)
+        to raise_error(Carat::GemfileError, /You need to specify gem names as Strings. Use 'gem "foo"' instead/)
     end
   end
 
@@ -174,18 +174,18 @@ describe Bundler::Dsl do
   end
 
   describe "syntax errors" do
-    it "will raise a Bundler::GemfileError" do
+    it "will raise a Carat::GemfileError" do
       gemfile "gem 'foo', :path => /unquoted/string/syntax/error"
-      expect { Bundler::Dsl.evaluate(bundled_app("Gemfile"), nil, true) }.
-        to raise_error(Bundler::GemfileError, /Gemfile syntax error/)
+      expect { Carat::Dsl.evaluate(bundled_app("Gemfile"), nil, true) }.
+        to raise_error(Carat::GemfileError, /Gemfile syntax error/)
     end
   end
 
-  describe "Runtime errors", :unless => Bundler.current_ruby.on_18? do
-    it "will raise a Bundler::GemfileError" do
+  describe "Runtime errors", :unless => Carat.current_ruby.on_18? do
+    it "will raise a Carat::GemfileError" do
       gemfile "s = 'foo'.freeze; s.strip!"
-      expect { Bundler::Dsl.evaluate(bundled_app("Gemfile"), nil, true) }.
-        to raise_error(Bundler::GemfileError, /There was an error in your Gemfile/)
+      expect { Carat::Dsl.evaluate(bundled_app("Gemfile"), nil, true) }.
+        to raise_error(Carat::GemfileError, /There was an error in your Gemfile/)
     end
   end
 end

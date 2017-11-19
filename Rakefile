@@ -38,7 +38,7 @@ end
 namespace :molinillo do
   task :namespace do
     files = Dir.glob('lib/bundler/vendor/molinillo*/**/*.rb')
-    clean_files(files, 'Molinillo', 'Bundler::Molinillo')
+    clean_files(files, 'Molinillo', 'Carat::Molinillo')
     clean_files(files, /require (["'])molinillo/, 'require \1bundler/vendor/molinillo/lib/molinillo')
   end
 
@@ -62,7 +62,7 @@ end
 namespace :thor do
   task :namespace do
     files = Dir.glob('lib/bundler/vendor/thor*/**/*.rb')
-    clean_files(files, 'Thor', 'Bundler::Thor')
+    clean_files(files, 'Thor', 'Carat::Thor')
     clean_files(files, /require (["'])thor/, 'require \1bundler/vendor/thor/lib/thor')
     clean_files(files, /(autoload\s+[:\w]+,\s+["'])(thor[\w\/]+["'])/, '\1bundler/vendor/thor/lib/\2')
   end
@@ -298,7 +298,7 @@ end
 desc "Update vendored SSL certs to match the certs vendored by Rubygems"
 task :update_certs => "spec:rubygems:clone_rubygems_master" do
   require 'bundler/ssl_certs/certificate_manager'
-  Bundler::SSLCerts::CertificateManager.update_from!(RUBYGEMS_REPO)
+  Carat::SSLCerts::CertificateManager.update_from!(RUBYGEMS_REPO)
 end
 
 require 'bundler/gem_tasks'

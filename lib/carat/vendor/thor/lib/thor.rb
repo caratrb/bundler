@@ -1,7 +1,7 @@
 require "set"
 require "carat/vendor/thor/lib/thor/base"
 
-class Bundler::Thor # rubocop:disable ClassLength
+class Carat::Thor # rubocop:disable ClassLength
   class << self
     # Allows for custom "Command" package naming.
     #
@@ -27,15 +27,15 @@ class Bundler::Thor # rubocop:disable ClassLength
     end
     alias_method :default_task, :default_command
 
-    # Registers another Bundler::Thor subclass as a command.
+    # Registers another Carat::Thor subclass as a command.
     #
     # ==== Parameters
-    # klass<Class>:: Bundler::Thor subclass to register
+    # klass<Class>:: Carat::Thor subclass to register
     # command<String>:: Subcommand name to use
     # usage<String>:: Short usage for the subcommand
     # description<String>:: Description for the subcommand
     def register(klass, subcommand_name, usage, description, options = {})
-      if klass <= Bundler::Thor::Group
+      if klass <= Carat::Thor::Group
         desc usage, description, options
         define_method(subcommand_name) { |*args| invoke(klass, args) }
       else
@@ -159,7 +159,7 @@ class Bundler::Thor # rubocop:disable ClassLength
     # Prints help information for the given command.
     #
     # ==== Parameters
-    # shell<Bundler::Thor::Shell>
+    # shell<Carat::Thor::Shell>
     # command_name<String>
     #
     def command_help(shell, command_name)
@@ -183,11 +183,11 @@ class Bundler::Thor # rubocop:disable ClassLength
     # Prints help information for this class.
     #
     # ==== Parameters
-    # shell<Bundler::Thor::Shell>
+    # shell<Carat::Thor::Shell>
     #
     def help(shell, subcommand = false)
       list = printable_commands(true, subcommand)
-      Bundler::Thor::Util.thor_classes_in(self).each do |klass|
+      Carat::Thor::Util.thor_classes_in(self).each do |klass|
         list += klass.printable_commands(false)
       end
       list.sort! { |a, b| a[0] <=> b[0] }
@@ -230,7 +230,7 @@ class Bundler::Thor # rubocop:disable ClassLength
       subcommand_classes[subcommand.to_s] = subcommand_class
 
       define_method(subcommand) do |*args|
-        args, opts = Bundler::Thor::Arguments.split(args)
+        args, opts = Carat::Thor::Arguments.split(args)
         args.unshift("help") if opts.include? "--help" or opts.include? "-h"
         invoke subcommand_class, args, opts, :invoked_via_subcommand => true, :class_options => options
       end
@@ -278,14 +278,14 @@ class Bundler::Thor # rubocop:disable ClassLength
     # argument is encountered.  All remaining arguments are passed to the command.
     # This is useful if you have a command that can receive arbitrary additional
     # options, and where those additional options should not be handled by
-    # Bundler::Thor.
+    # Carat::Thor.
     #
     # ==== Example
     #
     # To better understand how this is useful, let's consider a command that calls
     # an external command.  A user may want to pass arbitrary options and
     # arguments to that command.  The command itself also accepts some options,
-    # which should be handled by Bundler::Thor.
+    # which should be handled by Carat::Thor.
     #
     #   class_option "verbose",  :type => :boolean
     #   stop_on_unknown_option! :exec
@@ -337,7 +337,7 @@ class Bundler::Thor # rubocop:disable ClassLength
       end
 
       if command
-        args, opts = Bundler::Thor::Options.split(given_args)
+        args, opts = Carat::Thor::Options.split(given_args)
         if stop_on_unknown_option?(command) && !args.empty?
           # given_args starts with a non-option, so we treat everything as
           # ordinary arguments
@@ -360,7 +360,7 @@ class Bundler::Thor # rubocop:disable ClassLength
     end
 
     # The banner for this class. You can customize it if you are invoking the
-    # thor class by another ways which is not the Bundler::Thor::Runner. It receives
+    # thor class by another ways which is not the Carat::Thor::Runner. It receives
     # the command that is going to be invoked and a boolean which indicates if
     # the namespace should be displayed as arguments.
     #
@@ -369,11 +369,11 @@ class Bundler::Thor # rubocop:disable ClassLength
     end
 
     def baseclass #:nodoc:
-      Bundler::Thor
+      Carat::Thor
     end
 
     def dynamic_command_class #:nodoc:
-      Bundler::Thor::DynamicCommand
+      Carat::Thor::DynamicCommand
     end
 
     def create_command(meth) #:nodoc:
@@ -382,7 +382,7 @@ class Bundler::Thor # rubocop:disable ClassLength
       @long_desc ||= nil
 
       if @usage && @desc
-        base_class = @hide ? Bundler::Thor::HiddenCommand : Bundler::Thor::Command
+        base_class = @hide ? Carat::Thor::HiddenCommand : Carat::Thor::Command
         commands[meth] = base_class.new(meth, @desc, @long_desc, @usage, method_options)
         @usage, @desc, @long_desc, @method_options, @hide = nil
         true
@@ -465,7 +465,7 @@ class Bundler::Thor # rubocop:disable ClassLength
     alias_method :subtask_help, :subcommand_help
   end
 
-  include Bundler::Thor::Base
+  include Carat::Thor::Base
 
   map HELP_MAPPINGS => :help
 

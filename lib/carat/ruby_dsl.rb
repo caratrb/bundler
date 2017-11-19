@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   module RubyDsl
     def ruby(ruby_version, options = {})
       raise GemfileError, "Please define :engine_version" if options[:engine] && options[:engine_version].nil?

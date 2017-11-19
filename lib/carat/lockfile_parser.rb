@@ -1,16 +1,16 @@
 require "strscan"
 
-# Some versions of the Bundler 1.1 RC series introduced corrupted
+# Some versions of the Carat 1.1 RC series introduced corrupted
 # lockfiles. There were two major problems:
 #
 # * multiple copies of the same GIT section appeared in the lockfile
 # * when this happened, those sections got multiple copies of gems
 #   in those sections.
 #
-# As a result, Bundler 1.1 contains code that fixes the earlier
-# corruption. We will remove this fix-up code in Bundler 1.2.
+# As a result, Carat 1.1 contains code that fixes the earlier
+# corruption. We will remove this fix-up code in Carat 1.2.
 
-module Bundler
+module Carat
   class LockfileParser
     attr_reader :sources, :dependencies, :specs, :platforms
 
@@ -54,7 +54,7 @@ module Bundler
       @sources << @rubygems_aggregate
       @specs = @specs.values
     rescue ArgumentError => e
-      Bundler.ui.debug(e)
+      Carat.ui.debug(e)
       raise LockfileError, "Your lockfile is unreadable. Run `rm Gemfile.lock` " \
         "and then `bundle install` to generate a new lockfile."
     end
@@ -62,9 +62,9 @@ module Bundler
   private
 
     TYPES = {
-      GIT  => Bundler::Source::Git,
-      GEM  => Bundler::Source::Rubygems,
-      PATH => Bundler::Source::Path,
+      GIT  => Carat::Source::Git,
+      GEM  => Carat::Source::Rubygems,
+      PATH => Carat::Source::Path,
     }
 
     def parse_source(line)
@@ -119,7 +119,7 @@ module Bundler
         name, version, pinned = $1, $2, $4
         version = version.split(",").map { |d| d.strip } if version
 
-        dep = Bundler::Dependency.new(name, version)
+        dep = Carat::Dependency.new(name, version)
 
         if pinned && dep.name != 'carat'
           spec = @specs.find {|k, v| v.name == dep.name }
@@ -129,7 +129,7 @@ module Bundler
           # to use in the case that there are no gemspecs present. A fake
           # gemspec is created based on the version set on the dependency
           # TODO: Use the version from the spec instead of from the dependency
-          if version && version.size == 1 && version.first =~ /^\s*= (.+)\s*$/ && dep.source.is_a?(Bundler::Source::Path)
+          if version && version.size == 1 && version.first =~ /^\s*= (.+)\s*$/ && dep.source.is_a?(Carat::Source::Path)
             dep.source.name    = name
             dep.source.version = $1
           end

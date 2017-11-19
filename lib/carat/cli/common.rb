@@ -1,7 +1,7 @@
-module Bundler
+module Carat
   module CLI::Common
     def self.without_groups_message
-      groups = Bundler.settings.without
+      groups = Carat.settings.without
       group_list = [groups[0...-1].join(", "), groups[-1..-1]].
         reject{|s| s.to_s.empty? }.join(" and ")
       group_str = (groups.size == 1) ? "group" : "groups"
@@ -12,34 +12,34 @@ module Bundler
       specs = []
       regexp = Regexp.new(name) if regex_match
 
-      Bundler.definition.specs.each do |spec|
+      Carat.definition.specs.each do |spec|
         return spec if spec.name == name
         specs << spec if regexp && spec.name =~ regexp
       end
 
       case specs.count
       when 0
-        raise GemNotFound, gem_not_found_message(name, Bundler.definition.dependencies)
+        raise GemNotFound, gem_not_found_message(name, Carat.definition.dependencies)
       when 1
         specs.first
       else
         ask_for_spec_from(specs)
       end
     rescue RegexpError
-      raise GemNotFound, gem_not_found_message(name, Bundler.definition.dependencies)
+      raise GemNotFound, gem_not_found_message(name, Carat.definition.dependencies)
     end
 
     def self.ask_for_spec_from(specs)
       if !$stdout.tty? && ENV['BUNDLE_SPEC_RUN'].nil?
-        raise GemNotFound, gem_not_found_message(name, Bundler.definition.dependencies)
+        raise GemNotFound, gem_not_found_message(name, Carat.definition.dependencies)
       end
 
       specs.each_with_index do |spec, index|
-        Bundler.ui.info "#{index.succ} : #{spec.name}", true
+        Carat.ui.info "#{index.succ} : #{spec.name}", true
       end
-      Bundler.ui.info '0 : - exit -', true
+      Carat.ui.info '0 : - exit -', true
 
-      num = Bundler.ui.ask('> ').to_i
+      num = Carat.ui.ask('> ').to_i
       num > 0 ? specs[num - 1] : nil
     end
 

@@ -1,7 +1,7 @@
-# Capistrano task for Bundler.
+# Capistrano task for Carat.
 #
 # Just add "require 'carat/capistrano'" in your Capistrano deploy.rb, and
-# Bundler will be activated after each new deployment.
+# Carat will be activated after each new deployment.
 require 'carat/deployment'
 require 'capistrano/version'
 
@@ -11,6 +11,6 @@ end
 
 Capistrano::Configuration.instance(:must_exist).load do
   before "deploy:finalize_update", "bundle:install"
-  Bundler::Deployment.define_task(self, :task, :except => { :no_release => true })
+  Carat::Deployment.define_task(self, :task, :except => { :no_release => true })
   set :rake, lambda { "#{fetch(:bundle_cmd, "bundle")} exec rake" }
 end

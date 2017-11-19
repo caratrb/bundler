@@ -8,7 +8,7 @@ require "carat/vendor/thor/lib/thor/shell"
 require "carat/vendor/thor/lib/thor/line_editor"
 require "carat/vendor/thor/lib/thor/util"
 
-class Bundler::Thor
+class Carat::Thor
   autoload :Actions,    "carat/vendor/thor/lib/thor/actions"
   autoload :RakeCompat, "carat/vendor/thor/lib/thor/rake_compat"
   autoload :Group,      "carat/vendor/thor/lib/thor/group"
@@ -16,7 +16,7 @@ class Bundler::Thor
   # Shortcuts for help.
   HELP_MAPPINGS       = %w[-h -? --help -D]
 
-  # Bundler::Thor methods that should not be overwritten by the user.
+  # Carat::Thor methods that should not be overwritten by the user.
   THOR_RESERVED_WORDS = %w[invoke shell options behavior root destination_root relative_root
                            action add_file create_file in_root inside run run_ruby_script]
 
@@ -39,7 +39,7 @@ class Bundler::Thor
     #                 The hash given is converted to a hash with indifferent
     #                 access, magic predicates (options.skip?) and then frozen.
     #
-    # config<Hash>:: Configuration for this Bundler::Thor class.
+    # config<Hash>:: Configuration for this Carat::Thor class.
     #
     def initialize(args = [], local_options = {}, config = {}) # rubocop:disable MethodLength
       parse_options = self.class.class_options
@@ -59,11 +59,11 @@ class Bundler::Thor
         array_options, hash_options = [], local_options
       end
 
-      # Let Bundler::Thor::Options parse the options first, so it can remove
+      # Let Carat::Thor::Options parse the options first, so it can remove
       # declared options from the array. This will leave us with
       # a list of arguments that weren't declared.
       stop_on_unknown = self.class.stop_on_unknown_option? config[:current_command]
-      opts = Bundler::Thor::Options.new(parse_options, hash_options, stop_on_unknown)
+      opts = Carat::Thor::Options.new(parse_options, hash_options, stop_on_unknown)
       self.options = opts.parse(array_options)
       self.options = config[:class_options].merge(options) if config[:class_options]
 
@@ -74,12 +74,12 @@ class Bundler::Thor
       # Add the remaining arguments from the options parser to the
       # arguments passed in to initialize. Then remove any positional
       # arguments declared using #argument (this is primarily used
-      # by Bundler::Thor::Group). Tis will leave us with the remaining
+      # by Carat::Thor::Group). Tis will leave us with the remaining
       # positional arguments.
       to_parse  = args
       to_parse += opts.remaining unless self.class.strict_args_position?(config)
 
-      thor_args = Bundler::Thor::Arguments.new(self.class.arguments)
+      thor_args = Carat::Thor::Arguments.new(self.class.arguments)
       thor_args.parse(to_parse).each { |k, v| __send__("#{k}=", v) }
       @args = thor_args.remaining
     end
@@ -91,7 +91,7 @@ class Bundler::Thor
         base.send :include, Shell
       end
 
-      # Returns the classes that inherits from Bundler::Thor or Bundler::Thor::Group.
+      # Returns the classes that inherits from Carat::Thor or Carat::Thor::Group.
       #
       # ==== Returns
       # Array[Class]
@@ -109,14 +109,14 @@ class Bundler::Thor
         @subclass_files ||= Hash.new { |h, k| h[k] = [] }
       end
 
-      # Whenever a class inherits from Bundler::Thor or Bundler::Thor::Group, we should track the
-      # class and the file on Bundler::Thor::Base. This is the method responsable for it.
+      # Whenever a class inherits from Carat::Thor or Carat::Thor::Group, we should track the
+      # class and the file on Carat::Thor::Base. This is the method responsable for it.
       #
       def register_klass_file(klass) #:nodoc:
         file = caller[1].match(/(.*):\d+/)[1]
-        Bundler::Thor::Base.subclasses << klass unless Bundler::Thor::Base.subclasses.include?(klass)
+        Carat::Thor::Base.subclasses << klass unless Carat::Thor::Base.subclasses.include?(klass)
 
-        file_subclasses = Bundler::Thor::Base.subclass_files[File.expand_path(file)]
+        file_subclasses = Carat::Thor::Base.subclass_files[File.expand_path(file)]
         file_subclasses << klass unless file_subclasses.include?(klass)
       end
     end
@@ -227,13 +227,13 @@ class Bundler::Thor
 
         options[:required] = required
 
-        arguments << Bundler::Thor::Argument.new(name, options)
+        arguments << Carat::Thor::Argument.new(name, options)
       end
 
       # Returns this class arguments, looking up in the ancestors chain.
       #
       # ==== Returns
-      # Array[Bundler::Thor::Argument]
+      # Array[Carat::Thor::Argument]
       #
       def arguments
         @arguments ||= from_superclass(:arguments, [])
@@ -265,7 +265,7 @@ class Bundler::Thor
       # :required:: -- If the argument is required or not.
       # :default::  -- Default value for this argument.
       # :group::    -- The group for this options. Use by class options to output options in different levels.
-      # :aliases::  -- Aliases for this option. <b>Note:</b> Bundler::Thor follows a convention of one-dash-one-letter options. Thus aliases like "-something" wouldn't be parsed; use either "\--something" or "-s" instead.
+      # :aliases::  -- Aliases for this option. <b>Note:</b> Carat::Thor follows a convention of one-dash-one-letter options. Thus aliases like "-something" wouldn't be parsed; use either "\--something" or "-s" instead.
       # :type::     -- The type of the argument, can be :string, :hash, :array, :numeric or :boolean.
       # :banner::   -- String to show on usage notes.
       # :hide::     -- If you want to hide this option from the help.
@@ -324,30 +324,30 @@ class Bundler::Thor
         end
       end
 
-      # Returns the commands for this Bundler::Thor class.
+      # Returns the commands for this Carat::Thor class.
       #
       # ==== Returns
-      # OrderedHash:: An ordered hash with commands names as keys and Bundler::Thor::Command
+      # OrderedHash:: An ordered hash with commands names as keys and Carat::Thor::Command
       #               objects as values.
       #
       def commands
-        @commands ||= Bundler::Thor::CoreExt::OrderedHash.new
+        @commands ||= Carat::Thor::CoreExt::OrderedHash.new
       end
       alias_method :tasks, :commands
 
-      # Returns the commands for this Bundler::Thor class and all subclasses.
+      # Returns the commands for this Carat::Thor class and all subclasses.
       #
       # ==== Returns
-      # OrderedHash:: An ordered hash with commands names as keys and Bundler::Thor::Command
+      # OrderedHash:: An ordered hash with commands names as keys and Carat::Thor::Command
       #               objects as values.
       #
       def all_commands
-        @all_commands ||= from_superclass(:all_commands, Bundler::Thor::CoreExt::OrderedHash.new)
+        @all_commands ||= from_superclass(:all_commands, Carat::Thor::CoreExt::OrderedHash.new)
         @all_commands.merge(commands)
       end
       alias_method :all_tasks, :all_commands
 
-      # Removes a given command from this Bundler::Thor class. This is usually done if you
+      # Removes a given command from this Carat::Thor class. This is usually done if you
       # are inheriting from another class and don't want it to be available
       # anymore.
       #
@@ -374,7 +374,7 @@ class Bundler::Thor
       #
       # So you can do:
       #
-      #   class MyScript < Bundler::Thor
+      #   class MyScript < Carat::Thor
       #     no_commands do
       #       def this_is_not_a_command
       #       end
@@ -383,7 +383,7 @@ class Bundler::Thor
       #
       # You can also add the method and remove it from the command list:
       #
-      #   class MyScript < Bundler::Thor
+      #   class MyScript < Carat::Thor
       #     def this_is_not_a_command
       #     end
       #     remove_command :this_is_not_a_command
@@ -397,8 +397,8 @@ class Bundler::Thor
       end
       alias_method :no_tasks, :no_commands
 
-      # Sets the namespace for the Bundler::Thor or Bundler::Thor::Group class. By default the
-      # namespace is retrieved from the class name. If your Bundler::Thor class is named
+      # Sets the namespace for the Carat::Thor or Carat::Thor::Group class. By default the
+      # namespace is retrieved from the class name. If your Carat::Thor class is named
       # Scripts::MyScript, the help method, for example, will be called as:
       #
       #   thor scripts:my_script -h
@@ -423,22 +423,22 @@ class Bundler::Thor
         if name
           @namespace = name.to_s
         else
-          @namespace ||= Bundler::Thor::Util.namespace_from_thor_class(self)
+          @namespace ||= Carat::Thor::Util.namespace_from_thor_class(self)
         end
       end
 
       # Parses the command and options from the given args, instantiate the class
       # and invoke the command. This method is used when the arguments must be parsed
-      # from an array. If you are inside Ruby and want to use a Bundler::Thor class, you
+      # from an array. If you are inside Ruby and want to use a Carat::Thor class, you
       # can simply initialize it:
       #
       #   script = MyScript.new(args, options, config)
       #   script.invoke(:command, first_arg, second_arg, third_arg)
       #
       def start(given_args = ARGV, config = {})
-        config[:shell] ||= Bundler::Thor::Base.shell.new
+        config[:shell] ||= Carat::Thor::Base.shell.new
         dispatch(nil, given_args.dup, nil, config)
-      rescue Bundler::Thor::Error => e
+      rescue Carat::Thor::Error => e
         config[:debug] || ENV["THOR_DEBUG"] == "1" ? (raise e) : config[:shell].error(e.message)
         exit(1) if exit_on_failure?
       rescue Errno::EPIPE
@@ -528,10 +528,10 @@ class Bundler::Thor
         shell.say ""
       end
 
-      # Raises an error if the word given is a Bundler::Thor reserved word.
+      # Raises an error if the word given is a Carat::Thor reserved word.
       def is_thor_reserved_word?(word, type) #:nodoc:
         return false unless THOR_RESERVED_WORDS.include?(word.to_s)
-        fail "#{word.inspect} is a Bundler::Thor reserved word and cannot be defined as #{type}"
+        fail "#{word.inspect} is a Carat::Thor reserved word and cannot be defined as #{type}"
       end
 
       # Build an option and adds it to the given scope.
@@ -541,7 +541,7 @@ class Bundler::Thor
       # options<Hash>:: Described in both class_option and method_option.
       # scope<Hash>:: Options hash that is being built up
       def build_option(name, options, scope) #:nodoc:
-        scope[name] = Bundler::Thor::Option.new(name, options)
+        scope[name] = Carat::Thor::Option.new(name, options)
       end
 
       # Receives a hash of options, parse them and add to the scope. This is a
@@ -553,7 +553,7 @@ class Bundler::Thor
       # Hash[Symbol => Object]
       def build_options(options, scope) #:nodoc:
         options.each do |key, value|
-          scope[key] = Bundler::Thor::Option.parse(key, value)
+          scope[key] = Carat::Thor::Option.parse(key, value)
         end
       end
 
@@ -571,10 +571,10 @@ class Bundler::Thor
       end
       alias_method :find_and_refresh_task, :find_and_refresh_command
 
-      # Everytime someone inherits from a Bundler::Thor class, register the klass
+      # Everytime someone inherits from a Carat::Thor class, register the klass
       # and file into baseclass.
       def inherited(klass)
-        Bundler::Thor::Base.register_klass_file(klass)
+        Carat::Thor::Base.register_klass_file(klass)
         klass.instance_variable_set(:@no_commands, false)
       end
 
@@ -595,7 +595,7 @@ class Bundler::Thor
         return if @no_commands || !create_command(meth)
 
         is_thor_reserved_word?(meth, :command)
-        Bundler::Thor::Base.register_klass_file(self)
+        Carat::Thor::Base.register_klass_file(self)
       end
 
       # Retrieves a value from superclass. If it reaches the baseclass,

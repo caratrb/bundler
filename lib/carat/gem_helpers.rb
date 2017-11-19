@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   module GemHelpers
 
     GENERIC_CACHE = {}

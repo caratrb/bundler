@@ -1,6 +1,6 @@
 require "carat/vendor/thor/lib/thor/actions/empty_directory"
 
-class Bundler::Thor
+class Carat::Thor
   module Actions
     # Copies recursively the files from source directory to root directory.
     # If any of the files finishes with .tt, it's considered to be a template
@@ -29,9 +29,9 @@ class Bundler::Thor
     #     rdoc.rb
     #     blog.rb
     #
-    # <b>Encoded path note:</b> Since Bundler::Thor internals use Object#respond_to? to check if it can
+    # <b>Encoded path note:</b> Since Carat::Thor internals use Object#respond_to? to check if it can
     # expand %something%, this `something` should be a public method in the class calling
-    # #directory. If a method is private, Bundler::Thor stack raises PrivateMethodEncodedError.
+    # #directory. If a method is private, Carat::Thor stack raises PrivateMethodEncodedError.
     #
     # ==== Parameters
     # source<String>:: the relative path to the source root.

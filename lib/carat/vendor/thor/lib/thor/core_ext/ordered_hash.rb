@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   module CoreExt #:nodoc:
     if RUBY_VERSION >= "1.9"
       class OrderedHash < ::Hash

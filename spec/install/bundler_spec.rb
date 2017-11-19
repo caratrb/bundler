@@ -9,7 +9,7 @@ describe "bundle install" do
           s.add_dependency "carat", ">= 0.9.0.pre"
         end
         build_gem "carat", "0.9.1"
-        build_gem "carat", Bundler::VERSION
+        build_gem "carat", Carat::VERSION
       end
     end
 
@@ -19,7 +19,7 @@ describe "bundle install" do
         gem "rails", "3.0"
       G
 
-      should_be_installed "carat #{Bundler::VERSION}"
+      should_be_installed "carat #{Carat::VERSION}"
     end
 
     it "are not added if not already present" do
@@ -27,7 +27,7 @@ describe "bundle install" do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      should_not_be_installed "carat #{Bundler::VERSION}"
+      should_not_be_installed "carat #{Carat::VERSION}"
     end
 
     it "causes a conflict if explicitly requesting a different version" do
@@ -40,12 +40,12 @@ describe "bundle install" do
       nice_error = <<-E.strip.gsub(/^ {8}/, '')
         Fetching source index from file:#{gem_repo2}/
         Resolving dependencies...
-        Bundler could not find compatible versions for gem "carat":
+        Carat could not find compatible versions for gem "carat":
           In Gemfile:
             carat (= 0.9.2) ruby
 
-          Current Bundler version:
-            carat (#{Bundler::VERSION})
+          Current Carat version:
+            carat (#{Carat::VERSION})
         E
       expect(out).to include(nice_error)
     end
@@ -78,7 +78,7 @@ describe "bundle install" do
       expect(out).to eq("WIN")
     end
 
-    it "allows gem 'carat' when Bundler is not in the Gemfile or its dependencies" do
+    it "allows gem 'carat' when Carat is not in the Gemfile or its dependencies" do
       install_gemfile <<-G
         source "file://#{gem_repo2}"
         gem "rack"
@@ -98,7 +98,7 @@ describe "bundle install" do
       nice_error = <<-E.strip.gsub(/^ {8}/, '')
         Fetching source index from file:#{gem_repo2}/
         Resolving dependencies...
-        Bundler could not find compatible versions for gem "activesupport":
+        Carat could not find compatible versions for gem "activesupport":
           In Gemfile:
             activemerchant (>= 0) ruby depends on
               activesupport (>= 2.0.0) ruby
@@ -119,7 +119,7 @@ describe "bundle install" do
       nice_error = <<-E.strip.gsub(/^ {8}/, '')
         Fetching source index from file:#{gem_repo2}/
         Resolving dependencies...
-        Bundler could not find compatible versions for gem "activesupport":
+        Carat could not find compatible versions for gem "activesupport":
           In Gemfile:
             rails_fail (>= 0) ruby depends on
               activesupport (= 1.2.3) ruby

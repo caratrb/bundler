@@ -1,7 +1,7 @@
 require 'carat'
 require 'carat/vendored_thor'
 
-module Bundler
+module Carat
   class CLI < Thor
     include Thor::Actions
     AUTO_INSTALL_CMDS = %w[show binstubs outdated exec open console licenses clean]
@@ -9,24 +9,24 @@ module Bundler
     def self.start(*)
       super
     rescue Exception => e
-      Bundler.ui = UI::Shell.new
+      Carat.ui = UI::Shell.new
       raise e
     end
 
     def initialize(*args)
       super
       current_cmd = args.last[:current_command].name
-      custom_gemfile = options[:gemfile] || Bundler.settings[:gemfile]
+      custom_gemfile = options[:gemfile] || Carat.settings[:gemfile]
       ENV['BUNDLE_GEMFILE']   = File.expand_path(custom_gemfile) if custom_gemfile
-      Bundler::Retry.attempts = options[:retry] || Bundler.settings[:retry] || Bundler::Retry::DEFAULT_ATTEMPTS
-      Bundler.rubygems.ui = UI::RGProxy.new(Bundler.ui)
+      Carat::Retry.attempts = options[:retry] || Carat.settings[:retry] || Carat::Retry::DEFAULT_ATTEMPTS
+      Carat.rubygems.ui = UI::RGProxy.new(Carat.ui)
       auto_install if AUTO_INSTALL_CMDS.include?(current_cmd)
     rescue UnknownArgumentError => e
       raise InvalidOption, e.message
     ensure
       self.options ||= {}
-      Bundler.ui = UI::Shell.new(options)
-      Bundler.ui.level = "debug" if options["verbose"]
+      Carat.ui = UI::Shell.new(options)
+      Carat.ui.level = "debug" if options["verbose"]
     end
 
     check_unknown_options!(:except => [:config, :exec])
@@ -58,7 +58,7 @@ module Bundler
       if manpages.include?(command)
         root = File.expand_path("../man", __FILE__)
 
-        if Bundler.which("man") && root !~ %r{^file:/.+!/META-INF/jruby.home/.+}
+        if Carat.which("man") && root !~ %r{^file:/.+!/META-INF/jruby.home/.+}
           Kernel.exec "man #{root}/#{command}"
         else
           puts File.read("#{root}/#{command}.txt")
@@ -69,7 +69,7 @@ module Bundler
     end
 
     def self.handle_no_command_error(command, has_namespace = $thor_runner)
-      return super unless command_path = Bundler.which("carat-#{command}")
+      return super unless command_path = Carat.which("carat-#{command}")
 
       Kernel.exec(command_path, *ARGV[1..-1])
     end
@@ -89,15 +89,15 @@ module Bundler
     desc "check [OPTIONS]", "Checks if the dependencies listed in Gemfile are satisfied by currently installed gems"
     long_desc <<-D
       Check searches the local machine for each of the gems requested in the Gemfile. If
-      all gems are found, Bundler prints a success message and exits with a status of 0.
-      If not, the first missing gem is listed and Bundler exits status 1.
+      all gems are found, Carat prints a success message and exits with a status of 0.
+      If not, the first missing gem is listed and Carat exits status 1.
     D
     method_option "dry-run", :type => :boolean, :default => false, :banner =>
       "Lock the Gemfile"
     method_option "gemfile", :type => :string, :banner =>
       "Use the specified gemfile instead of Gemfile"
     method_option "path", :type => :string, :banner =>
-      "Specify a different path than the system default ($BUNDLE_PATH or $GEM_HOME). Bundler will remember this value for future installs on this machine"
+      "Specify a different path than the system default ($BUNDLE_PATH or $GEM_HOME). Carat will remember this value for future installs on this machine"
     def check
       require 'carat/cli/check'
       Check.new(options).run
@@ -135,18 +135,18 @@ module Bundler
     method_option "no-prune", :type => :boolean, :banner =>
       "Don't remove stale gems from the cache."
     method_option "path", :type => :string, :banner =>
-      "Specify a different path than the system default ($BUNDLE_PATH or $GEM_HOME). Bundler will remember this value for future installs on this machine"
+      "Specify a different path than the system default ($BUNDLE_PATH or $GEM_HOME). Carat will remember this value for future installs on this machine"
     method_option "quiet", :type => :boolean, :banner =>
       "Only output warnings and errors."
     method_option "shebang", :type => :string, :banner =>
       "Specify a different shebang executable name than the default (usually 'ruby')"
     method_option "standalone", :type => :array, :lazy_default => [], :banner =>
-      "Make a bundle that can work without the Bundler runtime"
+      "Make a bundle that can work without the Carat runtime"
     method_option "system", :type => :boolean, :banner =>
       "Install to the system location ($BUNDLE_PATH or $GEM_HOME) even if the bundle was previously installed somewhere else for this application"
     method_option "trust-policy", :alias => "P", :type => :string, :banner =>
       "Gem trust policy (like gem install -P). Must be one of " +
-        Bundler.rubygems.security_policy_keys.join('|')
+        Carat.rubygems.security_policy_keys.join('|')
     method_option "without", :type => :array, :banner =>
       "Exclude gems that are part of the specified named group."
 
@@ -212,7 +212,7 @@ module Bundler
       Outdated lists the names and versions of gems that have a newer version available
       in the given source. Calling outdated with [GEM [GEM]] will only check for newer
       versions of the given gems. Prerelease gems are ignored by default. If your gems
-      are up to date, Bundler will exit with a status of 0. Otherwise, it will exit 1.
+      are up to date, Carat will exit with a status of 0. Otherwise, it will exit 1.
     D
     method_option "local", :type => :boolean, :banner =>
       "Do not attempt to fetch gems remotely and use the gem cache instead"
@@ -243,7 +243,7 @@ module Bundler
     method_option "no-install",  :type => :boolean, :banner => "Don't actually install the gems, just package."
     method_option "no-prune",  :type => :boolean, :banner => "Don't remove stale gems from the cache."
     method_option "path", :type => :string, :banner =>
-      "Specify a different path than the system default ($BUNDLE_PATH or $GEM_HOME). Bundler will remember this value for future installs on this machine"
+      "Specify a different path than the system default ($BUNDLE_PATH or $GEM_HOME). Carat will remember this value for future installs on this machine"
     method_option "quiet", :type => :boolean, :banner => "Only output warnings and errors."
     long_desc <<-D
       The package command will copy the .gem files for every gem in the bundle into the
@@ -300,20 +300,20 @@ module Bundler
 
     desc "version", "Prints the carat's version information"
     def version
-      Bundler.ui.info "Bundler version #{Bundler::VERSION}"
+      Carat.ui.info "Carat version #{Carat::VERSION}"
     end
     map %w(-v --version) => :version
 
     desc "licenses", "Prints the license of all gems in the bundle"
     def licenses
-      Bundler.load.specs.sort_by { |s| s.license.to_s }.reverse.each do |s|
+      Carat.load.specs.sort_by { |s| s.license.to_s }.reverse.each do |s|
         gem_name = s.name
         license  = s.license || s.licenses
 
         if license.empty?
-          Bundler.ui.warn "#{gem_name}: Unknown"
+          Carat.ui.warn "#{gem_name}: Unknown"
         else
-          Bundler.ui.info "#{gem_name}: #{license}"
+          Carat.ui.info "#{gem_name}: #{license}"
         end
       end
     end
@@ -377,7 +377,7 @@ module Bundler
       Inject.new(options, name, version, gems).run
     end
 
-    desc "env", "Print information about the environment Bundler is running under"
+    desc "env", "Print information about the environment Carat is running under"
     def env
       Env.new.write($stdout)
     end
@@ -385,22 +385,22 @@ module Bundler
     private
 
       # Automatically invoke `bundle install` and resume if
-      # Bundler.settings[:auto_install] exists. This is set through config cmd
+      # Carat.settings[:auto_install] exists. This is set through config cmd
       # `bundle config auto_install 1`.
       #
       # Note that this method `nil`s out the global Definition object, so it
       # should be called first, before you instantiate anything like an
       # `Installer` that'll keep a reference to the old one instead.
       def auto_install
-        return unless Bundler.settings[:auto_install]
+        return unless Carat.settings[:auto_install]
 
         begin
-          Bundler.definition.specs
+          Carat.definition.specs
         rescue GemNotFound
-          Bundler.ui.info "Automatically installing missing gems."
-          Bundler.reset!
+          Carat.ui.info "Automatically installing missing gems."
+          Carat.reset!
           invoke :install, []
-          Bundler.reset!
+          Carat.reset!
         end
       end
   end

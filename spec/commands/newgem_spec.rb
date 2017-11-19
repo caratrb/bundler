@@ -18,7 +18,7 @@ describe "bundle gem" do
 
   before do
     @git_name = `git config --global user.name`.chomp
-    `git config --global user.name "Bundler User"`
+    `git config --global user.name "Carat User"`
     @git_email = `git config --global user.email`.chomp
     `git config --global user.email user@example.com`
   end
@@ -31,7 +31,7 @@ describe "bundle gem" do
   shared_examples_for "git config is present" do
     context "git config user.{name,email} present" do
       it "sets gemspec author to git user.name if available" do
-        expect(generated_gem.gemspec.authors.first).to eq("Bundler User")
+        expect(generated_gem.gemspec.authors.first).to eq("Carat User")
       end
 
       it "sets gemspec email to git user.email if available" do
@@ -125,10 +125,10 @@ describe "bundle gem" do
       bundle "gem #{gem_name}"
       remove_push_guard(gem_name)
       # reset gemspec cache for each test because of commit 3d4163a
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
-    let(:generated_gem) { Bundler::GemHelper.new(bundled_app(gem_name).to_s) }
+    let(:generated_gem) { Carat::GemHelper.new(bundled_app(gem_name).to_s) }
 
     it "generates a gem skeleton" do
       expect(bundled_app("test_gem/test_gem.gemspec")).to exist
@@ -338,7 +338,7 @@ describe "bundle gem" do
       bundle "gem #{gem_name} --mit"
       remove_push_guard(gem_name)
       # reset gemspec cache for each test because of commit 3d4163a
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
     it "generates a gem skeleton with MIT license" do
@@ -349,7 +349,7 @@ describe "bundle gem" do
       expect(bundled_app("test-gem/lib/test/gem.rb")).to exist
       expect(bundled_app("test-gem/lib/test/gem/version.rb")).to exist
 
-      skel = Bundler::GemHelper.new(bundled_app(gem_name).to_s)
+      skel = Carat::GemHelper.new(bundled_app(gem_name).to_s)
       expect(skel.gemspec.license).to eq("MIT")
     end
   end
@@ -360,7 +360,7 @@ describe "bundle gem" do
     before do
       bundle "gem #{gem_name} --coc"
       # reset gemspec cache for each test because of commit 3d4163a
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
     it "generates a gem skeleton with Code of Conduct" do
@@ -380,10 +380,10 @@ describe "bundle gem" do
       bundle "gem #{gem_name}"
       remove_push_guard(gem_name)
       # reset gemspec cache for each test because of commit 3d4163a
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
-    let(:generated_gem) { Bundler::GemHelper.new(bundled_app(gem_name).to_s) }
+    let(:generated_gem) { Carat::GemHelper.new(bundled_app(gem_name).to_s) }
 
     it "generates a gem skeleton" do
       expect(bundled_app("test-gem/test-gem.gemspec")).to exist
@@ -597,7 +597,7 @@ describe "bundle gem" do
   describe "uncommon gem names" do
     it "can deal with two dashes" do
       bundle "gem a--a"
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
 
       expect(bundled_app("a--a/a--a.gemspec")).to exist
     end
@@ -608,7 +608,7 @@ describe "bundle gem" do
       bundle "gem #{subject}"
     end
     after do
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
     context "with an existing const name" do

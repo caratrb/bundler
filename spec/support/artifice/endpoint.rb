@@ -19,7 +19,7 @@ class Endpoint < Sinatra::Base
 
       require 'rubygems'
       require 'carat'
-      Bundler::Deprecate.skip_during do
+      Carat::Deprecate.skip_during do
         Marshal.load(File.open(gem_repo.join("specs.4.8")).read).map do |name, version, platform|
           spec = load_spec(name, version, platform, gem_repo)
           if gem_names.include?(spec.name)

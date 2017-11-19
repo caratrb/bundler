@@ -1,6 +1,6 @@
 require "carat/vendor/thor/lib/thor/actions/empty_directory"
 
-class Bundler::Thor
+class Carat::Thor
   module Actions
     # Create a new file relative to the destination root with the given data,
     # which is the return value of a block or a data string.

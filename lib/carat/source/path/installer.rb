@@ -1,21 +1,21 @@
-module Bundler
+module Carat
   class Source
     class Path
 
-      class Installer < Bundler::GemInstaller
+      class Installer < Carat::GemInstaller
         attr_reader :spec
 
         def initialize(spec, options = {})
           @spec              = spec
-          @gem_dir           = Bundler.rubygems.path(spec.full_gem_path)
+          @gem_dir           = Carat.rubygems.path(spec.full_gem_path)
           @wrappers          = options[:wrappers] || true
           @env_shebang       = options[:env_shebang] || true
           @format_executable = options[:format_executable] || false
-          @build_args        = options[:build_args] || Bundler.rubygems.build_args
-          @gem_bin_dir       = "#{Bundler.rubygems.gem_dir}/bin"
+          @build_args        = options[:build_args] || Carat.rubygems.build_args
+          @gem_bin_dir       = "#{Carat.rubygems.gem_dir}/bin"
 
-          if Bundler.requires_sudo?
-            @tmp_dir = Bundler.tmp(spec.full_name).to_s
+          if Carat.requires_sudo?
+            @tmp_dir = Carat.tmp(spec.full_name).to_s
             @bin_dir = "#{@tmp_dir}/bin"
           else
             @bin_dir = @gem_bin_dir
@@ -27,14 +27,14 @@ module Bundler
 
           super
 
-          if Bundler.requires_sudo?
-            Bundler.mkdir_p @gem_bin_dir
+          if Carat.requires_sudo?
+            Carat.mkdir_p @gem_bin_dir
             spec.executables.each do |exe|
-              Bundler.sudo "cp -R #{@bin_dir}/#{exe} #{@gem_bin_dir}"
+              Carat.sudo "cp -R #{@bin_dir}/#{exe} #{@gem_bin_dir}"
             end
           end
         ensure
-          Bundler.rm_rf(@tmp_dir) if Bundler.requires_sudo?
+          Carat.rm_rf(@tmp_dir) if Carat.requires_sudo?
         end
       end
 

@@ -1,7 +1,7 @@
 require 'tsort'
 require 'forwardable'
 
-module Bundler
+module Carat
   class SpecSet
     extend Forwardable
     include TSort, Enumerable
@@ -120,7 +120,7 @@ module Bundler
     end
 
     def extract_circular_gems(error)
-      if Bundler.current_ruby.mri? && Bundler.current_ruby.on_19?
+      if Carat.current_ruby.mri? && Carat.current_ruby.on_19?
         error.message.scan(/(\w+) \([^)]/).flatten
       else
         error.message.scan(/@name="(.*?)"/).flatten

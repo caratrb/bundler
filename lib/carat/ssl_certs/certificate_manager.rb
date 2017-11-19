@@ -4,7 +4,7 @@ require "carat/vendored_fileutils"
 require "net/https"
 require "openssl"
 
-module Bundler
+module Carat
   module SSLCerts
     class CertificateManager
       attr_reader :carat_cert_path, :carat_certs, :rubygems_certs

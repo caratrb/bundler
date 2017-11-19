@@ -1,7 +1,7 @@
 require 'carat/rubygems_integration'
 require 'carat/source/git/git_proxy'
 
-module Bundler
+module Carat
   class Env
 
     def write(io)
@@ -12,7 +12,7 @@ module Bundler
       print_gemfile = options.delete(:print_gemfile)
 
       out = "Environment\n\n"
-      out << "    Bundler   #{Bundler::VERSION}\n"
+      out << "    Carat   #{Carat::VERSION}\n"
       out << "    Rubygems  #{Gem::VERSION}\n"
       out << "    Ruby      #{ruby_version}"
       out << "    GEM_HOME  #{ENV['GEM_HOME']}\n" unless ENV['GEM_HOME'].nil? || ENV['GEM_HOME'].empty?
@@ -20,24 +20,24 @@ module Bundler
       out << "    RVM       #{ENV['rvm_version']}\n" if ENV['rvm_version']
       out << "    Git       #{git_version}\n"
       %w(rubygems-carat open_gem).each do |name|
-        specs = Bundler.rubygems.find_name(name)
+        specs = Carat.rubygems.find_name(name)
         out << "    #{name} (#{specs.map(&:version).join(',')})\n" unless specs.empty?
       end
 
-      out << "\nBundler settings\n\n" unless Bundler.settings.all.empty?
-      Bundler.settings.all.each do |setting|
+      out << "\nCarat settings\n\n" unless Carat.settings.all.empty?
+      Carat.settings.all.each do |setting|
         out << "    " << setting << "\n"
-        Bundler.settings.pretty_values_for(setting).each do |line|
+        Carat.settings.pretty_values_for(setting).each do |line|
           out << "      " << line << "\n"
         end
       end
 
       if print_gemfile
         out << "\nGemfile\n\n"
-        out << "    " << read_file(Bundler.default_gemfile).gsub(/\n/, "\n    ") << "\n"
+        out << "    " << read_file(Carat.default_gemfile).gsub(/\n/, "\n    ") << "\n"
 
         out << "\n" << "Gemfile.lock\n\n"
-        out << "    " << read_file(Bundler.default_lockfile).gsub(/\n/, "\n    ") << "\n"
+        out << "    " << read_file(Carat.default_lockfile).gsub(/\n/, "\n    ") << "\n"
       end
 
       out
@@ -66,8 +66,8 @@ module Bundler
     end
 
     def git_version
-      Bundler::Source::Git::GitProxy.new(nil, nil, nil).version
-    rescue Bundler::Source::Git::GitNotInstalledError
+      Carat::Source::Git::GitProxy.new(nil, nil, nil).version
+    rescue Carat::Source::Git::GitNotInstalledError
       "not installed"
     end
 

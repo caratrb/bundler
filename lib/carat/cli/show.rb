@@ -1,6 +1,6 @@
 require 'carat/cli/common'
 
-module Bundler
+module Carat
   class CLI::Show
     attr_reader :options, :gem_name, :latest_specs
     def initialize(options, gem_name)
@@ -11,43 +11,43 @@ module Bundler
     end
 
     def run
-      Bundler.ui.silence do
-        Bundler.definition.validate_ruby!
-        Bundler.load.lock
+      Carat.ui.silence do
+        Carat.definition.validate_ruby!
+        Carat.load.lock
       end
 
       if gem_name
         if gem_name == "carat"
           path = File.expand_path("../../../..", __FILE__)
         else
-          spec = Bundler::CLI::Common.select_spec(gem_name, :regex_match)
+          spec = Carat::CLI::Common.select_spec(gem_name, :regex_match)
           return unless spec
           path = spec.full_gem_path
           if !File.directory?(path)
-            Bundler.ui.warn "The gem #{gem_name} has been deleted. It was installed at:"
+            Carat.ui.warn "The gem #{gem_name} has been deleted. It was installed at:"
           end
         end
-        return Bundler.ui.info(path)
+        return Carat.ui.info(path)
       end
 
       if options[:paths]
-        Bundler.load.specs.sort_by { |s| s.name }.map do |s|
-          Bundler.ui.info s.full_gem_path
+        Carat.load.specs.sort_by { |s| s.name }.map do |s|
+          Carat.ui.info s.full_gem_path
         end
       else
-        Bundler.ui.info "Gems included by the bundle:"
-        Bundler.load.specs.sort_by { |s| s.name }.each do |s|
+        Carat.ui.info "Gems included by the bundle:"
+        Carat.load.specs.sort_by { |s| s.name }.each do |s|
           desc = "  * #{s.name} (#{s.version}#{s.git_version})"
           if @verbose
             latest = latest_specs.find { |l| l.name == s.name }
-            Bundler.ui.info <<-END.gsub(/^ +/, '')
+            Carat.ui.info <<-END.gsub(/^ +/, '')
               #{desc}
               \tSummary:  #{s.summary || 'No description available.'}
               \tHomepage: #{s.homepage || 'No website available.'}
               \tStatus:   #{outdated?(s, latest) ? "Outdated - #{s.version} < #{latest.version}" : "Up to date"}
             END
           else
-            Bundler.ui.info desc
+            Carat.ui.info desc
           end
         end
       end
@@ -56,10 +56,10 @@ module Bundler
     private
 
     def fetch_latest_specs
-      definition = Bundler.definition(true)
+      definition = Carat.definition(true)
       if options[:outdated]
-        Bundler.ui.info "Fetching remote specs for outdated check...\n\n"
-        Bundler.ui.silence { definition.resolve_remotely! }
+        Carat.ui.info "Fetching remote specs for outdated check...\n\n"
+        Carat.ui.silence { definition.resolve_remotely! }
       else
         definition.resolve_with_cache!
       end

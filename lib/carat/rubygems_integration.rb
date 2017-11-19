@@ -2,7 +2,7 @@ require 'monitor'
 require 'rubygems'
 require 'rubygems/config_file'
 
-module Bundler
+module Carat
   class RubygemsIntegration
 
     def self.version
@@ -48,8 +48,8 @@ module Bundler
     def configuration
       Gem.configuration
     rescue Gem::SystemExitException => e
-      Bundler.ui.error "#{e.class}: #{e.message}"
-      Bundler.ui.trace e
+      Carat.ui.error "#{e.class}: #{e.message}"
+      Carat.ui.trace e
       raise Gem::SystemExitException
     end
 
@@ -204,7 +204,7 @@ module Bundler
     end
 
     def download_gem(spec, uri, path)
-      uri = Bundler::Source.mirror_for(uri)
+      uri = Carat::Source.mirror_for(uri)
       fetcher = Gem::RemoteFetcher.new(configuration[:http_proxy])
       fetcher.download(spec, uri, path)
     end
@@ -315,7 +315,7 @@ module Bundler
           spec = specs.find { |s| s.executables.include?(exec_name) }
           spec or raise Gem::Exception, "can't find executable #{exec_name}"
           unless spec.name == name
-            warn "Bundler is using a binstub that was created for a different gem.\n" \
+            warn "Carat is using a binstub that was created for a different gem.\n" \
               "This is deprecated, in future versions you may need to `bundle binstub #{name}` " \
               "to work around a system/bundle conflict."
           end
@@ -330,7 +330,7 @@ module Bundler
       end
     end
 
-    # Because Bundler has a static view of what specs are available,
+    # Because Carat has a static view of what specs are available,
     # we don't #refresh, so stub it out.
     def replace_refresh
       gem_class = (class << Gem ; self ; end)
@@ -514,7 +514,7 @@ module Bundler
       def fetch_specs(source, name)
         path = source + "#{name}.#{Gem.marshal_version}.gz"
         string = Gem::RemoteFetcher.fetcher.fetch_path(path)
-        Bundler.load_marshal(string)
+        Carat.load_marshal(string)
       rescue Gem::RemoteFetcher::FetchError => e
         # it's okay for prerelease to fail
         raise e unless name == "prerelease_specs"
@@ -538,7 +538,7 @@ module Bundler
 
       def download_gem(spec, uri, path)
         require 'resolv'
-        uri = Bundler::Source.mirror_for(uri)
+        uri = Carat::Source.mirror_for(uri)
         proxy, dns = configuration[:http_proxy], Resolv::DNS.new
         fetcher = Gem::RemoteFetcher.new(proxy, dns)
         fetcher.download(spec, uri, path)

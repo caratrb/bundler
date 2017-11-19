@@ -58,7 +58,7 @@ describe "bundle install with explicit source paths" do
     expect(out).to match("user #{username} doesn't exist")
   end
 
-  it "expands paths relative to Bundler.root" do
+  it "expands paths relative to Carat.root" do
     build_lib "foo", :path => bundled_app("foo-1.0")
 
     install_gemfile <<-G

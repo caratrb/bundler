@@ -1,19 +1,19 @@
 require "digest/sha1"
 require "set"
 
-module Bundler
+module Carat
   class Definition
     include GemHelpers
 
     attr_reader :dependencies, :platforms, :ruby_version, :locked_deps
 
-    # Given a gemfile and lockfile creates a Bundler definition
+    # Given a gemfile and lockfile creates a Carat definition
     #
     # @param gemfile [Pathname] Path to Gemfile
     # @param lockfile [Pathname,nil] Path to Gemfile.lock
     # @param unlock [Hash, Boolean, nil] Gems that have been requested
     #   to be updated or true if all gems should be updated
-    # @return [Bundler::Definition]
+    # @return [Carat::Definition]
     def self.build(gemfile, lockfile, unlock)
       unlock ||= {}
       gemfile = Pathname.new(gemfile).expand_path
@@ -38,11 +38,11 @@ module Bundler
     #  specs, then we can try to resolve locally.
     #
     # @param lockfile [Pathname] Path to Gemfile.lock
-    # @param dependencies [Array(Bundler::Dependency)] array of dependencies from Gemfile
-    # @param sources [Bundler::SourceList]
+    # @param dependencies [Array(Carat::Dependency)] array of dependencies from Gemfile
+    # @param sources [Carat::SourceList]
     # @param unlock [Hash, Boolean, nil] Gems that have been requested
     #   to be updated or true if all gems should be updated
-    # @param ruby_version [Bundler::RubyVersion, nil] Requested Ruby Version
+    # @param ruby_version [Carat::RubyVersion, nil] Requested Ruby Version
     def initialize(lockfile, dependencies, sources, unlock, ruby_version = nil)
       @unlocking = unlock == true || !unlock.empty?
 
@@ -53,7 +53,7 @@ module Bundler
       @ruby_version      = ruby_version
 
       if lockfile && File.exist?(lockfile)
-        @lockfile_contents = Bundler.read_file(lockfile)
+        @lockfile_contents = Carat.read_file(lockfile)
         locked = LockfileParser.new(@lockfile_contents)
         @platforms      = locked.platforms
 
@@ -78,7 +78,7 @@ module Bundler
       @unlock[:gems] ||= []
       @unlock[:sources] ||= []
 
-      current_platform = Bundler.rubygems.platforms.map { |p| generic(p) }.compact.last
+      current_platform = Carat.rubygems.platforms.map { |p| generic(p) }.compact.last
       @new_platform = !@platforms.include?(current_platform)
       @platforms |= [current_platform]
 
@@ -126,13 +126,13 @@ module Bundler
     #  1. The method first resolves the dependencies specified in Gemfile
     #  2. After that it tries and fetches gemspec of resolved dependencies
     #
-    # @return [Bundler::SpecSet]
+    # @return [Carat::SpecSet]
     def specs
       @specs ||= begin
-        specs = resolve.materialize(Bundler.settings[:cache_all_platforms] ? dependencies : requested_dependencies)
+        specs = resolve.materialize(Carat.settings[:cache_all_platforms] ? dependencies : requested_dependencies)
 
         unless specs["carat"].any?
-          local = Bundler.settings[:frozen] ? rubygems_index : index
+          local = Carat.settings[:frozen] ? rubygems_index : index
           carat = local.search(Gem::Dependency.new('carat', VERSION)).last
           specs["carat"] = carat if carat
         end
@@ -161,7 +161,7 @@ module Bundler
 
     def requested_specs
       @requested_specs ||= begin
-        groups = self.groups - Bundler.settings.without
+        groups = self.groups - Carat.settings.without
         groups.map! { |g| g.to_sym }
         specs_for(groups)
       end
@@ -185,7 +185,7 @@ module Bundler
     def resolve
       @resolve ||= begin
         last_resolve = converge_locked_specs
-        if Bundler.settings[:frozen] || (!@unlocking && nothing_changed?)
+        if Carat.settings[:frozen] || (!@unlocking && nothing_changed?)
           last_resolve
         else
           # Run a resolve against the locally available gems
@@ -242,14 +242,14 @@ module Bundler
 
       return if @lockfile_contents == contents
 
-      if Bundler.settings[:frozen]
-        Bundler.ui.error "Cannot write a changed lockfile while frozen."
+      if Carat.settings[:frozen]
+        Carat.ui.error "Cannot write a changed lockfile while frozen."
         return
       end
 
       File.open(file, 'wb'){|f| f.puts(contents) }
     rescue Errno::EACCES
-      raise Bundler::InstallError,
+      raise Carat::InstallError,
         "There was an error while trying to write to Gemfile.lock. It is likely that \n" \
         "you need to allow write permissions for the file at path: \n" \
         "#{File.expand_path(file)}"
@@ -358,7 +358,7 @@ module Bundler
     def validate_ruby!
       return unless ruby_version
 
-      if diff = ruby_version.diff(Bundler.ruby_version)
+      if diff = ruby_version.diff(Carat.ruby_version)
         problem, expected, actual = diff
 
         msg = case problem
@@ -367,7 +367,7 @@ module Bundler
         when :version
           "Your Ruby version is #{actual}, but your Gemfile specified #{expected}"
         when :engine_version
-          "Your #{Bundler.ruby_version.engine} version is #{actual}, but your Gemfile specified #{ruby_version.engine} #{expected}"
+          "Your #{Carat.ruby_version.engine} version is #{actual}, but your Gemfile specified #{ruby_version.engine} #{expected}"
         when :patchlevel
           if !expected.is_a?(String)
             "The Ruby patchlevel in your Gemfile must be a string"
@@ -425,7 +425,7 @@ module Bundler
     def converge_locals
       locals = []
 
-      Bundler.settings.local_overrides.map do |k,v|
+      Carat.settings.local_overrides.map do |k,v|
         spec   = @dependencies.find { |s| s.name == k }
         source = spec && spec.source
         if source && source.respond_to?(:local_override!)
@@ -590,7 +590,7 @@ module Bundler
     end
 
     def requested_dependencies
-      groups = self.groups - Bundler.settings.without
+      groups = self.groups - Carat.settings.without
       groups.map! { |g| g.to_sym }
       dependencies.reject { |d| !d.should_include? || (d.groups & groups).empty? }
     end

@@ -15,7 +15,7 @@ module Gem
   end
 end
 
-module Bundler
+module Carat
   module SharedHelpers
     attr_accessor :gem_loaded
 
@@ -38,7 +38,7 @@ module Bundler
       bundle_dir = find_directory(".bundle")
       return nil unless bundle_dir
 
-      global_bundle_dir = File.join(Bundler.rubygems.user_home, ".bundle")
+      global_bundle_dir = File.join(Carat.rubygems.user_home, ".bundle")
       return nil if bundle_dir == global_bundle_dir
 
       Pathname.new(bundle_dir)
@@ -49,13 +49,13 @@ module Bundler
     end
 
     def chdir(dir, &blk)
-      Bundler.rubygems.ext_lock.synchronize do
+      Carat.rubygems.ext_lock.synchronize do
         Dir.chdir dir, &blk
       end
     end
 
     def pwd
-      Bundler.rubygems.ext_lock.synchronize do
+      Carat.rubygems.ext_lock.synchronize do
         Dir.pwd
       end
     end
@@ -76,7 +76,7 @@ module Bundler
     def set_bundle_environment
       # Set PATH
       paths = (ENV["PATH"] || "").split(File::PATH_SEPARATOR)
-      paths.unshift "#{Bundler.bundle_path}/bin"
+      paths.unshift "#{Carat.bundle_path}/bin"
       ENV["PATH"] = paths.uniq.join(File::PATH_SEPARATOR)
 
       # Set RUBYOPT
@@ -138,7 +138,7 @@ module Bundler
         $LOAD_PATH.reject! do |p|
           next if File.expand_path(p) =~ /^#{Regexp.escape(me)}/
           p != File.dirname(__FILE__) &&
-            Bundler.rubygems.gem_path.any?{|gp| p =~ /^#{Regexp.escape(gp)}/ }
+            Carat.rubygems.gem_path.any?{|gp| p =~ /^#{Regexp.escape(gp)}/ }
         end
         $LOAD_PATH.uniq!
       end

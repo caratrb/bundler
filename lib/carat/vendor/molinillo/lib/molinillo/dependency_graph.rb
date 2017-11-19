@@ -1,7 +1,7 @@
 require 'set'
 require 'tsort'
 
-module Bundler::Molinillo
+module Carat::Molinillo
   # A directed acyclic graph that is tuned to hold named dependencies
   class DependencyGraph
     include Enumerable

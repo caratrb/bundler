@@ -12,7 +12,7 @@ RSpec.describe "SSL Certificates", :rubygems_master do
 
   hosts.each do |host|
     it "can securely connect to #{host}", :realworld do
-      Bundler::SSLCerts::CertificateManager.new.connect_to(host)
+      Carat::SSLCerts::CertificateManager.new.connect_to(host)
     end
   end
 end

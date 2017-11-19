@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class DepProxy
 
     attr_reader :__platform, :dep

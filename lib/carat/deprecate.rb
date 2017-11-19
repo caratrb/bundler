@@ -1,4 +1,4 @@
-module Bundler
+module Carat
 
   if defined? ::Deprecate
     Deprecate = ::Deprecate

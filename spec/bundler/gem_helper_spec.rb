@@ -2,7 +2,7 @@ require "spec_helper"
 require 'rake'
 require 'carat/gem_helper'
 
-describe Bundler::GemHelper do
+describe Carat::GemHelper do
   let(:app_name) { "lorem__ipsum" }
   let(:app_path) { bundled_app app_name }
   let(:app_gemspec_path) { app_path.join("#{app_name}.gemspec") }
@@ -13,7 +13,7 @@ describe Bundler::GemHelper do
   end
 
   context "determining gemspec" do
-    subject { Bundler::GemHelper.new(app_path) }
+    subject { Carat::GemHelper.new(app_path) }
 
     context "fails" do
       it "when there is no gemspec" do
@@ -59,7 +59,7 @@ describe Bundler::GemHelper do
 
   context "gem management" do
     def mock_confirm_message(message)
-      expect(Bundler.ui).to receive(:confirm).with(message)
+      expect(Carat.ui).to receive(:confirm).with(message)
     end
 
     def mock_build_message(name, version)
@@ -67,7 +67,7 @@ describe Bundler::GemHelper do
       mock_confirm_message message
     end
 
-    subject! { Bundler::GemHelper.new(app_path) }
+    subject! { Carat::GemHelper.new(app_path) }
     let(:app_version) { "0.1.0" }
     let(:app_gem_dir) { app_path.join("pkg") }
     let(:app_gem_path) { app_gem_dir.join("#{app_name}-#{app_version}.gem") }
@@ -88,7 +88,7 @@ describe Bundler::GemHelper do
     end
 
     it "uses a shell UI for output" do
-      expect(Bundler.ui).to be_a(Bundler::UI::Shell)
+      expect(Carat.ui).to be_a(Carat::UI::Shell)
     end
 
     describe "#install" do
@@ -211,8 +211,8 @@ describe Bundler::GemHelper do
 
         it "when there is no git remote" do
           # silence messages
-          allow(Bundler.ui).to receive(:confirm)
-          allow(Bundler.ui).to receive(:error)
+          allow(Carat.ui).to receive(:confirm)
+          allow(Carat.ui).to receive(:error)
 
           Dir.chdir(app_path) { `git commit -a -m "initial commit"` }
           expect { Rake.application["release"].invoke }.to raise_error

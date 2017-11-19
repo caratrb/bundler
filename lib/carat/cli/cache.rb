@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class CLI::Cache
     attr_reader :options
     def initialize(options)
@@ -6,28 +6,28 @@ module Bundler
     end
 
     def run
-      Bundler.definition.validate_ruby!
-      Bundler.definition.resolve_with_cache!
+      Carat.definition.validate_ruby!
+      Carat.definition.resolve_with_cache!
       setup_cache_all
-      Bundler.settings[:cache_all_platforms] = options["all-platforms"] if options.key?("all-platforms")
-      Bundler.load.cache
-      Bundler.settings[:no_prune] = true if options["no-prune"]
-      Bundler.load.lock
+      Carat.settings[:cache_all_platforms] = options["all-platforms"] if options.key?("all-platforms")
+      Carat.load.cache
+      Carat.settings[:no_prune] = true if options["no-prune"]
+      Carat.load.lock
     rescue GemNotFound => e
-      Bundler.ui.error(e.message)
-      Bundler.ui.warn "Run `bundle install` to install missing gems."
+      Carat.ui.error(e.message)
+      Carat.ui.warn "Run `bundle install` to install missing gems."
       exit 1
     end
 
   private
 
     def setup_cache_all
-      Bundler.settings[:cache_all] = options[:all] if options.key?("all")
+      Carat.settings[:cache_all] = options[:all] if options.key?("all")
 
-      if Bundler.definition.has_local_dependencies? && !Bundler.settings[:cache_all]
-        Bundler.ui.warn "Your Gemfile contains path and git dependencies. If you want "    \
+      if Carat.definition.has_local_dependencies? && !Carat.settings[:cache_all]
+        Carat.ui.warn "Your Gemfile contains path and git dependencies. If you want "    \
           "to package them as well, please pass the --all flag. This will be the default " \
-          "on Bundler 2.0."
+          "on Carat 2.0."
       end
     end
 

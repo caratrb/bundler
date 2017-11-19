@@ -2,7 +2,7 @@ require 'rubygems/dependency'
 require 'carat/shared_helpers'
 require 'carat/rubygems_ext'
 
-module Bundler
+module Carat
   class Dependency < Gem::Dependency
     attr_reader :autorequire
     attr_reader :groups
@@ -91,7 +91,7 @@ module Bundler
     def current_platform?
       return true if @platforms.empty?
       @platforms.any? { |p|
-        Bundler.current_ruby.send("#{p}?")
+        Carat.current_ruby.send("#{p}?")
       }
     end
 

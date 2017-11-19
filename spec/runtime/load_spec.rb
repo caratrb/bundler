@@ -1,11 +1,11 @@
 require "spec_helper"
 
-describe "Bundler.load" do
+describe "Carat.load" do
   before :each do
     system_gems "rack-1.0.0"
     # clear memoized method results
     # TODO: Don't reset internal ivars
-    Bundler.instance_eval do
+    Carat.instance_eval do
       @load = nil
       @runtime = nil
       @definition = nil
@@ -21,17 +21,17 @@ describe "Bundler.load" do
     end
 
     it "provides a list of the env dependencies" do
-      expect(Bundler.load.dependencies).to have_dep("rack", ">= 0")
+      expect(Carat.load.dependencies).to have_dep("rack", ">= 0")
     end
 
     it "provides a list of the resolved gems" do
-      expect(Bundler.load.gems).to have_gem("rack-1.0.0", "carat-#{Bundler::VERSION}")
+      expect(Carat.load.gems).to have_gem("rack-1.0.0", "carat-#{Carat::VERSION}")
     end
 
     it "ignores blank BUNDLE_GEMFILEs" do
       expect {
         ENV['BUNDLE_GEMFILE'] = ""
-        Bundler.load
+        Carat.load
       }.not_to raise_error()
     end
   end
@@ -45,26 +45,26 @@ describe "Bundler.load" do
     end
 
     it "provides a list of the env dependencies" do
-      expect(Bundler.load.dependencies).to have_dep("rack", ">= 0")
+      expect(Carat.load.dependencies).to have_dep("rack", ">= 0")
     end
 
     it "provides a list of the resolved gems" do
-      expect(Bundler.load.gems).to have_gem("rack-1.0.0", "carat-#{Bundler::VERSION}")
+      expect(Carat.load.gems).to have_gem("rack-1.0.0", "carat-#{Carat::VERSION}")
     end
   end
 
   describe "without a gemfile" do
     it "raises an exception if the default gemfile is not found" do
       expect {
-        Bundler.load
-      }.to raise_error(Bundler::GemfileNotFound, /could not locate gemfile/i)
+        Carat.load
+      }.to raise_error(Carat::GemfileNotFound, /could not locate gemfile/i)
     end
 
     it "raises an exception if a specified gemfile is not found" do
       expect {
         ENV['BUNDLE_GEMFILE'] = "omg.rb"
-        Bundler.load
-      }.to raise_error(Bundler::GemfileNotFound, /omg\.rb/)
+        Carat.load
+      }.to raise_error(Carat::GemfileNotFound, /omg\.rb/)
     end
 
     it "does not find a Gemfile above the testing directory" do
@@ -74,7 +74,7 @@ describe "Bundler.load" do
         @remove_carat_gemfile = true
       end
       begin
-        expect { Bundler.load }.to raise_error(Bundler::GemfileNotFound)
+        expect { Carat.load }.to raise_error(Carat::GemfileNotFound)
       ensure
         carat_gemfile.rmtree if @remove_carat_gemfile
       end
@@ -92,8 +92,8 @@ describe "Bundler.load" do
 
       ruby <<-RUBY
         require "carat"
-        Bundler.setup :default
-        Bundler.require :default
+        Carat.setup :default
+        Carat.require :default
         puts RACK
         begin
           require "activesupport"
@@ -113,7 +113,7 @@ describe "Bundler.load" do
         gem "activerecord"
       G
 
-      Bundler.load.specs.each do |spec|
+      Carat.load.specs.each do |spec|
         expect(spec.to_yaml).not_to match(/^\s+source:/)
         expect(spec.to_yaml).not_to match(/^\s+groups:/)
       end

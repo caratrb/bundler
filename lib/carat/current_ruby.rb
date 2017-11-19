@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   # Returns current version of Ruby
   #
   # @return [CurrentRuby] Current version of Ruby
@@ -96,7 +96,7 @@ module Bundler
     end
 
     def mswin?
-      Bundler::WINDOWS
+      Carat::WINDOWS
     end
 
     def mswin_18?
@@ -120,7 +120,7 @@ module Bundler
     end
 
     def mswin64?
-      Bundler::WINDOWS && Gem::Platform.local.os == "mswin64" && Gem::Platform.local.cpu == 'x64'
+      Carat::WINDOWS && Gem::Platform.local.os == "mswin64" && Gem::Platform.local.cpu == 'x64'
     end
 
     def mswin64_19?
@@ -140,7 +140,7 @@ module Bundler
     end
 
     def mingw?
-      Bundler::WINDOWS && Gem::Platform.local.os == "mingw32" && Gem::Platform.local.cpu != 'x64'
+      Carat::WINDOWS && Gem::Platform.local.os == "mingw32" && Gem::Platform.local.cpu != 'x64'
     end
 
     def mingw_18?
@@ -164,7 +164,7 @@ module Bundler
     end
 
     def x64_mingw?
-      Bundler::WINDOWS && Gem::Platform.local.os == "mingw32" && Gem::Platform.local.cpu == 'x64'
+      Carat::WINDOWS && Gem::Platform.local.os == "mingw32" && Gem::Platform.local.cpu == 'x64'
     end
 
     def x64_mingw_20?

@@ -15,7 +15,7 @@ end
 # At least load the YAML stdlib, whatever that may be
 require 'yaml' unless defined?(YAML.dump)
 
-module Bundler
+module Carat
   # On encountering invalid YAML,
   # Psych raises Psych::SyntaxError
   if defined?(::Psych::SyntaxError)

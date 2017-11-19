@@ -1,7 +1,7 @@
 require "spec_helper"
 
 describe "the lockfile format" do
-  include Bundler::GemHelpers
+  include Carat::GemHelpers
 
   it "generates a simple lockfile for a single source, gem" do
     install_gemfile <<-G
@@ -760,7 +760,7 @@ describe "the lockfile format" do
 
   end
 
-  # Some versions of the Bundler 1.1 RC series introduced corrupted
+  # Some versions of the Carat 1.1 RC series introduced corrupted
   # lockfiles. There were two major problems:
   #
   # * multiple copies of the same GIT section appeared in the lockfile
@@ -877,7 +877,7 @@ describe "the lockfile format" do
         expect { ruby <<-RUBY
                    require 'rubygems'
                    require 'carat'
-                   Bundler.setup
+                   Carat.setup
                  RUBY
                }.not_to change { File.mtime(bundled_app('Gemfile.lock')) }
       end
@@ -890,7 +890,7 @@ describe "the lockfile format" do
         expect { ruby <<-RUBY
                    require 'rubygems'
                    require 'carat'
-                   Bundler.setup
+                   Carat.setup
                  RUBY
                }.not_to change { File.mtime(bundled_app('Gemfile.lock')) }
       end

@@ -2,12 +2,12 @@ require "spec_helper"
 
 describe "git base name" do
   it "base_name should strip private repo uris" do
-    source  = Bundler::Source::Git.new("uri" => "git@github.com:carat.git")
+    source  = Carat::Source::Git.new("uri" => "git@github.com:carat.git")
     expect(source.send(:base_name)).to eq("carat")
   end
 
   it "base_name should strip network share paths" do
-    source = Bundler::Source::Git.new("uri" => "//MachineName/ShareFolder")
+    source = Carat::Source::Git.new("uri" => "//MachineName/ShareFolder")
     expect(source.send(:base_name)).to eq("ShareFolder")
   end
 end

@@ -1,7 +1,7 @@
 require "tempfile"
 require "io/console" if RUBY_VERSION > "1.9.2"
 
-class Bundler::Thor
+class Carat::Thor
   module Shell
     class Basic # rubocop:disable ClassLength
       attr_accessor :base
@@ -272,9 +272,9 @@ class Bundler::Thor
         80
       end
 
-      # Called if something goes wrong during the execution. This is used by Bundler::Thor
+      # Called if something goes wrong during the execution. This is used by Carat::Thor
       # internally and should not be used inside your scripts. If something went
-      # wrong, you can always raise an exception. If you raise a Bundler::Thor::Error, it
+      # wrong, you can always raise an exception. If you raise a Carat::Thor::Error, it
       # will be rescued and wrapped in the method below.
       #
       def error(statement)
@@ -282,7 +282,7 @@ class Bundler::Thor
       end
 
       # Apply color to the given string with optional bold. Disabled in the
-      # Bundler::Thor::Shell::Basic class.
+      # Carat::Thor::Shell::Basic class.
       #
       def set_color(string, *args) #:nodoc:
         string
@@ -392,7 +392,7 @@ class Bundler::Thor
         default = options[:default]
         message = [statement, ("(#{default})" if default), nil].uniq.join(" ")
         message = prepare_message(message, color)
-        result = Bundler::Thor::LineEditor.readline(message, options)
+        result = Carat::Thor::LineEditor.readline(message, options)
 
         return unless result
 

@@ -1,7 +1,7 @@
 require "erb"
 require "open-uri"
 
-class Bundler::Thor
+class Carat::Thor
   module Actions
     # Copies the file from the relative source to the relative destination. If
     # the destination is not given it's assumed to be equal to the source.

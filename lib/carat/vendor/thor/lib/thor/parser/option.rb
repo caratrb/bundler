@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   class Option < Argument #:nodoc:
     attr_reader :aliases, :group, :lazy_default, :hide
 

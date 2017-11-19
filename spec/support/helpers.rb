@@ -33,7 +33,7 @@ module Spec
       expect_err = opts.delete(:expect_err)
       env = opts.delete(:env)
       groups = args.map {|a| a.inspect }.join(", ")
-      setup = "require 'rubygems' ; require 'carat' ; Bundler.setup(#{groups})\n"
+      setup = "require 'rubygems' ; require 'carat' ; Carat.setup(#{groups})\n"
       @out = ruby(setup + cmd, :expect_err => expect_err, :env => env)
     end
 

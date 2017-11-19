@@ -5,7 +5,7 @@ class Gem::Platform
 end
 
 if ENV['CARAT_SPEC_VERSION']
-  module Bundler
+  module Carat
     VERSION = ENV['CARAT_SPEC_VERSION'].dup
   end
 end

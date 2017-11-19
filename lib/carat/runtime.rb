@@ -1,6 +1,6 @@
 require "digest/sha1"
 
-module Bundler
+module Carat
   class Runtime < Environment
     include SharedHelpers
 
@@ -13,7 +13,7 @@ module Bundler
       specs = groups.any? ? @definition.specs_for(groups) : requested_specs
 
       setup_environment
-      Bundler.rubygems.replace_entrypoints(specs)
+      Carat.rubygems.replace_entrypoints(specs)
 
       # Activate the specs
       specs.each do |spec|
@@ -21,7 +21,7 @@ module Bundler
           raise GemNotFound, "#{spec.full_name} is missing. Run `bundle` to get it."
         end
 
-        if activated_spec = Bundler.rubygems.loaded_specs(spec.name) and activated_spec.version != spec.version
+        if activated_spec = Carat.rubygems.loaded_specs(spec.name) and activated_spec.version != spec.version
           e = Gem::LoadError.new "You have already activated #{activated_spec.name} #{activated_spec.version}, " \
                                  "but your Gemfile requires #{spec.name} #{spec.version}. Prepending " \
                                  "`bundle exec` to your command may solve this."
@@ -34,7 +34,7 @@ module Bundler
           raise e
         end
 
-        Bundler.rubygems.mark_loaded(spec)
+        Carat.rubygems.mark_loaded(spec)
         load_paths = spec.load_paths.reject {|path| $LOAD_PATH.include?(path)}
         $LOAD_PATH.unshift(*load_paths)
       end
@@ -103,13 +103,13 @@ module Bundler
     alias gems specs
 
     def cache(custom_path = nil)
-      cache_path = Bundler.app_cache(custom_path)
+      cache_path = Carat.app_cache(custom_path)
       FileUtils.mkdir_p(cache_path) unless File.exist?(cache_path)
 
-      Bundler.ui.info "Updating files in #{Bundler.settings.app_cache_path}"
+      Carat.ui.info "Updating files in #{Carat.settings.app_cache_path}"
       specs.each do |spec|
         next if spec.name == 'carat'
-        spec.source.send(:fetch_gem, spec) if Bundler.settings[:cache_all_platforms] && spec.source.respond_to?(:fetch_gem, true)
+        spec.source.send(:fetch_gem, spec) if Carat.settings[:cache_all_platforms] && spec.source.respond_to?(:fetch_gem, true)
         spec.source.cache(spec, custom_path) if spec.source.respond_to?(:cache)
       end
 
@@ -118,7 +118,7 @@ module Bundler
         FileUtils.touch(File.expand_path("../.bundlecache", git_dir))
       end
 
-      prune_cache(cache_path) unless Bundler.settings[:no_prune]
+      prune_cache(cache_path) unless Carat.settings[:no_prune]
     end
 
     def prune_cache(cache_path)
@@ -148,12 +148,12 @@ module Bundler
         md = %r{(.+carat/gems/.+-[a-f0-9]{7,12})}.match(spec.full_gem_path)
         spec_git_paths << md[1] if md
         spec_gem_executables << spec.executables.collect do |executable|
-          e = "#{Bundler.rubygems.gem_bindir}/#{executable}"
+          e = "#{Carat.rubygems.gem_bindir}/#{executable}"
           [e, "#{e}.bat"]
         end
         spec_cache_paths << spec.cache_file
         spec_gemspec_paths << spec.spec_file
-        spec_git_cache_dirs << spec.source.cache_path.to_s if spec.source.is_a?(Bundler::Source::Git)
+        spec_git_cache_dirs << spec.source.cache_path.to_s if spec.source.is_a?(Carat::Source::Git)
       end
       spec_gem_paths.uniq!
       spec_gem_executables.flatten!
@@ -174,9 +174,9 @@ module Bundler
         output  = "#{name} (#{version})"
 
         if dry_run
-          Bundler.ui.info "Would have removed #{output}"
+          Carat.ui.info "Would have removed #{output}"
         else
-          Bundler.ui.info "Removing #{output}"
+          Carat.ui.info "Removing #{output}"
           FileUtils.rm_rf(gem_dir)
         end
 
@@ -190,9 +190,9 @@ module Bundler
         output   = "#{name} (#{revision})"
 
         if dry_run
-          Bundler.ui.info "Would have removed #{output}"
+          Carat.ui.info "Would have removed #{output}"
         else
-          Bundler.ui.info "Removing #{output}"
+          Carat.ui.info "Removing #{output}"
           FileUtils.rm_rf(gem_dir)
         end
 
@@ -211,7 +211,7 @@ module Bundler
 
     def setup_environment
       begin
-        ENV["BUNDLE_BIN_PATH"] = Bundler.rubygems.bin_path("carat", "carat", VERSION)
+        ENV["BUNDLE_BIN_PATH"] = Carat.rubygems.bin_path("carat", "carat", VERSION)
       rescue Gem::GemNotFoundException
         ENV["BUNDLE_BIN_PATH"] = File.expand_path("../../../bin/carat", __FILE__)
       end
@@ -228,18 +228,18 @@ module Bundler
       cached  = Dir["#{cache_path}/*.gem"]
 
       cached = cached.delete_if do |path|
-        spec = Bundler.rubygems.spec_from_gem path
+        spec = Carat.rubygems.spec_from_gem path
 
         resolve.any? do |s|
-          s.name == spec.name && s.version == spec.version && !s.source.is_a?(Bundler::Source::Git)
+          s.name == spec.name && s.version == spec.version && !s.source.is_a?(Carat::Source::Git)
         end
       end
 
       if cached.any?
-        Bundler.ui.info "Removing outdated .gem files from #{Bundler.settings.app_cache_path}"
+        Carat.ui.info "Removing outdated .gem files from #{Carat.settings.app_cache_path}"
 
         cached.each do |path|
-          Bundler.ui.info "  * #{File.basename(path)}"
+          Carat.ui.info "  * #{File.basename(path)}"
           File.delete(path)
         end
       end
@@ -258,11 +258,11 @@ module Bundler
       end
 
       if cached.any?
-        Bundler.ui.info "Removing outdated git and path gems from #{Bundler.settings.app_cache_path}"
+        Carat.ui.info "Removing outdated git and path gems from #{Carat.settings.app_cache_path}"
 
         cached.each do |path|
           path = File.dirname(path)
-          Bundler.ui.info "  * #{File.basename(path)}"
+          Carat.ui.info "  * #{File.basename(path)}"
           FileUtils.rm_rf(path)
         end
       end

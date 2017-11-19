@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class Source
     class Git < Path
 
@@ -12,7 +12,7 @@ module Bundler
 
       class GitNotAllowedError < GitError
         def initialize(command)
-          msg =  "Bundler is trying to run a `git #{command}` at runtime. You probably need to run `bundle install`. However, "
+          msg =  "Carat is trying to run a `git #{command}` at runtime. You probably need to run `bundle install`. However, "
           msg << "this error message could probably be more useful. Please submit a ticket at http://github.com/caratrb/carat/issues "
           msg << "with steps to reproduce as well as the following\n\nCALLER: #{caller.join("\n")}"
           super msg
@@ -40,7 +40,7 @@ module Bundler
           @ref      = ref
           @revision = revision
           @git      = git
-          raise GitNotInstalledError.new if allow? && !Bundler.git_present?
+          raise GitNotInstalledError.new if allow? && !Carat.git_present?
         end
 
         def revision
@@ -67,12 +67,12 @@ module Bundler
         def checkout
           if path.exist?
             return if has_revision_cached?
-            Bundler.ui.confirm "Updating #{uri}"
+            Carat.ui.confirm "Updating #{uri}"
             in_path do
               git_retry %|fetch --force --quiet --tags #{uri_escaped} "refs/heads/*:refs/heads/*"|
             end
           else
-            Bundler.ui.info "Fetching #{uri}"
+            Carat.ui.info "Fetching #{uri}"
             FileUtils.mkdir_p(path.dirname)
             git_retry %|clone #{uri_escaped} "#{path}" --bare --no-hardlinks --quiet|
           end
@@ -104,11 +104,11 @@ module Bundler
         # If it doesn't, everything will work fine, but the user
         # will get the $stderr messages as well.
         def git_null(command)
-          git("#{command} 2>#{Bundler::NULL}", false)
+          git("#{command} 2>#{Carat::NULL}", false)
         end
 
         def git_retry(command)
-          Bundler::Retry.new("git #{command}", GitNotAllowedError).attempts do
+          Carat::Retry.new("git #{command}", GitNotAllowedError).attempts do
             git(command)
           end
         end
@@ -130,7 +130,7 @@ module Bundler
 
         # Escape the URI for git commands
         def uri_escaped
-          if Bundler::WINDOWS
+          if Carat::WINDOWS
             # Windows quoting requires double quotes only, with double quotes
             # inside the string escaped by being doubled.
             '"' + uri.gsub('"') {|s| '""'} + '"'

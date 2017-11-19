@@ -1,4 +1,4 @@
-module Bundler
+module Carat
   class SourceList
     attr_reader :path_sources,
                 :git_sources

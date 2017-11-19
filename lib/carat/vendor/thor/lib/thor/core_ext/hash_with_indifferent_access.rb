@@ -1,8 +1,8 @@
-class Bundler::Thor
+class Carat::Thor
   module CoreExt #:nodoc:
     # A hash with indifferent access and magic predicates.
     #
-    #   hash = Bundler::Thor::CoreExt::HashWithIndifferentAccess.new 'foo' => 'bar', 'baz' => 'bee', 'force' => true
+    #   hash = Carat::Thor::CoreExt::HashWithIndifferentAccess.new 'foo' => 'bar', 'baz' => 'bee', 'force' => true
     #
     #   hash[:foo]  #=> 'bar'
     #   hash['foo'] #=> 'bar'

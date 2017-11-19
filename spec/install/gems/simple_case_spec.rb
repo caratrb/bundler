@@ -328,8 +328,8 @@ describe "bundle install with gem sources" do
     end
 
     it "doesn't blow up when the global .bundle/config is empty" do
-      FileUtils.mkdir_p("#{Bundler.rubygems.user_home}/.bundle")
-      FileUtils.touch("#{Bundler.rubygems.user_home}/.bundle/config")
+      FileUtils.mkdir_p("#{Carat.rubygems.user_home}/.bundle")
+      FileUtils.touch("#{Carat.rubygems.user_home}/.bundle/config")
 
       install_gemfile(<<-G)
         source "file://#{gem_repo1}"
@@ -340,7 +340,7 @@ describe "bundle install with gem sources" do
     end
   end
 
-  describe "when Bundler root contains regex chars" do
+  describe "when Carat root contains regex chars" do
     before do
       root_dir = tmp("foo[]bar")
 

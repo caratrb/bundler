@@ -27,7 +27,7 @@ describe "bundle lock with git gems" do
 
   it "provides correct #full_gem_path" do
     run <<-RUBY
-      puts Bundler.rubygems.find_name('foo').first.full_gem_path
+      puts Carat.rubygems.find_name('foo').first.full_gem_path
     RUBY
     expect(out).to eq(bundle("show foo"))
   end

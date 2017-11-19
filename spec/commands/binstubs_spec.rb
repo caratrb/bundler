@@ -58,7 +58,7 @@ describe "bundle binstubs <gem>" do
       bundle "binstubs carat"
 
       expect(bundled_app("bin/bundle")).not_to exist
-      expect(out).to eq("Sorry, Bundler can only be run via Rubygems.")
+      expect(out).to eq("Sorry, Carat can only be run via Rubygems.")
     end
 
     it "installs binstubs from git gems" do

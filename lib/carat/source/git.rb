@@ -2,7 +2,7 @@ require 'fileutils'
 require 'uri'
 require 'digest/sha1'
 
-module Bundler
+module Carat
   class Source
 
     class Git < Path
@@ -83,10 +83,10 @@ module Bundler
       def install_path
         @install_path ||= begin
           git_scope = "#{base_name}-#{shortref_for_path(revision)}"
-          path = Bundler.install_path.join(git_scope)
+          path = Carat.install_path.join(git_scope)
 
-          if !path.exist? && Bundler.requires_sudo?
-            Bundler.user_bundle_path.join(Bundler.ruby_scope).join(git_scope)
+          if !path.exist? && Carat.requires_sudo?
+            Carat.user_bundle_path.join(Carat.ruby_scope).join(git_scope)
           else
             path
           end
@@ -108,9 +108,9 @@ module Bundler
         return false if local?
 
         path = Pathname.new(path)
-        path = path.expand_path(Bundler.root) unless path.relative?
+        path = path.expand_path(Carat.root) unless path.relative?
 
-        unless options["branch"] || Bundler.settings[:disable_local_branch_check]
+        unless options["branch"] || Carat.settings[:disable_local_branch_check]
           raise GitError, "Cannot use local override for #{name} at #{path} because " \
             ":branch is not specified in Gemfile. Specify a branch or use " \
             "`bundle config --delete` to remove the local override"
@@ -127,7 +127,7 @@ module Bundler
         # so the Gemfile.lock always picks up the new revision.
         @git_proxy = GitProxy.new(path, uri, ref)
 
-        if git_proxy.branch != options["branch"] && !Bundler.settings[:disable_local_branch_check]
+        if git_proxy.branch != options["branch"] && !Carat.settings[:disable_local_branch_check]
           raise GitError, "Local override for #{name} at #{path} is using branch " \
             "#{git_proxy.branch} but Gemfile specifies #{options["branch"]}"
         end
@@ -176,7 +176,7 @@ module Bundler
 
       def cache(spec, custom_path = nil)
         app_cache_path = app_cache_path(custom_path)
-        return unless Bundler.settings[:cache_all]
+        return unless Carat.settings[:cache_all]
         return if path == app_cache_path
         cached!
         FileUtils.rm_rf(app_cache_path)
@@ -188,7 +188,7 @@ module Bundler
       def load_spec_files
         super
       rescue PathError => e
-        Bundler.ui.trace e
+        Carat.ui.trace e
         raise GitError, "#{to_s} is not yet checked out. Run `bundle install` first."
       end
 
@@ -200,10 +200,10 @@ module Bundler
         @cache_path ||= begin
           git_scope = "#{base_name}-#{uri_hash}"
 
-          if Bundler.requires_sudo?
-            Bundler.user_bundle_path.join("cache/git", git_scope)
+          if Carat.requires_sudo?
+            Carat.user_bundle_path.join("cache/git", git_scope)
           else
-            Bundler.cache.join("git", git_scope)
+            Carat.cache.join("git", git_scope)
           end
         end
       end
@@ -223,12 +223,12 @@ module Bundler
       private
 
       def serialize_gemspecs_in(destination)
-        expanded_path = destination.expand_path(Bundler.root)
+        expanded_path = destination.expand_path(Carat.root)
         Dir["#{expanded_path}/#{@glob}"].each do |spec_path|
           # Evaluate gemspecs and cache the result. Gemspecs
           # in git might require git or other dependencies.
           # The gemspecs we cache should already be evaluated.
-          spec = Bundler.load_gemspec(spec_path)
+          spec = Carat.load_gemspec(spec_path)
           next unless spec
           File.open(spec_path, 'wb') {|file| file.write(spec.to_ruby) }
         end

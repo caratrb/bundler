@@ -40,7 +40,7 @@ describe "bundle install with groups" do
       expect(err).to eq("ZOMG LOAD ERROR")
     end
 
-    it "sets up everything if Bundler.setup is used with no groups" do
+    it "sets up everything if Carat.setup is used with no groups" do
       output = run("require 'rack'; puts RACK")
       expect(output).to eq('1.0.0')
 
@@ -53,7 +53,7 @@ describe "bundle install with groups" do
 
     it "removes old groups when new groups are set up" do
       load_error_run <<-RUBY, 'thin', :emo
-        Bundler.setup(:default)
+        Carat.setup(:default)
         require 'thin'
         puts THIN
       RUBY
@@ -63,8 +63,8 @@ describe "bundle install with groups" do
 
     it "sets up old groups when they have previously been removed" do
       output = run <<-RUBY, :emo
-        Bundler.setup(:default)
-        Bundler.setup(:default, :emo)
+        Carat.setup(:default)
+        Carat.setup(:default, :emo)
         require 'thin'; puts THIN
       RUBY
       expect(output).to eq('1.0')
@@ -105,7 +105,7 @@ describe "bundle install with groups" do
         expect(out).not_to include("activesupport")
       end
 
-      it "allows Bundler.setup for specific groups" do
+      it "allows Carat.setup for specific groups" do
         bundle :install, :without => "emo"
         run("require 'rack'; puts RACK", :default)
         expect(out).to eq('1.0.0')
@@ -256,8 +256,8 @@ describe "bundle install with groups" do
 
       ruby <<-R
         require "carat"
-        Bundler.setup :default
-        Bundler.require :default
+        Carat.setup :default
+        Carat.require :default
         puts RACK
         begin
           require "activesupport"

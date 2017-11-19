@@ -1,9 +1,9 @@
 require 'rubygems/installer'
 
-module Bundler
+module Carat
   class GemInstaller < Gem::Installer
     def check_executable_overwrite(filename)
-      # Bundler needs to install gems regardless of binstub overwriting
+      # Carat needs to install gems regardless of binstub overwriting
     end
   end
 end

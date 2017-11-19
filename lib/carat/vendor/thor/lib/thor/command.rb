@@ -1,4 +1,4 @@
-class Bundler::Thor
+class Carat::Thor
   class Command < Struct.new(:name, :description, :long_description, :usage, :options)
     FILE_REGEXP = /^#{Regexp.escape(File.dirname(__FILE__))}/
 

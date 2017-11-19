@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module Bundler; end
+module Carat; end
 if RUBY_VERSION >= "2.4"
   require "carat/vendor/fileutils/lib/fileutils"
 else

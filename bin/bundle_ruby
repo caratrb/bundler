@@ -6,7 +6,7 @@ require 'bundler/ruby_version'
 require 'bundler/ruby_dsl'
 require 'bundler/shared_helpers'
 
-module Bundler
+module Carat
   class GemfileError < RuntimeError; end
   class Dsl
     include RubyDsl
@@ -27,7 +27,7 @@ module Bundler
       e.backtrace[0] = "#{e.backtrace[0]}: #{e.message} (#{e.class})"
       STDERR.puts e.backtrace.join("\n       ")
       raise GemfileError, "There was an error in your Gemfile," \
-        " and Bundler cannot continue."
+        " and Carat cannot continue."
     end
 
     def source(source, options = {})
@@ -41,16 +41,16 @@ module Bundler
   end
 end
 
-dsl = Bundler::Dsl.new
+dsl = Carat::Dsl.new
 begin
-  dsl.eval_gemfile(Bundler::SharedHelpers.default_gemfile)
+  dsl.eval_gemfile(Carat::SharedHelpers.default_gemfile)
   ruby_version = dsl.ruby_version
   if ruby_version
     puts ruby_version
   else
     puts "No ruby version specified"
   end
-rescue Bundler::GemfileError => e
+rescue Carat::GemfileError => e
   puts e.message
   exit(-1)
 end

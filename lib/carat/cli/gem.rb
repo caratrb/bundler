@@ -1,6 +1,6 @@
 require 'pathname'
 
-module Bundler
+module Carat
   class CLI::Gem
     attr_reader :options, :gem_name, :thor, :name, :target
 
@@ -16,7 +16,7 @@ module Bundler
     end
 
     def run
-      Bundler.ui.confirm "Creating gem '#{name}'..."
+      Carat.ui.confirm "Creating gem '#{name}'..."
 
       underscored_name = name.tr('-', '_')
       namespaced_path = name.tr('-', '/')
@@ -116,7 +116,7 @@ module Bundler
         path.chmod(executable)
       end
 
-      Bundler.ui.info "Initializing git repo in #{target}"
+      Carat.ui.info "Initializing git repo in #{target}"
       Dir.chdir(target) { `git init`; `git add .` }
 
       if options[:edit]
@@ -132,12 +132,12 @@ module Bundler
     end
 
     def ask_and_set(key, header, message)
-      choice = options[key] || Bundler.settings["gem.#{key}"]
+      choice = options[key] || Carat.settings["gem.#{key}"]
 
       if choice.nil?
-        Bundler.ui.confirm header
-        choice = Bundler.ui.yes? "#{message} y/(n):"
-        Bundler.settings.set_global("gem.#{key}", choice)
+        Carat.ui.confirm header
+        choice = Carat.ui.yes? "#{message} y/(n):"
+        Carat.settings.set_global("gem.#{key}", choice)
       end
 
       choice
@@ -146,7 +146,7 @@ module Bundler
     def validate_ext_name
       return unless gem_name.index('-')
 
-      Bundler.ui.error "You have specified a gem name which does not conform to the \n" \
+      Carat.ui.error "You have specified a gem name which does not conform to the \n" \
                        "naming guidelines for C extensions. For more information, \n" \
                        "see the 'Extension Naming' section at the following URL:\n" \
                        "http://guides.rubygems.org/gems-with-extensions/\n"
@@ -154,11 +154,11 @@ module Bundler
     end
 
     def ask_and_set_test_framework
-      test_framework = options[:test] || Bundler.settings["gem.test"]
+      test_framework = options[:test] || Carat.settings["gem.test"]
 
       if test_framework.nil?
-        Bundler.ui.confirm "Do you want to generate tests with your gem?"
-        result = Bundler.ui.ask "Type 'rspec' or 'minitest' to generate those test files now and " \
+        Carat.ui.confirm "Do you want to generate tests with your gem?"
+        result = Carat.ui.ask "Type 'rspec' or 'minitest' to generate those test files now and " \
           "in the future. rspec/minitest/(none):"
         if result =~ /rspec|minitest/
           test_framework = result
@@ -167,15 +167,15 @@ module Bundler
         end
       end
 
-      if Bundler.settings["gem.test"].nil?
-        Bundler.settings.set_global("gem.test", test_framework)
+      if Carat.settings["gem.test"].nil?
+        Carat.settings.set_global("gem.test", test_framework)
       end
 
       test_framework
     end
 
     def carat_dependency_version
-      v = Gem::Version.new(Bundler::VERSION)
+      v = Gem::Version.new(Carat::VERSION)
       req = v.segments[0..1]
       req << 'a' if v.prerelease?
       req.join(".")
@@ -183,10 +183,10 @@ module Bundler
 
     def ensure_safe_gem_name name, constant_array
       if name =~ /^\d/
-        Bundler.ui.error "Invalid gem name #{name} Please give a name which does not start with numbers."
+        Carat.ui.error "Invalid gem name #{name} Please give a name which does not start with numbers."
         exit 1
       elsif constant_array.inject(Object) {|c, s| (c.const_defined?(s) && c.const_get(s)) || break }
-        Bundler.ui.error "Invalid gem name #{name} constant #{constant_array.join("::")} is already in use. Please choose another gem name."
+        Carat.ui.error "Invalid gem name #{name} constant #{constant_array.join("::")} is already in use. Please choose another gem name."
         exit 1
       end
     end

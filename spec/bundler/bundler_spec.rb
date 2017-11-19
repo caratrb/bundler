@@ -2,10 +2,10 @@
 require 'spec_helper'
 require 'carat'
 
-describe Bundler do
+describe Carat do
   describe "#load_gemspec_uncached" do
     let(:app_gemspec_path) { tmp("test.gemspec") }
-    subject { Bundler.load_gemspec_uncached(app_gemspec_path) }
+    subject { Carat.load_gemspec_uncached(app_gemspec_path) }
 
     context "with incorrect YAML file" do
       before do
@@ -18,7 +18,7 @@ describe Bundler do
       end
 
       it "catches YAML syntax errors" do
-        expect { subject }.to raise_error(Bundler::GemspecError)
+        expect { subject }.to raise_error(Carat::GemspecError)
       end
 
       context "on Rubies with a settable YAML engine", :if => defined?(YAML::ENGINE) do
@@ -26,7 +26,7 @@ describe Bundler do
           it "raises a GemspecError after YAML load throws ArgumentError" do
             orig_yamler, YAML::ENGINE.yamler = YAML::ENGINE.yamler, 'syck'
 
-            expect { subject }.to raise_error(Bundler::GemspecError)
+            expect { subject }.to raise_error(Carat::GemspecError)
 
             YAML::ENGINE.yamler = orig_yamler
           end
@@ -36,7 +36,7 @@ describe Bundler do
           it "raises a GemspecError after YAML load throws Psych::SyntaxError" do
             orig_yamler, YAML::ENGINE.yamler = YAML::ENGINE.yamler, 'psych'
 
-            expect { subject }.to raise_error(Bundler::GemspecError)
+            expect { subject }.to raise_error(Carat::GemspecError)
 
             YAML::ENGINE.yamler = orig_yamler
           end

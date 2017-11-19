@@ -1,7 +1,7 @@
 require 'carat/dependency'
 require 'carat/ruby_dsl'
 
-module Bundler
+module Carat
   class Dsl
     include RubyDsl
 
@@ -11,7 +11,7 @@ module Bundler
       builder.to_definition(lockfile, unlock)
     end
 
-    VALID_PLATFORMS = Bundler::Dependency::PLATFORM_MAP.keys.freeze
+    VALID_PLATFORMS = Carat::Dependency::PLATFORM_MAP.keys.freeze
 
     attr_accessor :dependencies
 
@@ -28,29 +28,29 @@ module Bundler
     end
 
     def eval_gemfile(gemfile, contents = nil)
-      contents ||= Bundler.read_file(gemfile.to_s)
+      contents ||= Carat.read_file(gemfile.to_s)
       instance_eval(contents, gemfile.to_s, 1)
     rescue SyntaxError => e
       syntax_msg = e.message.gsub("#{gemfile}:", 'on line ')
       raise GemfileError, "Gemfile syntax error #{syntax_msg}"
     rescue ScriptError, RegexpError, NameError, ArgumentError, RuntimeError => e
       e.backtrace[0] = "#{e.backtrace[0]}: #{e.message} (#{e.class})"
-      Bundler.ui.warn e.backtrace.join("\n       ")
+      Carat.ui.warn e.backtrace.join("\n       ")
       raise GemfileError, "There was an error in your Gemfile," \
-        " and Bundler cannot continue."
+        " and Carat cannot continue."
     end
 
     def gemspec(opts = nil)
       path              = opts && opts[:path] || '.'
       name              = opts && opts[:name] || '{,*}'
       development_group = opts && opts[:development_group] || :development
-      expanded_path     = File.expand_path(path, Bundler.default_gemfile.dirname)
+      expanded_path     = File.expand_path(path, Carat.default_gemfile.dirname)
 
       gemspecs = Dir[File.join(expanded_path, "#{name}.gemspec")]
 
       case gemspecs.size
       when 1
-        spec = Bundler.load_gemspec(gemspecs.first)
+        spec = Carat.load_gemspec(gemspecs.first)
         raise InvalidOption, "There was an error loading the gemspec at #{gemspecs.first}." unless spec
         gem spec.name, :path => path
         group(development_group) do
@@ -86,7 +86,7 @@ module Bundler
           end
 
         else
-          Bundler.ui.warn "Your Gemfile lists the gem #{current.name} (#{current.requirement}) more than once.\n" \
+          Carat.ui.warn "Your Gemfile lists the gem #{current.name} (#{current.requirement}) more than once.\n" \
                           "You should probably keep only one of them.\n" \
                           "While it's not a problem now, it could cause errors if you change the version of just one of them later."
         end
@@ -298,7 +298,7 @@ module Bundler
     def normalize_source(source)
       case source
       when :gemcutter, :rubygems, :rubyforge
-        Bundler.ui.warn "The source :#{source} is deprecated because HTTP " \
+        Carat.ui.warn "The source :#{source} is deprecated because HTTP " \
           "requests are insecure.\nPlease change your source to 'https://" \
           "rubygems.org' if possible, or 'http://rubygems.org' if not."
         "http://rubygems.org"
@@ -312,13 +312,13 @@ module Bundler
     def check_primary_source_safety(source)
       return unless source.rubygems_primary_remotes.any?
 
-      if Bundler.settings[:disable_multisource]
+      if Carat.settings[:disable_multisource]
         raise GemspecError, "Warning: this Gemfile contains multiple primary sources. " \
           "Each source after the first must include a block to indicate which gems " \
           "should come from that source. To downgrade this error to a warning, run " \
           "`bundle config --delete disable_multisource`."
       else
-        Bundler.ui.warn "Warning: this Gemfile contains multiple primary sources. " \
+        Carat.ui.warn "Warning: this Gemfile contains multiple primary sources. " \
           "Using `source` more than once without a block is a security risk, and " \
           "may result in installing unexpected gems. To resolve this warning, use " \
           "a block to indicate which gems should come from the secondary source. " \
