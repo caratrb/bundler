@@ -52,7 +52,7 @@ describe "gemcutter's dependency API", :realworld => true do
         $VERBOSE = old_v
       G
 
-      bundle :install
+      carat :install
       expect(out).to include("Fetching source index from #{@server_uri}/")
       should_be_installed "rack 1.0.0"
     end

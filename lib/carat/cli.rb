@@ -41,18 +41,18 @@ module Carat
     def help(cli = nil)
       case cli
       when "gemfile" then command = "gemfile.5"
-      when nil       then command = "bundle"
-      else command = "bundle-#{cli}"
+      when nil       then command = "carat"
+      else command = "carat-#{cli}"
       end
 
       manpages = %w(
-          bundle
-          bundle-config
-          bundle-exec
-          bundle-install
-          bundle-package
-          bundle-update
-          bundle-platform
+          carat
+          carat-config
+          carat-exec
+          carat-install
+          carat-package
+          carat-update
+          carat-platform
           gemfile.5)
 
       if manpages.include?(command)
@@ -107,7 +107,7 @@ module Carat
     long_desc <<-D
       Install will install all of the gems in the current bundle, making them available
       for use. In a freshly checked out repository, this command will give you the same
-      gem versions as the last person who updated the Gemfile and ran `bundle update`.
+      gem versions as the last person who updated the Gemfile and ran `carat update`.
 
       Passing [DIR] to install (e.g. vendor) will cause the unpacked gems to be installed
       into the [DIR] directory rather than into system gems.
@@ -117,7 +117,7 @@ module Carat
     method_option "binstubs", :type => :string, :lazy_default => "bin", :banner =>
       "Generate bin stubs for bundled gems to ./bin"
     method_option "clean", :type => :boolean, :banner =>
-      "Run bundle clean automatically after install"
+      "Run carat clean automatically after install"
     method_option "deployment", :type => :boolean, :banner =>
       "Install using defaults tuned for deployment environments"
     method_option "frozen", :type => :boolean, :banner =>
@@ -261,7 +261,7 @@ module Carat
     method_option :keep_file_descriptors, :type => :boolean, :default => false
     long_desc <<-D
       Exec runs a command, providing it access to the gems in the bundle. While using
-      bundle exec you can require and call the bundled gems as if they were installed
+      carat exec you can require and call the bundled gems as if they were installed
       into the system wide Rubygems repository.
     D
     def exec(*args)
@@ -322,7 +322,7 @@ module Carat
     long_desc <<-D
       Viz generates a PNG file of the current Gemfile as a dependency graph.
       Viz requires the ruby-graphviz gem (and its dependencies).
-      The associated gems must also be installed via 'bundle install'.
+      The associated gems must also be installed via 'carat install'.
     D
     method_option :file, :type => :string, :default => 'gem_graph', :aliases => '-f', :banner => "The name to use for the generated file. see format option"
     method_option :format, :type => :string, :default => "png", :aliases => '-F', :banner => "This is output format option. Supported format is png, jpg, svg, dot ..."
@@ -335,15 +335,15 @@ module Carat
     end
 
     desc "gem GEM [OPTIONS]", "Creates a skeleton for creating a rubygem"
-    method_option :bin, :type => :boolean, :default => false, :aliases => '-b', :desc => "Generate a binary for your library. Set a default with `bundle config gem.mit true`."
-    method_option :coc, :type => :boolean, :desc => "Generate a code of conduct file. Set a default with `bundle config gem.coc true`."
+    method_option :bin, :type => :boolean, :default => false, :aliases => '-b', :desc => "Generate a binary for your library. Set a default with `carat config gem.mit true`."
+    method_option :coc, :type => :boolean, :desc => "Generate a code of conduct file. Set a default with `carat config gem.coc true`."
     method_option :edit, :type => :string, :aliases => "-e", :required => false, :banner => "EDITOR",
       :lazy_default => [ENV['CARAT_EDITOR'], ENV['VISUAL'], ENV['EDITOR']].find{|e| !e.nil? && !e.empty? },
       :desc => "Open generated gemspec in the specified editor (defaults to $EDITOR or $CARAT_EDITOR)"
     method_option :ext, :type => :boolean, :default => false, :desc => "Generate the boilerplate for C extension code"
     method_option :mit, :type => :boolean, :desc => "Generate an MIT license file"
     method_option :test, :type => :string, :lazy_default => 'rspec', :aliases => '-t', :banner => "rspec",
-      :desc => "Generate a test directory for your library, either rspec or minitest. Set a default with `bundle config gem.test rspec`."
+      :desc => "Generate a test directory for your library, either rspec or minitest. Set a default with `carat config gem.test rspec`."
     def gem(name)
       require 'carat/cli/gem'
       Gem.new(options, name, self).run
@@ -384,9 +384,9 @@ module Carat
 
     private
 
-      # Automatically invoke `bundle install` and resume if
+      # Automatically invoke `carat install` and resume if
       # Carat.settings[:auto_install] exists. This is set through config cmd
-      # `bundle config auto_install 1`.
+      # `carat config auto_install 1`.
       #
       # Note that this method `nil`s out the global Definition object, so it
       # should be called first, before you instantiate anything like an

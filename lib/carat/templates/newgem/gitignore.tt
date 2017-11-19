@@ -1,4 +1,4 @@
-/.bundle/
+/.carat/
 /.yardoc
 /Gemfile.lock
 /_yardoc/
@@ -8,7 +8,7 @@
 /spec/reports/
 /tmp/
 <%- if config[:ext] -%>
-*.bundle
+*.carat
 *.so
 *.o
 *.a

@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle lock with git gems" do
+describe "carat lock with git gems" do
   before :each do
     build_git "foo"
 
@@ -15,7 +15,7 @@ describe "bundle lock with git gems" do
 
   it "locks a git source to the current ref" do
     update_git "foo"
-    bundle :install
+    carat :install
 
     run <<-RUBY
       require 'foo'
@@ -29,6 +29,6 @@ describe "bundle lock with git gems" do
     run <<-RUBY
       puts Carat.rubygems.find_name('foo').first.full_gem_path
     RUBY
-    expect(out).to eq(bundle("show foo"))
+    expect(out).to eq(carat("show foo"))
   end
 end

@@ -15,7 +15,7 @@ module Carat
       installer = Installer.new(Carat.root, Carat.definition)
 
       if gems.empty?
-        Carat.ui.error "`bundle binstubs` needs at least one gem to run."
+        Carat.ui.error "`carat binstubs` needs at least one gem to run."
         exit 1
       end
 

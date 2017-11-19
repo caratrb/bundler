@@ -10,7 +10,7 @@ if defined?(Capistrano::Version) && Gem::Version.new(Capistrano::Version).releas
 end
 
 Capistrano::Configuration.instance(:must_exist).load do
-  before "deploy:finalize_update", "bundle:install"
+  before "deploy:finalize_update", "carat:install"
   Carat::Deployment.define_task(self, :task, :except => { :no_release => true })
-  set :rake, lambda { "#{fetch(:bundle_cmd, "bundle")} exec rake" }
+  set :rake, lambda { "#{fetch(:bundle_cmd, "carat")} exec rake" }
 end

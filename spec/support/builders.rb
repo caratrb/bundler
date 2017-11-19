@@ -163,8 +163,8 @@ module Spec
         end
 
         build_gem "carat", "0.9" do |s|
-          s.executables = "bundle"
-          s.write "bin/bundle", "puts 'FAIL'"
+          s.executables = "carat"
+          s.write "bin/carat", "puts 'FAIL'"
         end
 
         # The carat 0.8 gem has a rubygems plugin that always loads :(

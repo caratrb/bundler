@@ -53,7 +53,7 @@ module Carat
           end
           if conflict.locked_requirement
             o << "\n"
-            o << %(Running `bundle update` will rebuild your snapshot from scratch, using only\n)
+            o << %(Running `carat update` will rebuild your snapshot from scratch, using only\n)
             o << %(the gems in your Gemfile, which may resolve the conflict.\n)
           elsif !conflict.existing
             if conflict.requirement_trees.first.size > 1
@@ -312,7 +312,7 @@ module Carat
             message = "You have requested:\n" \
               "  #{requirement.name} #{requirement.requirement}\n\n" \
               "The bundle currently has #{requirement.name} locked at #{version}.\n" \
-              "Try running `bundle update #{requirement.name}`"
+              "Try running `carat update #{requirement.name}`"
           elsif requirement.source
             name = requirement.name
             versions = @source_requirements[name][name].map { |s| s.version }

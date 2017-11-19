@@ -153,7 +153,7 @@ module Carat
 
         if @output_format.to_s == "debug"
           $stdout.puts g.output :none => String
-          Carat.ui.info "debugging bundle viz..."
+          Carat.ui.info "debugging carat viz..."
         else
           begin
             g.output @output_format.to_sym => "#{@output_file}.#{@output_format}"

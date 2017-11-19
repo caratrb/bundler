@@ -1,8 +1,8 @@
 require "spec_helper"
 
-describe "bundle init" do
+describe "carat init" do
   it "generates a Gemfile" do
-    bundle :init
+    carat :init
     expect(bundled_app("Gemfile")).to exist
   end
 
@@ -12,7 +12,7 @@ describe "bundle init" do
     G
 
     expect {
-      bundle :init
+      carat :init
     }.not_to change { File.read(bundled_app("Gemfile")) }
   end
 
@@ -28,7 +28,7 @@ describe "bundle init" do
       S
     end
 
-    bundle :init, :gemspec => spec_file
+    carat :init, :gemspec => spec_file
 
     gemfile = bundled_app("Gemfile").read
     expect(gemfile).to match(/source 'https:\/\/rubygems.org'/)

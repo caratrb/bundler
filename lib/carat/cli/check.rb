@@ -13,14 +13,14 @@ module Carat
         not_installed = definition.missing_specs
       rescue GemNotFound, VersionConflict
         Carat.ui.error "Carat can't satisfy your Gemfile's dependencies."
-        Carat.ui.warn  "Install missing gems with `bundle install`."
+        Carat.ui.warn  "Install missing gems with `carat install`."
         exit 1
       end
 
       if not_installed.any?
         Carat.ui.error "The following gems are missing"
         not_installed.each { |s| Carat.ui.error " * #{s.name} (#{s.version})" }
-        Carat.ui.warn "Install missing gems with `bundle install`"
+        Carat.ui.warn "Install missing gems with `carat install`"
         exit 1
       elsif !Carat.default_lockfile.exist? && Carat.settings[:frozen]
         Carat.ui.error "This bundle has been frozen, but there is no Gemfile.lock present"

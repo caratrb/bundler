@@ -35,12 +35,12 @@ this warning, by using the [`:source` option](#SOURCE-source-) or a
 
 ### CREDENTIALS (#credentials)
 
-Some gem sources require a username and password. Use `bundle config` to set
+Some gem sources require a username and password. Use `carat config` to set
 the username and password for any sources that need it. The command must be run
 once on each computer that will install the Gemfile, but this keeps the
 credentials from being stored in plain text in version control.
 
-    bundle config gems.example.com user:password
+    carat config gems.example.com user:password
 
 For some sources, like a company Gemfury account, it may be easier to simply
 include the credentials in the Gemfile as part of the source URL.
@@ -131,7 +131,7 @@ The Carat runtime allows its two main methods, `Carat.setup` and
 
     # setup adds gems to Ruby's load path
     Carat.setup                    # defaults to all groups
-    require "bundler/setup"          # same as Carat.setup
+    require "carat/setup"          # same as Carat.setup
     Carat.setup(:default)          # only set up the _default_ group
     Carat.setup(:test)             # only set up the _test_ group (but `not` _default_)
     Carat.setup(:default, :test)   # set up the _default_ and _test_ groups, but no others
@@ -142,25 +142,25 @@ The Carat runtime allows its two main methods, `Carat.setup` and
     Carat.require(:default, :test) # requires the _default_ and _test_ groups
     Carat.require(:test)           # requires just the _test_ group
 
-The Carat CLI allows you to specify a list of groups whose gems `bundle install` should
+The Carat CLI allows you to specify a list of groups whose gems `carat install` should
 not install with the `--without` option. To specify multiple groups to ignore, specify a
 list of groups separated by spaces.
 
-    bundle install --without test
-    bundle install --without development test
+    carat install --without test
+    carat install --without development test
 
-After running `bundle install --without test`, bundler will remember that you excluded
-the test group in the last installation. The next time you run `bundle install`,
-without any `--without option`, bundler will recall it.
+After running `carat install --without test`, carat will remember that you excluded
+the test group in the last installation. The next time you run `carat install`,
+without any `--without option`, carat will recall it.
 
-Also, calling `Carat.setup` with no parameters, or calling `require "bundler/setup"`
+Also, calling `Carat.setup` with no parameters, or calling `require "carat/setup"`
 will setup all groups except for the ones you excluded via `--without` (since they
 are obviously not available).
 
-Note that on `bundle install`, bundler downloads and evaluates all gems, in order to
+Note that on `carat install`, carat downloads and evaluates all gems, in order to
 create a single canonical list of all of the required gems and their dependencies.
 This means that you cannot list different versions of the same gems in different
-groups. For more details, see [Understanding Carat](http://bundler.io/rationale.html).
+groups. For more details, see [Understanding Carat](http://carat.io/rationale.html).
 
 ### PLATFORMS (:platforms)
 
@@ -228,7 +228,7 @@ As with groups, you can specify one or more platforms:
     gem "ruby-debug", :platforms => :mri_18
     gem "nokogiri",   :platforms => [:mri_18, :jruby]
 
-All operations involving groups (`bundle install`, `Carat.setup`,
+All operations involving groups (`carat install`, `Carat.setup`,
 `Carat.require`) behave exactly the same as if any groups not
 matching the current platform were explicitly excluded.
 
@@ -264,7 +264,7 @@ several protocols:
   * `git`:
     gem "rails", :git => "git://github.com/rails/rails.git"
 
-If using SSH, the user that you use to run `bundle install` `MUST` have the
+If using SSH, the user that you use to run `carat install` `MUST` have the
 appropriate keys available in their `$HOME/.ssh`.
 
 `NOTE`: `http://` and `git://` URLs should be avoided if at all possible. These
@@ -280,7 +280,7 @@ directory containing the gem, with the extension `.gemspec`. This file
 `MUST` contain a valid gem specification, as expected by the `gem build`
 command.
 
-If a git repository does not have a `.gemspec`, bundler will attempt to
+If a git repository does not have a `.gemspec`, carat will attempt to
 create one, but it will not contain any dependencies, executables, or
 C extension compilation instructions. As a result, it may fail to properly
 integrate into your application.
@@ -288,10 +288,10 @@ integrate into your application.
 If a git repository does have a `.gemspec` for the gem you attached it
 to, a version specifier, if provided, means that the git repository is
 only valid if the `.gemspec` specifies a version matching the version
-specifier. If not, bundler will print a warning.
+specifier. If not, carat will print a warning.
 
     gem "rails", "2.3.8", :git => "https://github.com/rails/rails.git"
-    # bundle install will fail, because the .gemspec in the rails
+    # carat install will fail, because the .gemspec in the rails
     # repository's master branch specifies version 3.0.0
 
 If a git repository does `not` have a `.gemspec` for the gem you attached
@@ -304,7 +304,7 @@ Git repositories support a number of additional options.
     You `MUST` only specify at most one of these options. The default
     is `:branch => "master"`
   * `submodules`:
-    Specify `:submodules => true` to cause bundler to expand any
+    Specify `:submodules => true` to cause carat to expand any
     submodules included in the git repository
 
 If a git repository contains multiple `.gemspecs`, each `.gemspec`
@@ -319,7 +319,7 @@ the `.gemspec`.
     | |-activesupport.gemspec [activesupport gem located here]
     |...
 
-To install a gem located in a git repository, bundler changes to
+To install a gem located in a git repository, carat changes to
 the directory containing the gemspec, runs `gem build name.gemspec`
 and then installs the resulting gem. The `gem build` command,
 which comes standard with Rubygems, evaluates the `.gemspec` in
@@ -396,9 +396,9 @@ directory containing the `Gemfile`.
 Similar to the semantics of the `:git` option, the `:path`
 option requires that the directory in question either contains
 a `.gemspec` for the gem, or that you specify an explicit
-version that bundler should use.
+version that carat should use.
 
-Unlike `:git`, bundler does not compile C extensions for
+Unlike `:git`, carat does not compile C extensions for
 gems specified as paths.
 
     gem "rails", :path => "vendor/rails"
@@ -454,19 +454,19 @@ need not manipulate the load path manually or require project files via relative
 paths.
 
 The `gemspec` method supports optional `:path`, `:name`, and `:development_group`
-options, which control where bundler looks for the `.gemspec`, what named
+options, which control where carat looks for the `.gemspec`, what named
 `.gemspec` it uses (if more than one is present), and which group development
 dependencies are included in.
 
 ## SOURCE PRIORITY
 
 When attempting to locate a gem to satisfy a gem requirement,
-bundler uses the following priority order:
+carat uses the following priority order:
 
   1. The source explicitly attached to the gem (using `:source`, `:path`, or
      `:git`)
   2. For implicit gems (dependencies of explicit gems), any source, git, or path
-     repository declared on the parent. This results in bundler prioritizing the
+     repository declared on the parent. This results in carat prioritizing the
      ActiveSupport gem from the Rails git repository over ones from
      `rubygems.org`
   3. The sources specified via global `source` lines, searching each source in

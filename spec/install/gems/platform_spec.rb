@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle install across platforms" do
+describe "carat install across platforms" do
   it "maintains the same lockfile if all gems are compatible across platforms" do
     lockfile <<-G
       GEM
@@ -82,7 +82,7 @@ describe "bundle install across platforms" do
     G
 
     simulate_platform "java"
-    bundle "install"
+    carat "install"
 
     should_be_installed "nokogiri 1.4.2 JAVA", "weakling 0.0.3"
   end
@@ -94,17 +94,17 @@ describe "bundle install across platforms" do
       gem "rack", "1.0.0"
     G
 
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
     new_version = Gem::ConfigMap[:ruby_version] == "1.8" ? "1.9.1" : "1.8"
     FileUtils.mv(vendored_gems, bundled_app("vendor/bundle", Gem.ruby_engine, new_version))
 
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
     expect(vendored_gems("gems/rack-1.0.0")).to exist
   end
 end
 
-describe "bundle install with platform conditionals" do
+describe "carat install with platform conditionals" do
   it "installs gems tagged w/ the current platforms" do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
@@ -173,7 +173,7 @@ describe "bundle install with platform conditionals" do
       end
     G
 
-    bundle :show
+    carat :show
     expect(exitstatus).to eq(0) if exitstatus
   end
 
@@ -186,7 +186,7 @@ describe "bundle install with platform conditionals" do
       gem "some_gem", platform: :rbx
     G
 
-    bundle "install --local"
+    carat "install --local"
     expect(out).not_to match(/Could not find gem 'some_gem/)
   end
 
@@ -200,7 +200,7 @@ describe "bundle install with platform conditionals" do
       gem "some_gem", platform: :#{other_ruby_version_tag}
     G
 
-    bundle "install --local"
+    carat "install --local"
     expect(out).not_to match(/Could not find gem 'some_gem/)
   end
 end
@@ -215,7 +215,7 @@ describe "when a gem has no architecture" do
       gem "rcov"
     G
 
-    bundle :install, :fakeweb => "windows"
+    carat :install, :fakeweb => "windows"
     should_be_installed "rcov 1.0.0"
   end
 end

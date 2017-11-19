@@ -316,13 +316,13 @@ module Carat
         raise GemspecError, "Warning: this Gemfile contains multiple primary sources. " \
           "Each source after the first must include a block to indicate which gems " \
           "should come from that source. To downgrade this error to a warning, run " \
-          "`bundle config --delete disable_multisource`."
+          "`carat config --delete disable_multisource`."
       else
         Carat.ui.warn "Warning: this Gemfile contains multiple primary sources. " \
           "Using `source` more than once without a block is a security risk, and " \
           "may result in installing unexpected gems. To resolve this warning, use " \
           "a block to indicate which gems should come from the secondary source. " \
-          "To upgrade this warning to an error, run `bundle config " \
+          "To upgrade this warning to an error, run `carat config " \
           "disable_multisource true`."
       end
     end

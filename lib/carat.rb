@@ -195,7 +195,7 @@ module Carat
                   default_gemfile.dirname.expand_path
                 rescue GemfileNotFound
                   bundle_dir = default_bundle_dir
-                  raise GemfileNotFound, "Could not locate Gemfile or .bundle/ directory" unless bundle_dir
+                  raise GemfileNotFound, "Could not locate Gemfile or .carat/ directory" unless bundle_dir
                   Pathname.new(File.expand_path("..", bundle_dir))
                 end
     end
@@ -203,7 +203,7 @@ module Carat
     def app_config_path
       ENV['BUNDLE_APP_CONFIG'] ?
         Pathname.new(ENV['BUNDLE_APP_CONFIG']).expand_path(root) :
-        root.join('.bundle')
+        root.join('.carat')
     end
 
     def app_cache(custom_path = nil)
@@ -223,7 +223,7 @@ module Carat
       return @settings if defined?(@settings)
       @settings = Settings.new(app_config_path)
     rescue GemfileNotFound
-      @settings = Settings.new(Pathname.new(".bundle").expand_path)
+      @settings = Settings.new(Pathname.new(".carat").expand_path)
     end
 
     def with_original_env
@@ -271,7 +271,7 @@ module Carat
       # system binaries. If you put '-n foo' in your .gemrc, Rubygems will
       # install binstubs there instead. Unfortunately, Rubygems doesn't expose
       # that directory at all, so rather than parse .gemrc ourselves, we allow
-      # the directory to be set as well, via `bundle config bindir foo`.
+      # the directory to be set as well, via `carat config bindir foo`.
       Carat.settings[:system_bindir] || Carat.rubygems.gem_bindir
     end
 
@@ -326,7 +326,7 @@ module Carat
       Your user account isn't allowed to install to the system Rubygems.
       You can cancel this installation and run:
 
-          bundle install --path vendor/bundle
+          carat install --path vendor/bundle
 
       to install the gems into ./vendor/bundle/, or you can enter your password
       and install the bundled gems to Rubygems using sudo.

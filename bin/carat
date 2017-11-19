@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+# Exit cleanly from an early interrupt
+Signal.trap("INT") { exit 1 }
+
+require 'carat'
+# Check if an older version of carat is installed
+$LOAD_PATH.each do |path|
+  if path =~ %r'/carat-0\.(\d+)' && $1.to_i < 9
+    err = "Looks like you have a version of carat that's older than 0.9.\n"
+    err << "Please remove your old versions.\n"
+    err << "An easy way to do this is by running `gem cleanup carat`."
+    abort(err)
+  end
+end
+
+require 'carat/friendly_errors'
+Carat.with_friendly_errors do
+  require 'carat/cli'
+  Carat::CLI.start(ARGV, :debug => true)
+end

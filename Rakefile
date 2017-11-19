@@ -4,7 +4,7 @@ require 'shellwords'
 require 'benchmark'
 
 RUBYGEMS_REPO = File.expand_path("tmp/rubygems")
-CARAT_SPEC = Gem::Specification.load("bundler.gemspec")
+CARAT_SPEC = Gem::Specification.load("carat.gemspec")
 
 def safe_task(&block)
   yield
@@ -37,19 +37,19 @@ end
 
 namespace :molinillo do
   task :namespace do
-    files = Dir.glob('lib/bundler/vendor/molinillo*/**/*.rb')
+    files = Dir.glob('lib/carat/vendor/molinillo*/**/*.rb')
     clean_files(files, 'Molinillo', 'Carat::Molinillo')
-    clean_files(files, /require (["'])molinillo/, 'require \1bundler/vendor/molinillo/lib/molinillo')
+    clean_files(files, /require (["'])molinillo/, 'require \1carat/vendor/molinillo/lib/molinillo')
   end
 
   task :clean do
-    files = Dir.glob('lib/bundler/vendor/molinillo*/*', File::FNM_DOTMATCH).reject { |f| %(. .. lib).include? f.split('/').last }
+    files = Dir.glob('lib/carat/vendor/molinillo*/*', File::FNM_DOTMATCH).reject { |f| %(. .. lib).include? f.split('/').last }
     rm_r files
   end
 
   task :update, [:tag] => [] do |t, args|
     tag = args[:tag]
-    Dir.chdir 'lib/bundler/vendor' do
+    Dir.chdir 'lib/carat/vendor' do
       rm_rf 'molinillo'
       sh "curl -L https://github.com/CocoaPods/molinillo/archive/#{tag}.tar.gz | tar -xz"
       sh "mv Molinillo-* molinillo"
@@ -61,20 +61,20 @@ end
 
 namespace :thor do
   task :namespace do
-    files = Dir.glob('lib/bundler/vendor/thor*/**/*.rb')
+    files = Dir.glob('lib/carat/vendor/thor*/**/*.rb')
     clean_files(files, 'Thor', 'Carat::Thor')
-    clean_files(files, /require (["'])thor/, 'require \1bundler/vendor/thor/lib/thor')
-    clean_files(files, /(autoload\s+[:\w]+,\s+["'])(thor[\w\/]+["'])/, '\1bundler/vendor/thor/lib/\2')
+    clean_files(files, /require (["'])thor/, 'require \1carat/vendor/thor/lib/thor')
+    clean_files(files, /(autoload\s+[:\w]+,\s+["'])(thor[\w\/]+["'])/, '\1carat/vendor/thor/lib/\2')
   end
 
   task :clean do
-    files = Dir.glob('lib/bundler/vendor/thor*/*', File::FNM_DOTMATCH).reject { |f| %(. .. lib).include? f.split('/').last }
+    files = Dir.glob('lib/carat/vendor/thor*/*', File::FNM_DOTMATCH).reject { |f| %(. .. lib).include? f.split('/').last }
     rm_r files
   end
 
   task :update, [:tag] => [] do |t, args|
     tag = args[:tag]
-    Dir.chdir 'lib/bundler/vendor' do
+    Dir.chdir 'lib/carat/vendor' do
       rm_rf 'thor'
       sh "curl -L https://github.com/erikhuda/thor/archive/#{tag}.tar.gz | tar -xz"
       sh "mv thor-* thor"
@@ -220,19 +220,19 @@ begin
     task :travis do
       rg = ENV['RGV'] || raise("Rubygems version is required on Travis!")
 
-      puts "\n\e[1;33m[Travis CI] Running bundler specs against rubygems #{rg}\e[m\n\n"
+      puts "\n\e[1;33m[Travis CI] Running carat specs against rubygems #{rg}\e[m\n\n"
       specs = safe_task { Rake::Task["spec:rubygems:#{rg}"].invoke }
 
       Rake::Task["spec:rubygems:#{rg}"].reenable
 
-      puts "\n\e[1;33m[Travis CI] Running bundler sudo specs against rubygems #{rg}\e[m\n\n"
+      puts "\n\e[1;33m[Travis CI] Running carat sudo specs against rubygems #{rg}\e[m\n\n"
       sudos = system("sudo -E rake spec:rubygems:#{rg}:sudo")
       # clean up by chowning the newly root-owned tmp directory back to the travis user
       system("sudo chown -R #{ENV['USER']} #{File.join(File.dirname(__FILE__), 'tmp')}")
 
       Rake::Task["spec:rubygems:#{rg}"].reenable
 
-      puts "\n\e[1;33m[Travis CI] Running bundler real world specs against rubygems #{rg}\e[m\n\n"
+      puts "\n\e[1;33m[Travis CI] Running carat real world specs against rubygems #{rg}\e[m\n\n"
       realworld = safe_task { Rake::Task["spec:rubygems:#{rg}:realworld"].invoke }
 
       {"specs" => specs, "sudo" => sudos, "realworld" => realworld}.each do |name, passed|
@@ -259,13 +259,13 @@ begin
   require 'ronn'
 
   namespace :man do
-    directory "lib/bundler/man"
+    directory "lib/carat/man"
 
     Dir["man/*.ronn"].each do |ronn|
       basename = File.basename(ronn, ".ronn")
-      roff = "lib/bundler/man/#{basename}"
+      roff = "lib/carat/man/#{basename}"
 
-      file roff => ["lib/bundler/man", ronn] do
+      file roff => ["lib/carat/man", ronn] do
         sh "#{Gem.ruby} -S ronn --roff --pipe #{ronn} > #{roff}"
       end
 
@@ -281,7 +281,7 @@ begin
 
     desc "Clean up from the built man pages"
     task :clean do
-      rm_rf "lib/bundler/man"
+      rm_rf "lib/carat/man"
     end
 
     task(:require) { }
@@ -297,11 +297,11 @@ end
 
 desc "Update vendored SSL certs to match the certs vendored by Rubygems"
 task :update_certs => "spec:rubygems:clone_rubygems_master" do
-  require 'bundler/ssl_certs/certificate_manager'
+  require 'carat/ssl_certs/certificate_manager'
   Carat::SSLCerts::CertificateManager.update_from!(RUBYGEMS_REPO)
 end
 
-require 'bundler/gem_tasks'
+require 'carat/gem_tasks'
 task :build => ["man:clean", "man:build"]
 task :release => ["man:require", "man:clean", "man:build"]
 

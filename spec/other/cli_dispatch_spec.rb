@@ -1,20 +1,20 @@
 require "spec_helper"
 
-describe "bundle command names" do
+describe "carat command names" do
   it "work when given fully" do
-    bundle "install"
+    carat "install"
     expect(err).to eq("")
     expect(out).not_to match(/Ambiguous command/)
   end
 
   it "work when not ambiguous" do
-    bundle "ins"
+    carat "ins"
     expect(err).to eq("")
     expect(out).not_to match(/Ambiguous command/)
   end
 
   it "print a friendly error when ambiguous" do
-    bundle "i"
+    carat "i"
     expect(err).to eq("")
     expect(out).to match(/Ambiguous command/)
   end

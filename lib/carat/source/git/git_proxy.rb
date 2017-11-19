@@ -12,7 +12,7 @@ module Carat
 
       class GitNotAllowedError < GitError
         def initialize(command)
-          msg =  "Carat is trying to run a `git #{command}` at runtime. You probably need to run `bundle install`. However, "
+          msg =  "Carat is trying to run a `git #{command}` at runtime. You probably need to run `carat install`. However, "
           msg << "this error message could probably be more useful. Please submit a ticket at http://github.com/caratrb/carat/issues "
           msg << "with steps to reproduce as well as the following\n\nCALLER: #{caller.join("\n")}"
           super msg
@@ -152,7 +152,7 @@ module Carat
 
         def allowed_in_path
           return in_path { yield } if allow?
-          raise GitError, "The git source #{uri} is not yet checked out. Please run `bundle install` before trying to start your application"
+          raise GitError, "The git source #{uri} is not yet checked out. Please run `carat install` before trying to start your application"
         end
 
       end

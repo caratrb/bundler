@@ -9,7 +9,7 @@ describe "parallel", :realworld => true do
       gem 'i18n', '~> 0.6.0' # Because 1.7+ requires Ruby 1.9.3+
     G
 
-    bundle :install, :jobs => 4, :env => {"DEBUG" => "1"}
+    carat :install, :jobs => 4, :env => {"DEBUG" => "1"}
 
     if Carat.rubygems.provides?(">= 2.1.0")
       expect(out).to match(/[1-3]: /)
@@ -17,13 +17,13 @@ describe "parallel", :realworld => true do
       expect(out).to include("is not threadsafe")
     end
 
-    bundle "show activesupport"
+    carat "show activesupport"
     expect(out).to match(/activesupport/)
 
-    bundle "show faker"
+    carat "show faker"
     expect(out).to match(/faker/)
 
-    bundle "config jobs"
+    carat "config jobs"
     expect(out).to match(/: "4"/)
   end
 
@@ -41,7 +41,7 @@ describe "parallel", :realworld => true do
       gem 'i18n', '~> 0.6.0' # Because 1.7+ requires Ruby 1.9.3+
     G
 
-    bundle :update, :jobs => 4, :env => {"DEBUG" => "1"}
+    carat :update, :jobs => 4, :env => {"DEBUG" => "1"}
 
     if Carat.rubygems.provides?(">= 2.1.0")
       expect(out).to match(/[1-3]: /)
@@ -49,13 +49,13 @@ describe "parallel", :realworld => true do
       expect(out).to include("is not threadsafe")
     end
 
-    bundle "show activesupport"
+    carat "show activesupport"
     expect(out).to match(/activesupport-3\.2\.\d+/)
 
-    bundle "show faker"
+    carat "show faker"
     expect(out).to match(/faker/)
 
-    bundle "config jobs"
+    carat "config jobs"
     expect(out).to match(/: "4"/)
   end
 
@@ -65,7 +65,7 @@ describe "parallel", :realworld => true do
       gem "diff-lcs"
     G
 
-    bundle :install, :standalone => true, :jobs => 4
+    carat :install, :standalone => true, :jobs => 4
 
     ruby <<-RUBY, :no_lib => true
       $:.unshift File.expand_path("bundle")

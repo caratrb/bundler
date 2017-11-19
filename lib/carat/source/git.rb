@@ -113,12 +113,12 @@ module Carat
         unless options["branch"] || Carat.settings[:disable_local_branch_check]
           raise GitError, "Cannot use local override for #{name} at #{path} because " \
             ":branch is not specified in Gemfile. Specify a branch or use " \
-            "`bundle config --delete` to remove the local override"
+            "`carat config --delete` to remove the local override"
         end
 
         unless path.exist?
           raise GitError, "Cannot use local override for #{name} because #{path} " \
-            "does not exist. Check `bundle config --delete` to remove the local override"
+            "does not exist. Check `carat config --delete` to remove the local override"
         end
 
         set_local!(path)
@@ -189,7 +189,7 @@ module Carat
         super
       rescue PathError => e
         Carat.ui.trace e
-        raise GitError, "#{to_s} is not yet checked out. Run `bundle install` first."
+        raise GitError, "#{to_s} is not yet checked out. Run `carat install` first."
       end
 
       # This is the path which is going to contain a cache

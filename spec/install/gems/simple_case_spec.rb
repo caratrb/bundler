@@ -1,13 +1,13 @@
 require "spec_helper"
 
-describe "bundle install with gem sources" do
+describe "carat install with gem sources" do
   describe "the simple case" do
     it "prints output and returns if no dependencies are specified" do
       gemfile <<-G
         source "file://#{gem_repo1}"
       G
 
-      bundle :install
+      carat :install
       expect(out).to match(/no dependencies/)
     end
 
@@ -36,7 +36,7 @@ describe "bundle install with gem sources" do
         gem "rack", "1.0"
       G
 
-      bundle 'install --gemfile OmgFile'
+      carat 'install --gemfile OmgFile'
 
       expect(bundled_app("OmgFile.lock")).to exist
     end
@@ -243,7 +243,7 @@ describe "bundle install with gem sources" do
       end
     end
 
-    describe "doing bundle install foo" do
+    describe "doing carat install foo" do
       before do
         gemfile <<-G
           source "file://#{gem_repo1}"
@@ -252,21 +252,21 @@ describe "bundle install with gem sources" do
       end
 
       it "works" do
-        bundle "install --path vendor"
+        carat "install --path vendor"
         should_be_installed "rack 1.0"
       end
 
-      it "allows running bundle install --system without deleting foo" do
-        bundle "install --path vendor"
-        bundle "install --system"
+      it "allows running carat install --system without deleting foo" do
+        carat "install --path vendor"
+        carat "install --system"
         FileUtils.rm_rf(bundled_app("vendor"))
         should_be_installed "rack 1.0"
       end
 
-      it "allows running bundle install --system after deleting foo" do
-        bundle "install --path vendor"
+      it "allows running carat install --system after deleting foo" do
+        carat "install --path vendor"
         FileUtils.rm_rf(bundled_app("vendor"))
-        bundle "install --system"
+        carat "install --system"
         should_be_installed "rack 1.0"
       end
     end
@@ -291,7 +291,7 @@ describe "bundle install with gem sources" do
         gem "rack"
       G
 
-      bundle :install, :expect_err => true
+      carat :install, :expect_err => true
       expect(out).to include("Your Gemfile has no gem server sources")
     end
 
@@ -310,14 +310,14 @@ describe "bundle install with gem sources" do
         gem 'foo'
       G
 
-      bundle :install
+      carat :install
       expect(out).to include("Could not fetch specs from http://localhost:9384/")
       expect(out).not_to include("file://")
     end
 
-    it "doesn't blow up when the local .bundle/config is empty" do
-      FileUtils.mkdir_p(bundled_app(".bundle"))
-      FileUtils.touch(bundled_app(".bundle/config"))
+    it "doesn't blow up when the local .carat/config is empty" do
+      FileUtils.mkdir_p(bundled_app(".carat"))
+      FileUtils.touch(bundled_app(".carat/config"))
 
       install_gemfile(<<-G)
         source "file://#{gem_repo1}"
@@ -327,9 +327,9 @@ describe "bundle install with gem sources" do
       expect(exitstatus).to eq(0) if exitstatus
     end
 
-    it "doesn't blow up when the global .bundle/config is empty" do
-      FileUtils.mkdir_p("#{Carat.rubygems.user_home}/.bundle")
-      FileUtils.touch("#{Carat.rubygems.user_home}/.bundle/config")
+    it "doesn't blow up when the global .carat/config is empty" do
+      FileUtils.mkdir_p("#{Carat.rubygems.user_home}/.carat")
+      FileUtils.touch("#{Carat.rubygems.user_home}/.carat/config")
 
       install_gemfile(<<-G)
         source "file://#{gem_repo1}"
@@ -357,7 +357,7 @@ describe "bundle install with gem sources" do
         file.puts gemfile
       end
 
-      bundle :install
+      carat :install
 
       expect(exitstatus).to eq(0) if exitstatus
     end
@@ -369,7 +369,7 @@ describe "bundle install with gem sources" do
         gem 'rack'
       G
 
-      bundle :install, :quiet => true
+      carat :install, :quiet => true
       expect(out).to include("Could not find gem 'rack (>= 0) ruby'")
       expect(out).to_not include("Your Gemfile has no gem server sources")
     end

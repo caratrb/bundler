@@ -30,16 +30,16 @@ module Carat
           in your deploy.rb file.
 
             set :bundle_gemfile,  "Gemfile"
-            set :bundle_dir,      File.join(fetch(:shared_path), 'bundle')
+            set :bundle_dir,      File.join(fetch(:shared_path), 'carat')
             set :bundle_flags,    "--deployment --quiet"
             set :bundle_without,  [:development, :test]
-            set :bundle_cmd,      "bundle" # e.g. "/opt/ruby/bin/bundle"
+            set :bundle_cmd,      "carat" # e.g. "/opt/ruby/bin/carat"
             set :bundle_roles,    #{role_default} # e.g. [:app, :batch]
         DESC
         send task_method, :install, opts do
-          bundle_cmd     = context.fetch(:bundle_cmd, "bundle")
+          bundle_cmd     = context.fetch(:bundle_cmd, "carat")
           bundle_flags   = context.fetch(:bundle_flags, "--deployment --quiet")
-          bundle_dir     = context.fetch(:bundle_dir, File.join(context.fetch(:shared_path), 'bundle'))
+          bundle_dir     = context.fetch(:bundle_dir, File.join(context.fetch(:shared_path), 'carat'))
           bundle_gemfile = context.fetch(:bundle_gemfile, "Gemfile")
           bundle_without = [*context.fetch(:bundle_without, [:development, :test])].compact
           app_path = context.fetch(:latest_release)

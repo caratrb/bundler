@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle install" do
+describe "carat install" do
 
   context "with duplicated gems" do
     it "will display a warning" do
@@ -19,7 +19,7 @@ describe "bundle install" do
         gem 'rack'
       G
 
-      bundle :install, :gemfile => bundled_app("NotGemfile")
+      carat :install, :gemfile => bundled_app("NotGemfile")
 
       ENV['BUNDLE_GEMFILE'] = "NotGemfile"
       should_be_installed "rack 1.0.0"
@@ -33,19 +33,19 @@ describe "bundle install" do
         gem 'rack'
       G
 
-      bundle "config --local gemfile #{bundled_app("NotGemfile")}"
+      carat "config --local gemfile #{bundled_app("NotGemfile")}"
     end
     it "uses the gemfile to install" do
-      bundle "install"
-      bundle "show"
+      carat "install"
+      carat "show"
 
       expect(out).to include("rack (1.0.0)")
     end
     it "uses the gemfile while in a subdirectory" do
       bundled_app("subdir").mkpath
       Dir.chdir(bundled_app("subdir")) do
-        bundle "install"
-        bundle "show"
+        carat "install"
+        carat "show"
 
         expect(out).to include("rack (1.0.0)")
       end
@@ -62,7 +62,7 @@ describe "bundle install" do
         gem "rack", :lib => "rack"
       G
 
-      bundle :install
+      carat :install
       expect(out).to match(/You passed :lib as an option for gem 'rack', but it is invalid/)
     end
   end

@@ -9,27 +9,27 @@ describe "install with --deployment or --frozen" do
   end
 
   it "fails without a lockfile and says that --deployment requires a lock" do
-    bundle "install --deployment"
+    carat "install --deployment"
     expect(out).to include("The --deployment flag requires a Gemfile.lock")
   end
 
   it "fails without a lockfile and says that --frozen requires a lock" do
-    bundle "install --frozen"
+    carat "install --frozen"
     expect(out).to include("The --frozen flag requires a Gemfile.lock")
   end
 
   it "works after you try to deploy without a lock" do
-    bundle "install --deployment"
-    bundle :install
+    carat "install --deployment"
+    carat :install
     expect(exitstatus).to eq(0) if exitstatus
     should_be_installed "rack 1.0"
   end
 
   it "still works if you are not in the app directory and specify --gemfile" do
-    bundle "install"
+    carat "install"
     Dir.chdir tmp
     simulate_new_machine
-    bundle "install --gemfile #{tmp}/bundled_app/Gemfile --deployment"
+    carat "install --gemfile #{tmp}/bundled_app/Gemfile --deployment"
     Dir.chdir bundled_app
     should_be_installed "rack 1.0"
   end
@@ -41,15 +41,15 @@ describe "install with --deployment or --frozen" do
         gem "foo", :git => "#{lib_path('foo-1.0')}"
       end
     G
-    bundle :install
-    bundle "install --deployment --without test"
+    carat :install
+    carat "install --deployment --without test"
     expect(exitstatus).to eq(0) if exitstatus
   end
 
-  it "works when you bundle exec bundle" do
-    bundle :install
-    bundle "install --deployment"
-    bundle "exec bundle check"
+  it "works when you carat exec carat" do
+    carat :install
+    carat "install --deployment"
+    carat "exec carat check"
     expect(exitstatus).to eq(0) if exitstatus
   end
 
@@ -61,8 +61,8 @@ describe "install with --deployment or --frozen" do
       gem "bar", :path => "#{lib_path("nested")}"
     G
 
-    bundle :install
-    bundle "install --deployment"
+    carat :install
+    carat "install --deployment"
 
     expect(exitstatus).to eq(0) if exitstatus
   end
@@ -74,7 +74,7 @@ describe "install with --deployment or --frozen" do
       gem "rack-obama", ">= 1.0"
     G
 
-    bundle "install --deployment", :artifice => "endpoint_strict_basic_authentication"
+    carat "install --deployment", :artifice => "endpoint_strict_basic_authentication"
 
     expect(exitstatus).to eq(0) if exitstatus
   end
@@ -86,7 +86,7 @@ describe "install with --deployment or --frozen" do
       end
     G
 
-    bundle "install --deployment"
+    carat "install --deployment"
 
     expect(exitstatus).to eq(0) if exitstatus
     should_be_installed "rack 1.0"
@@ -94,16 +94,16 @@ describe "install with --deployment or --frozen" do
 
   describe "with an existing lockfile" do
     before do
-      bundle "install"
+      carat "install"
     end
 
     it "works with the --deployment flag if you didn't change anything" do
-      bundle "install --deployment"
+      carat "install --deployment"
       expect(exitstatus).to eq(0) if exitstatus
     end
 
     it "works with the --frozen flag if you didn't change anything" do
-      bundle "install --frozen"
+      carat "install --frozen"
       expect(exitstatus).to eq(0) if exitstatus
     end
 
@@ -114,7 +114,7 @@ describe "install with --deployment or --frozen" do
         gem "rack-obama"
       G
 
-      bundle "install --deployment"
+      carat "install --deployment"
       expect(out).to include("deployment mode")
       expect(out).to include("You have added to the Gemfile")
       expect(out).to include("* rack-obama")
@@ -130,7 +130,7 @@ describe "install with --deployment or --frozen" do
       G
 
       ENV['BUNDLE_FROZEN'] = '1'
-      bundle "install"
+      carat "install"
       expect(out).to include("deployment mode")
       expect(out).to include("You have added to the Gemfile")
       expect(out).to include("* rack-obama")
@@ -146,7 +146,7 @@ describe "install with --deployment or --frozen" do
       G
 
       ENV['BUNDLE_FROZEN'] = "false"
-      bundle "install"
+      carat "install"
       expect(out).not_to include("deployment mode")
       expect(out).not_to include("You have added to the Gemfile")
       expect(out).not_to include("* rack-obama")
@@ -159,7 +159,7 @@ describe "install with --deployment or --frozen" do
         gem "rack-obama"
       G
 
-      bundle "install --frozen"
+      carat "install --frozen"
       expect(out).to include("deployment mode")
       expect(out).to include("You have added to the Gemfile")
       expect(out).to include("* rack-obama")
@@ -173,7 +173,7 @@ describe "install with --deployment or --frozen" do
         gem "activesupport"
       G
 
-      bundle "install --deployment"
+      carat "install --deployment"
       expect(out).to include("deployment mode")
       expect(out).to include("You have added to the Gemfile:\n* activesupport\n\n")
       expect(out).to include("You have deleted from the Gemfile:\n* rack")
@@ -186,7 +186,7 @@ describe "install with --deployment or --frozen" do
         gem "rack", :git => "git://hubz.com"
       G
 
-      bundle "install --deployment"
+      carat "install --deployment"
       expect(out).to include("deployment mode")
       expect(out).to include("You have added to the Gemfile:\n* source: git://hubz.com (at master)")
       expect(out).not_to include("You have changed in the Gemfile")
@@ -205,7 +205,7 @@ describe "install with --deployment or --frozen" do
         gem "rack"
       G
 
-      bundle "install --deployment"
+      carat "install --deployment"
       expect(out).to include("deployment mode")
       expect(out).to include("You have deleted from the Gemfile:\n* source: #{lib_path("rack-1.0")} (at master)")
       expect(out).not_to include("You have added to the Gemfile")
@@ -228,7 +228,7 @@ describe "install with --deployment or --frozen" do
         gem "foo", :git => "#{lib_path("rack")}"
       G
 
-      bundle "install --deployment"
+      carat "install --deployment"
       expect(out).to include("deployment mode")
       expect(out).to include("You have changed in the Gemfile:\n* rack from `no specified source` to `#{lib_path("rack")} (at master)`")
       expect(out).not_to include("You have added to the Gemfile")
@@ -236,7 +236,7 @@ describe "install with --deployment or --frozen" do
     end
 
     it "remembers that the bundle is frozen at runtime" do
-      bundle "install --deployment"
+      carat "install --deployment"
 
       gemfile <<-G
         source "file://#{gem_repo1}"

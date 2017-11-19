@@ -1,4 +1,4 @@
-require "bundler/gem_tasks"
+require "carat/gem_tasks"
 <% if config[:test] == 'minitest' -%>
 require "rake/testtask"
 

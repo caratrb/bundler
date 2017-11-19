@@ -214,15 +214,15 @@ describe "Carat.require" do
     end
   end
 
-  describe "using bundle exec" do
+  describe "using carat exec" do
     it "requires the locked gems" do
-      bundle "exec ruby -e 'Carat.require'"
+      carat "exec ruby -e 'Carat.require'"
       expect(out).to eq("two")
 
-      bundle "exec ruby -e 'Carat.require(:bar)'"
+      carat "exec ruby -e 'Carat.require(:bar)'"
       expect(out).to eq("baz\nqux")
 
-      bundle "exec ruby -e 'Carat.require(:default, :bar)'"
+      carat "exec ruby -e 'Carat.require(:default, :bar)'"
       expect(out).to eq("baz\nqux\ntwo")
     end
   end

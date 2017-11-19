@@ -305,7 +305,7 @@ module Carat
       redefine_method(gem_class, :bin_path) do |name, *args|
         exec_name = args.first
 
-        if exec_name == 'bundle'
+        if exec_name == 'carat'
           return ENV['BUNDLE_BIN_PATH']
         end
 
@@ -316,8 +316,8 @@ module Carat
           spec or raise Gem::Exception, "can't find executable #{exec_name}"
           unless spec.name == name
             warn "Carat is using a binstub that was created for a different gem.\n" \
-              "This is deprecated, in future versions you may need to `bundle binstub #{name}` " \
-              "to work around a system/bundle conflict."
+              "This is deprecated, in future versions you may need to `carat binstub #{name}` " \
+              "to work around a system/carat conflict."
           end
         else
           spec = specs.find  { |s| s.name == name }

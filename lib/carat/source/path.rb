@@ -85,7 +85,7 @@ module Carat
 
         FileUtils.rm_rf(app_cache_path)
         FileUtils.cp_r("#{@original_path}/.", app_cache_path)
-        FileUtils.touch(app_cache_path.join(".bundlecache"))
+        FileUtils.touch(app_cache_path.join(".caratcache"))
       end
 
       def local_specs(*)

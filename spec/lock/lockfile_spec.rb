@@ -71,7 +71,7 @@ describe "the lockfile format" do
   end
 
   it "generates a lockfile wihout credentials for a configured source" do
-    bundle "config http://localgemserver.test/ user:pass"
+    carat "config http://localgemserver.test/ user:pass"
 
     install_gemfile(<<-G, :artifice => "endpoint_strict_basic_authentication", :quiet => true)
       source "http://localgemserver.test/"
@@ -178,7 +178,7 @@ describe "the lockfile format" do
         rack
     L
 
-    bundle "install"
+    carat "install"
     should_be_installed "rack 1.0.0"
   end
 
@@ -775,7 +775,7 @@ describe "the lockfile format" do
       gem "omg", :git => "#{lib_path('omg')}", :branch => 'master'
     G
 
-    bundle "install --path vendor"
+    carat "install --path vendor"
     should_be_installed "omg 1.0"
 
     # Create a Gemfile.lock that has duplicate GIT sections
@@ -806,7 +806,7 @@ describe "the lockfile format" do
     L
 
     FileUtils.rm_rf(bundled_app('vendor'))
-    bundle "install"
+    carat "install"
     should_be_installed "omg 1.0"
 
     # Confirm that duplicate specs do not appear
@@ -854,7 +854,7 @@ describe "the lockfile format" do
       it "preserves Gemfile.lock \\n line endings" do
         update_repo2
 
-        expect { bundle "update" }.to change { File.mtime(bundled_app('Gemfile.lock')) }
+        expect { carat "update" }.to change { File.mtime(bundled_app('Gemfile.lock')) }
         expect(File.read(bundled_app("Gemfile.lock"))).not_to match("\r\n")
         should_be_installed "rack 1.2"
       end
@@ -865,7 +865,7 @@ describe "the lockfile format" do
         File.open(bundled_app("Gemfile.lock"), "wb"){|f| f.puts(win_lock) }
         set_lockfile_mtime_to_known_value
 
-        expect { bundle "update" }.to change { File.mtime(bundled_app('Gemfile.lock')) }
+        expect { carat "update" }.to change { File.mtime(bundled_app('Gemfile.lock')) }
         expect(File.read(bundled_app("Gemfile.lock"))).to match("\r\n")
         should_be_installed "rack 1.2"
       end

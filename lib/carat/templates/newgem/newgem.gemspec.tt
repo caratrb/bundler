@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.extensions    = ["ext/<%=config[:underscored_name]%>/extconf.rb"]
 <%- end -%>
 
-  spec.add_development_dependency "bundler", "~> <%= config[:bundler_version] %>"
+  spec.add_development_dependency "carat", "~> <%= config[:carat_version] %>"
   spec.add_development_dependency "rake", "~> 10.0"
 <%- if config[:ext] -%>
   spec.add_development_dependency "rake-compiler"

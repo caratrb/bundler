@@ -33,7 +33,7 @@ module Carat
       exit 126
     rescue Errno::ENOENT
       Carat.ui.error "carat: command not found: #{cmd}"
-      Carat.ui.warn  "Install missing gem executables with `bundle install`"
+      Carat.ui.warn  "Install missing gem executables with `carat install`"
       exit 127
     rescue ArgumentError
       Carat.ui.error "carat: exec needs a command to run"

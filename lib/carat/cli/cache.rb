@@ -15,7 +15,7 @@ module Carat
       Carat.load.lock
     rescue GemNotFound => e
       Carat.ui.error(e.message)
-      Carat.ui.warn "Run `bundle install` to install missing gems."
+      Carat.ui.warn "Run `carat install` to install missing gems."
       exit 1
     end
 

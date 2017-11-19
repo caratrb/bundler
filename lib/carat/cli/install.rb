@@ -60,7 +60,7 @@ module Carat
       Carat.settings[:path]     = nil if options[:system]
       Carat.settings[:path]     = "vendor/bundle" if options[:deployment]
       Carat.settings[:path]     = options["path"] if options["path"]
-      Carat.settings[:path]     ||= "bundle" if options["standalone"]
+      Carat.settings[:path]     ||= "carat" if options["standalone"]
       Carat.settings[:bin]      = options["binstubs"] if options["binstubs"]
       Carat.settings[:bin]      = nil if options["binstubs"] && options["binstubs"].empty?
       Carat.settings[:shebang]  = options["shebang"] if options["shebang"]
@@ -88,7 +88,7 @@ module Carat
         relative_path = absolute_path.sub(File.expand_path('.'), '.')
         Carat.ui.confirm "Bundled gems are installed into #{relative_path}."
       else
-        Carat.ui.confirm "Use `bundle show [gemname]` to see where a bundled gem is installed."
+        Carat.ui.confirm "Use `carat show [gemname]` to see where a bundled gem is installed."
       end
 
       Installer.post_install_messages.to_a.each do |name, msg|

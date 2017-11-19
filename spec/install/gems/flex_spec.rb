@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle flex_install" do
+describe "carat flex_install" do
   it "installs the gems as expected" do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
@@ -25,7 +25,7 @@ describe "bundle flex_install" do
       gem 'rack', '1.0'
     G
 
-    bundle :install
+    carat :install
     should_be_installed "rack 1.0.0"
     should_be_locked
   end
@@ -184,14 +184,14 @@ describe "bundle flex_install" do
     end
 
     it "does not install gems whose dependencies are not met" do
-      bundle :install
+      carat :install
       ruby <<-RUBY, :expect_err => true
         require 'carat/setup'
       RUBY
       expect(err).to match(/could not find gem 'rack-obama/i)
     end
 
-    it "suggests bundle update when the Gemfile requires different versions than the lock" do
+    it "suggests carat update when the Gemfile requires different versions than the lock" do
       nice_error = <<-E.strip.gsub(/^ {8}/, '')
         Fetching source index from file:#{gem_repo2}/
         Resolving dependencies...
@@ -203,11 +203,11 @@ describe "bundle flex_install" do
             rack-obama (= 2.0) ruby depends on
               rack (= 1.2) ruby
 
-        Running `bundle update` will rebuild your snapshot from scratch, using only
+        Running `carat update` will rebuild your snapshot from scratch, using only
         the gems in your Gemfile, which may resolve the conflict.
       E
 
-      bundle :install, :retry => 0
+      carat :install, :retry => 0
       expect(out).to eq(nice_error)
     end
   end
@@ -229,16 +229,16 @@ describe "bundle flex_install" do
 
     it "does something" do
       expect {
-        bundle "install"
+        carat "install"
       }.not_to change { File.read(bundled_app('Gemfile.lock')) }
 
       expect(out).to include('rack = 0.9.1')
       expect(out).to include('locked at 1.0.0')
-      expect(out).to include('bundle update rack')
+      expect(out).to include('carat update rack')
     end
 
     it "should work when you update" do
-      bundle "update rack"
+      carat "update rack"
     end
   end
 

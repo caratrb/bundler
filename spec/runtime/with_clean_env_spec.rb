@@ -27,13 +27,13 @@ describe "Carat.with_env helpers" do
 
     it "should keep the original GEM_PATH even in sub processes" do
       gemfile ""
-      bundle "install --path vendor/bundle"
+      carat "install --path vendor/bundle"
 
       code = "Carat.with_clean_env do;" +
              "  print ENV['GEM_PATH'] != '';" +
              "end"
 
-      result = bundle "exec ruby -e #{code.inspect}"
+      result = carat "exec ruby -e #{code.inspect}"
       expect(result).to eq("true")
     end
 

@@ -1,7 +1,7 @@
-[![Version     ](https://img.shields.io/gem/v/bundler.svg?style=flat)](https://rubygems.org/gems/bundler)
-[![Build Status](https://img.shields.io/travis/bundler/bundler/master.svg?style=flat)](https://travis-ci.org/bundler/bundler)
-[![Code Climate](https://img.shields.io/codeclimate/github/bundler/bundler.svg?style=flat)](https://codeclimate.com/github/bundler/bundler)
-[![Inline docs ](http://inch-ci.org/github/bundler/bundler.svg?style=flat)](http://inch-ci.org/github/bundler/bundler)
+[![Version     ](https://img.shields.io/gem/v/carat.svg?style=flat)](https://rubygems.org/gems/carat)
+[![Build Status](https://img.shields.io/travis/caratrb/carat/master.svg?style=flat)](https://travis-ci.org/caratrb/carat)
+[![Code Climate](https://img.shields.io/codeclimate/github/caratrb/carat.svg?style=flat)](https://codeclimate.com/github/caratrb/carat)
+[![Inline docs ](http://inch-ci.org/github/caratrb/carat.svg?style=flat)](http://inch-ci.org/github/caratrb/carat)
 
 # Carat: a gem to bundle gems
 
@@ -12,14 +12,12 @@ It does this by managing the gems that the application depends on. Given a list 
 ### Installation and usage
 
 ```
-gem install bundler
-bundle init
+gem install carat
+carat init
 echo "gem 'rails'" >> Gemfile
-bundle install
-bundle exec rails new myapp
+carat install
+carat exec rails new myapp
 ```
-
-See [bundler.io](http://bundler.io) for the full documentation.
 
 ### Troubleshooting
 
@@ -28,8 +26,6 @@ For help with common problems, see [ISSUES](https://github.com/caratrb/carat/blo
 ### Other questions
 
 To see what has changed in recent versions of Carat, see the [CHANGELOG](https://github.com/caratrb/carat/blob/master/CHANGELOG.md).
-
-Feel free to chat with the Carat core team (and many other users) on IRC in the  [#bundler](irc://irc.freenode.net/bundler) channel on Freenode, or via email on the [Carat mailing list](http://groups.google.com/group/ruby-bundler).
 
 ### Contributing
 

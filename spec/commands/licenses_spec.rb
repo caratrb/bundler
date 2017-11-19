@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle licenses" do
+describe "carat licenses" do
   before :each do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
@@ -10,13 +10,13 @@ describe "bundle licenses" do
   end
 
   it "prints license information for all gems in the bundle" do
-    bundle "licenses"
+    carat "licenses"
 
     expect(out).to include("actionpack: Unknown")
     expect(out).to include("with_license: MIT")
   end
 
-  it "performs an automatic bundle install" do
+  it "performs an automatic carat install" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rails"
@@ -24,8 +24,8 @@ describe "bundle licenses" do
       gem "foo"
     G
 
-    bundle "config auto_install 1"
-    bundle :licenses
+    carat "config auto_install 1"
+    carat :licenses
     expect(out).to include("Installing foo 1.0")
   end
 end

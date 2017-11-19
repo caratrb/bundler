@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "bundle install" do
+describe "carat install" do
 
   describe "with carat dependencies" do
     before(:each) do
@@ -138,7 +138,7 @@ describe "bundle install" do
       simulate_carat_version "10.0.0"
       #simulate_new_machine
 
-      bundle "check"
+      carat "check"
       expect(out).to eq("The Gemfile's dependencies are satisfied")
     end
   end

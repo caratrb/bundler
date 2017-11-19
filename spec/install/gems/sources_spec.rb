@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle install with gems on multiple sources" do
+describe "carat install with gems on multiple sources" do
   # repo1 is built automatically before all of the specs run
   # it contains rack-obama 1.0.0 and rack 0.9.1 & 1.0.0 amongst other gems
 
@@ -28,7 +28,7 @@ describe "bundle install with gems on multiple sources" do
       end
 
       it "warns about ambiguous gems, but installs anyway, prioritizing sources last to first" do
-        bundle :install
+        carat :install
 
         expect(out).to include("Warning: this Gemfile contains multiple primary sources.")
         expect(out).to include("Warning: the gem 'rack' was found in multiple sources.")
@@ -37,8 +37,8 @@ describe "bundle install with gems on multiple sources" do
       end
 
       it "errors when disable_multisource is set" do
-        bundle "config disable_multisource true"
-        bundle :install
+        carat "config disable_multisource true"
+        carat :install
         expect(out).to include("Each source after the first must include a block")
         expect(exitstatus).to eq(14) if exitstatus
       end
@@ -57,7 +57,7 @@ describe "bundle install with gems on multiple sources" do
       end
 
       it "warns about ambiguous gems, but installs anyway" do
-        bundle :install
+        carat :install
 
         expect(out).to include("Warning: this Gemfile contains multiple primary sources.")
         expect(out).to include("Warning: the gem 'rack' was found in multiple sources.")
@@ -89,18 +89,18 @@ describe "bundle install with gems on multiple sources" do
       end
 
       it "installs the gems without any warning" do
-        bundle :install
+        carat :install
         expect(out).not_to include("Warning")
         should_be_installed("rack-obama 1.0.0", "rack 1.0.0")
       end
 
       it "can cache and deploy" do
-        bundle :package
+        carat :package
 
         expect(bundled_app("vendor/cache/rack-1.0.0.gem")).to exist
         expect(bundled_app("vendor/cache/rack-obama-1.0.gem")).to exist
 
-        bundle "install --deployment"
+        carat "install --deployment"
 
         expect(exitstatus).to eq(0) if exitstatus
         should_be_installed("rack-obama 1.0.0", "rack 1.0.0")
@@ -125,7 +125,7 @@ describe "bundle install with gems on multiple sources" do
       end
 
       it "installs the gems without any warning" do
-        bundle :install
+        carat :install
         expect(out).not_to include("Warning")
         should_be_installed("rack-obama 1.0.0", "rack 1.0.0")
       end
@@ -161,7 +161,7 @@ describe "bundle install with gems on multiple sources" do
           end
 
           it "installs from the same source without any warning" do
-            bundle :install
+            carat :install
             expect(out).not_to include("Warning")
             should_be_installed("depends_on_rack 1.0.1", "rack 1.0.0")
           end
@@ -178,7 +178,7 @@ describe "bundle install with gems on multiple sources" do
           end
 
           it "installs from the same source without any warning" do
-            bundle :install
+            carat :install
             expect(out).not_to include("Warning")
             should_be_installed("depends_on_rack 1.0.1", "rack 1.0.0")
           end
@@ -204,7 +204,7 @@ describe "bundle install with gems on multiple sources" do
           end
 
           it "installs from the other source without any warning" do
-            bundle :install
+            carat :install
             expect(out).not_to include("Warning")
             should_be_installed("depends_on_rack 1.0.1", "rack 1.0.0")
           end
@@ -222,7 +222,7 @@ describe "bundle install with gems on multiple sources" do
           end
 
           it "installs from the other source and warns about ambiguous gems" do
-            bundle :install
+            carat :install
             expect(out).to include("Warning: this Gemfile contains multiple primary sources.")
             expect(out).to include("Warning: the gem 'rack' was found in multiple sources.")
             expect(out).to include("Installed from: file:#{gem_repo2}")
@@ -249,7 +249,7 @@ describe "bundle install with gems on multiple sources" do
           end
 
           it "installs the dependency from the pinned source without warning" do
-            bundle :install
+            carat :install
 
             expect(out).not_to include("Warning: the gem 'rack' was found in multiple sources.")
             should_be_installed("depends_on_rack 1.0.1", "rack 1.0.0")
@@ -257,7 +257,7 @@ describe "bundle install with gems on multiple sources" do
             # In https://github.com/bundler/bundler/issues/3585 this failed
             # when there is already a lock file, and the gems are missing, so try again
             system_gems []
-            bundle :install
+            carat :install
 
             expect(out).not_to include("Warning: the gem 'rack' was found in multiple sources.")
             should_be_installed("depends_on_rack 1.0.1", "rack 1.0.0")
@@ -279,7 +279,7 @@ describe "bundle install with gems on multiple sources" do
       end
 
       it "does not install the gem" do
-        bundle :install
+        carat :install
         expect(out).to include("Could not find gem 'not_in_repo1 (>= 0) ruby'")
       end
     end
@@ -327,9 +327,9 @@ describe "bundle install with gems on multiple sources" do
       end
 
       it "does not unlock the non-path gem after install" do
-        bundle :install
+        carat :install
 
-        bundle %{exec ruby -e 'puts "OK"'}
+        carat %{exec ruby -e 'puts "OK"'}
 
         expect(out).to include("OK")
         expect(exitstatus).to eq(0) if exitstatus
@@ -348,7 +348,7 @@ describe "bundle install with gems on multiple sources" do
     end
 
     it "installs the gems without any warning" do
-      bundle :install
+      carat :install
       expect(out).not_to include("Warning")
       should_be_installed("rack 1.0.0")
     end
@@ -389,7 +389,7 @@ describe "bundle install with gems on multiple sources" do
           rack
       L
 
-      bundle "install --path ../gems/system"
+      carat "install --path ../gems/system"
 
       # 4. Then we add some new versions...
       update_repo4 do

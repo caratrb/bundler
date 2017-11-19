@@ -9,7 +9,7 @@ describe Carat::GemHelper do
 
   before(:each) do
     global_config "BUNDLE_GEM__MIT" => "false", "BUNDLE_GEM__TEST" => "false", "BUNDLE_GEM__COC" => "false"
-    bundle "gem #{app_name}"
+    carat "gem #{app_name}"
   end
 
   context "determining gemspec" do
@@ -48,7 +48,7 @@ describe Carat::GemHelper do
     end
 
     it "handles namespaces and converts them to CamelCase" do
-      bundle "gem #{app_name}-foo_bar"
+      carat "gem #{app_name}-foo_bar"
       underscore_path = bundled_app "#{app_name}-foo_bar"
 
       lib = underscore_path.join("lib/#{app_name}/foo_bar.rb").read

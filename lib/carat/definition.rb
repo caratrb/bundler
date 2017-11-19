@@ -298,12 +298,12 @@ module Carat
 
     def ensure_equivalent_gemfile_and_lockfile(explicit_flag = false)
       msg = "You are trying to install in deployment mode after changing\n" \
-            "your Gemfile. Run `bundle install` elsewhere and add the\n" \
+            "your Gemfile. Run `carat install` elsewhere and add the\n" \
             "updated Gemfile.lock to version control."
 
       unless explicit_flag
         msg += "\n\nIf this is a development machine, remove the Gemfile " \
-               "freeze \nby running `bundle install --no-deployment`."
+               "freeze \nby running `carat install --no-deployment`."
       end
 
       added =   []
@@ -470,7 +470,7 @@ module Carat
 
       sources.all_sources.each do |source|
         # If the source is unlockable and the current command allows an unlock of
-        # the source (for example, you are doing a `bundle update <foo>` of a git-pinned
+        # the source (for example, you are doing a `carat update <foo>` of a git-pinned
         # gem), unlock it. For git sources, this means to unlock the revision, which
         # will cause the `ref` used to be the most recent for the branch (or master) if
         # an explicit `ref` is not used.

@@ -56,7 +56,7 @@ module Carat
     rescue ArgumentError => e
       Carat.ui.debug(e)
       raise LockfileError, "Your lockfile is unreadable. Run `rm Gemfile.lock` " \
-        "and then `bundle install` to generate a new lockfile."
+        "and then `carat install` to generate a new lockfile."
     end
 
   private

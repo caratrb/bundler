@@ -27,6 +27,6 @@ Gem::Specification.new do |s|
   # we use them to generate the long-form help for each command.
   s.files      += Dir.glob('lib/carat/man/**/*')
 
-  s.executables   = %w(carat karat)
+  s.executables   = %w(carat)
   s.require_paths = ["lib"]
 end

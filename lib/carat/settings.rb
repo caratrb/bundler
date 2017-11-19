@@ -164,7 +164,7 @@ module Carat
     end
 
     def global_config_file
-      file = ENV["BUNDLE_CONFIG"] || File.join(Carat.rubygems.user_home, ".bundle/config")
+      file = ENV["BUNDLE_CONFIG"] || File.join(Carat.rubygems.user_home, ".carat/config")
       Pathname.new(file)
     end
 

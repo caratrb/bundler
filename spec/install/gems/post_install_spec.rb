@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "bundle install with gem sources" do
+describe "carat install with gem sources" do
   describe "when gems include post install messages" do
     it "should display the post-install messages after installing" do
       gemfile <<-G
@@ -10,7 +10,7 @@ describe "bundle install with gem sources" do
         gem 'rack-obama'
       G
 
-      bundle :install
+      carat :install
       expect(out).to include("Post-install message from rack:")
       expect(out).to include("Rack's post install message")
       expect(out).to include("Post-install message from thin:")
@@ -27,7 +27,7 @@ describe "bundle install with gem sources" do
         gem "activesupport"
       G
 
-      bundle :install
+      carat :install
       expect(out).not_to include("Post-install message")
     end
   end
@@ -39,14 +39,14 @@ describe "bundle install with gem sources" do
         gem 'rack_middleware'
       G
 
-      bundle :install
+      carat :install
       expect(out).to include("Post-install message from rack:")
       expect(out).to include("Rack's post install message")
     end
   end
 end
 
-describe "bundle install with git sources" do
+describe "carat install with git sources" do
   describe "when gems include post install messages" do
     it "should display the post-install messages after installing" do
       build_git "foo" do |s|
@@ -57,7 +57,7 @@ describe "bundle install with git sources" do
         gem 'foo', :git => '#{lib_path("foo-1.0")}'
       G
 
-      bundle :install
+      carat :install
       expect(out).to include("Post-install message from foo:")
       expect(out).to include("Foo's post install message")
     end
@@ -70,7 +70,7 @@ describe "bundle install with git sources" do
         source "file://#{gem_repo1}"
         gem 'foo', :git => '#{lib_path("foo-1.0")}'
       G
-      bundle :install
+      carat :install
 
       build_git "foo", "1.1" do |s|
         s.post_install_message = "Foo's 1.1 post install message"
@@ -79,7 +79,7 @@ describe "bundle install with git sources" do
         source "file://#{gem_repo1}"
         gem 'foo', :git => '#{lib_path("foo-1.1")}'
       G
-      bundle :install
+      carat :install
 
       expect(out).to include("Post-install message from foo:")
       expect(out).to include("Foo's 1.1 post install message")
@@ -94,11 +94,11 @@ describe "bundle install with git sources" do
         gem 'foo', :git => '#{lib_path("foo-1.0")}'
       G
 
-      bundle :install
+      carat :install
       expect(out).to include("Post-install message from foo:")
       expect(out).to include("Foo's post install message")
 
-      bundle :install
+      carat :install
       expect(out).not_to include("Post-install message")
     end
   end
@@ -113,7 +113,7 @@ describe "bundle install with git sources" do
         gem 'foo', :git => '#{lib_path("foo-1.0")}'
       G
 
-      bundle :install
+      carat :install
       expect(out).not_to include("Post-install message")
     end
   end

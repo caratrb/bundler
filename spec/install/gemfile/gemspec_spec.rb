@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle install from an existing gemspec" do
+describe "carat install from an existing gemspec" do
 
   before(:each) do
     build_gem "bar", :to_system => true
@@ -118,13 +118,13 @@ describe "bundle install from an existing gemspec" do
     end
 
     Dir.chdir(tmp.join("foo")) do
-      bundle "install"
+      carat "install"
       # This should really be able to rely on $stderr, but, it's not written
       # right, so we can't. In fact, this is a bug negation test, and so it'll
       # ghost pass in future, and will only catch a regression if the message
       # doesn't change. Exit codes should be used correctly (they can be more
       # than just 0 and 1).
-      output = bundle("install --deployment")
+      output = carat("install --deployment")
       expect(output).not_to match(/You have added to the Gemfile/)
       expect(output).not_to match(/You have deleted from the Gemfile/)
       expect(output).not_to match(/install in deployment mode after changing/)

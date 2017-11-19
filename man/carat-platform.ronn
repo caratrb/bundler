@@ -1,9 +1,9 @@
-bundle-platform(1) -- Displays platform compatibility information
+carat-platform(1) -- Displays platform compatibility information
 =================================================================
 
 ## SYNOPSIS
 
-`bundle platform` [--ruby]
+`carat platform` [--ruby]
 
 ## DESCRIPTION
 
@@ -18,7 +18,7 @@ For instance, using this Gemfile(5):
 
     gem "rack"
 
-If you run `bundle platform` on Ruby 1.9.3, it will display the following output:
+If you run `carat platform` on Ruby 1.9.3, it will display the following output:
 
     Your platform is: x86_64-linux
 

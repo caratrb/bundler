@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle update" do
+describe "carat update" do
   describe "git sources" do
     it "floats on a branch when :branch is used" do
       build_git  "foo", "1.0"
@@ -16,7 +16,7 @@ describe "bundle update" do
         s.write "lib/foo.rb", "FOO = '1.1'"
       end
 
-      bundle "update"
+      carat "update"
 
       should_be_installed "foo 1.1"
     end
@@ -31,7 +31,7 @@ describe "bundle update" do
         gem "rails", :git => "#{lib_path('rails')}"
       G
 
-      bundle "update rails"
+      carat "update rails"
       expect(out).to include("Using activesupport 3.0 from #{lib_path('rails')} (at master)")
       should_be_installed "rails 3.0", "activesupport 3.0"
     end
@@ -50,7 +50,7 @@ describe "bundle update" do
         s.write "lib/foo.rb", "FOO = '1.1'"
       end
 
-      bundle "update --source foo"
+      carat "update --source foo"
 
       should_be_installed "foo 1.1"
     end
@@ -70,7 +70,7 @@ describe "bundle update" do
         s.write "lib/foo.rb", "FOO = '1.1'"
       end
 
-      bundle "update foo"
+      carat "update foo"
 
       should_be_installed "foo 1.1"
     end
@@ -113,7 +113,7 @@ describe "bundle update" do
         gem 'foo', :git => "#{@remote.path}", :tag => "fubar"
       G
 
-      bundle "update"
+      carat "update"
       expect(exitstatus).to eq(0) if exitstatus
     end
 
@@ -188,7 +188,7 @@ describe "bundle update" do
 
       lib_path("foo-1.0").join(".git").rmtree
 
-      bundle :update, :expect_err => true
+      carat :update, :expect_err => true
       expect(out).to include(lib_path("foo-1.0").to_s)
     end
 
@@ -204,8 +204,8 @@ describe "bundle update" do
         gem "rack", :git => "#{lib_path('rack-0.8')}", :branch => "master"
       G
 
-      bundle %|config local.rack #{lib_path('local-rack')}|
-      bundle "update rack"
+      carat %|config local.rack #{lib_path('local-rack')}|
+      carat "update rack"
       expect(out).to include("Bundle updated!")
     end
 
@@ -229,7 +229,7 @@ describe "bundle update" do
           rails!
       G
 
-      bundle "update"
+      carat "update"
       expect(out).to include("Using rails 3.0 (was 2.3.2) from #{lib_path('rails')} (at master)")
     end
   end
@@ -253,7 +253,7 @@ describe "bundle update" do
     it "updates the source" do
       update_git "foo", :path => @git.path
 
-      bundle "update --source foo"
+      carat "update --source foo"
 
       in_app_root do
         run <<-RUBY
@@ -268,7 +268,7 @@ describe "bundle update" do
     it "unlocks gems that were originally pulled in by the source" do
       update_git "foo", "2.0", :path => @git.path
 
-      bundle "update --source foo"
+      carat "update --source foo"
       should_be_installed "foo 2.0"
     end
 
@@ -276,7 +276,7 @@ describe "bundle update" do
       update_repo2
       update_git "foo", :path => @git.path
 
-      bundle "update --source foo"
+      carat "update --source foo"
       should_be_installed "rack 1.0"
     end
   end

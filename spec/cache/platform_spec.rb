@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle cache with multiple platforms" do
+describe "carat cache with multiple platforms" do
   before :each do
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -33,8 +33,8 @@ describe "bundle cache with multiple platforms" do
     cache_gems "rack-1.0.0", "activesupport-2.3.5"
   end
 
-  it "ensures that a succesful bundle install does not delete gems for other platforms" do
-    bundle "install"
+  it "ensures that a succesful carat install does not delete gems for other platforms" do
+    carat "install"
 
     expect(exitstatus).to eq 0 if exitstatus
 
@@ -42,8 +42,8 @@ describe "bundle cache with multiple platforms" do
     expect(bundled_app("vendor/cache/activesupport-2.3.5.gem")).to exist
   end
 
-  it "ensures that a succesful bundle update does not delete gems for other platforms" do
-    bundle "update"
+  it "ensures that a succesful carat update does not delete gems for other platforms" do
+    carat "update"
 
     expect(exitstatus).to eq 0 if exitstatus
 

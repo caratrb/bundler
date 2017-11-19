@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle update" do
+describe "carat update" do
   before :each do
     build_repo2
 
@@ -17,7 +17,7 @@ describe "bundle update" do
         build_gem "activesupport", "3.0"
       end
 
-      bundle "update"
+      carat "update"
       should_be_installed "rack 1.2", "rack-obama 1.0", "activesupport 3.0"
     end
 
@@ -28,19 +28,19 @@ describe "bundle update" do
         gem "rack-obama"
         exit!
       G
-      bundle "update"
+      carat "update"
       expect(bundled_app("Gemfile.lock")).to exist
     end
   end
 
   describe "--quiet argument" do
     it "shows UI messages without --quiet argument" do
-      bundle "update"
+      carat "update"
       expect(out).to include("Fetching source")
     end
 
     it "does not show UI messages with --quiet argument" do
-      bundle "update --quiet"
+      carat "update --quiet"
       expect(out).not_to include("Fetching source")
     end
   end
@@ -51,18 +51,18 @@ describe "bundle update" do
         build_gem "activesupport", "3.0"
       end
 
-      bundle "update rack-obama"
+      carat "update rack-obama"
       should_be_installed "rack 1.2", "rack-obama 1.0", "activesupport 2.3.5"
     end
   end
 
   describe "with an unknown dependency" do
     it "should inform the user" do
-      bundle "update halting-problem-solver", :expect_err =>true
+      carat "update halting-problem-solver", :expect_err =>true
       expect(out).to include "Could not find gem 'halting-problem-solver'"
     end
     it "should suggest alternatives" do
-      bundle "update active-support", :expect_err =>true
+      carat "update active-support", :expect_err =>true
       expect(out).to include "Did you mean activesupport?"
     end
   end
@@ -70,7 +70,7 @@ describe "bundle update" do
   describe "with a child dependency" do
     it "should update the child dependency" do
       update_repo2
-      bundle "update rack"
+      carat "update rack"
       should_be_installed "rack 1.2"
     end
   end
@@ -79,7 +79,7 @@ describe "bundle update" do
     it "doesn't hit repo2" do
       FileUtils.rm_rf(gem_repo2)
 
-      bundle "update --local"
+      carat "update --local"
       expect(out).not_to match(/Fetching source index/)
     end
   end
@@ -94,14 +94,14 @@ describe "bundle update" do
       update_repo2 do
         build_gem "activesupport", "3.0"
       end
-      bundle "update --group development"
+      carat "update --group development"
       should_be_installed "activesupport 3.0"
       should_not_be_installed "rack 1.2"
     end
   end
 end
 
-describe "bundle update in more complicated situations" do
+describe "carat update in more complicated situations" do
   before :each do
     build_repo2
   end
@@ -120,12 +120,12 @@ describe "bundle update in more complicated situations" do
       end
     end
 
-    bundle "update thin"
+    carat "update thin"
     should_be_installed "thin 2.0", "rack 1.2", "rack-obama 1.0"
   end
 end
 
-describe "bundle update without a Gemfile.lock" do
+describe "carat update without a Gemfile.lock" do
   it "should not explode" do
     build_repo2
 
@@ -135,13 +135,13 @@ describe "bundle update without a Gemfile.lock" do
       gem "rack", "1.0"
     G
 
-    bundle "update"
+    carat "update"
 
     should_be_installed "rack 1.0.0"
   end
 end
 
-describe "bundle update when a gem depends on a newer version of carat" do
+describe "carat update when a gem depends on a newer version of carat" do
   before(:each) do
     build_repo2 do
       build_gem "rails", "3.0.1" do |s|
@@ -156,19 +156,19 @@ describe "bundle update when a gem depends on a newer version of carat" do
   end
 
   it "should not explode" do
-    bundle "update"
+    carat "update"
     expect(err).to be_empty
   end
 
   it "should explain that carat conflicted" do
-    bundle "update"
+    carat "update"
     expect(out).not_to match(/in snapshot/i)
     expect(out).to match(/current Carat version/i)
     expect(out).to match(/perhaps you need to update carat/i)
   end
 end
 
-describe "bundle update" do
+describe "carat update" do
   it "shows the previous version of the gem when updated from rubygems source" do
     build_repo2
 
@@ -177,14 +177,14 @@ describe "bundle update" do
       gem "activesupport"
     G
 
-    bundle "update"
+    carat "update"
     expect(out).to include("Using activesupport 2.3.5")
 
     update_repo2 do
       build_gem "activesupport", "3.0"
     end
 
-    bundle "update"
+    carat "update"
     expect(out).to include("Installing activesupport 3.0 (was 2.3.5)")
   end
 
@@ -194,8 +194,8 @@ describe "bundle update" do
       gem "activesupport"
     G
 
-    bundle "update nonexisting"
-    expect(out).to include("This Bundle hasn't been installed yet. Run `bundle install` to update and install the bundled gems.")
+    carat "update nonexisting"
+    expect(out).to include("This Bundle hasn't been installed yet. Run `carat install` to update and install the bundled gems.")
     expect(exitstatus).to eq(22) if exitstatus
   end
 end

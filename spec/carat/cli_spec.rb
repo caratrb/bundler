@@ -1,16 +1,16 @@
 require 'spec_helper'
 require 'carat/cli'
 
-describe "bundle executable" do
+describe "carat executable" do
   let(:source_uri) { "http://localgemserver.test" }
 
   it "returns non-zero exit status when passed unrecognized options" do
-    bundle '--invalid_argument'
+    carat '--invalid_argument'
     expect(exitstatus).to_not be_zero if exitstatus
   end
 
   it "returns non-zero exit status when passed unrecognized task" do
-    bundle 'unrecognized-tast'
+    carat 'unrecognized-tast'
     expect(exitstatus).to_not be_zero if exitstatus
   end
 
@@ -20,7 +20,7 @@ describe "bundle executable" do
     end
 
     with_path_as(tmp) do
-      bundle 'testtasks'
+      carat 'testtasks'
     end
 
     expect(exitstatus).to be_zero if exitstatus

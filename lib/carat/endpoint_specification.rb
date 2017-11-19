@@ -40,7 +40,7 @@ module Carat
       end
     end
 
-    # needed for bundle clean
+    # needed for carat clean
     def bindir
       if @remote_specification
         @remote_specification.bindir

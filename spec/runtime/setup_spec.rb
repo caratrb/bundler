@@ -179,13 +179,13 @@ describe "Carat.setup" do
     G
 
     ENV['BUNDLE_GEMFILE'] = bundled_app('4realz').to_s
-    bundle :install
+    carat :install
 
     should_be_installed "activesupport 2.3.5"
   end
 
   it "prioritizes gems in BUNDLE_PATH over gems in GEM_HOME" do
-    ENV['BUNDLE_PATH'] = bundled_app('.bundle').to_s
+    ENV['BUNDLE_PATH'] = bundled_app('.carat').to_s
     install_gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack", "1.0.0"
@@ -314,11 +314,11 @@ describe "Carat.setup" do
 
     it "provides a useful exception when the git repo is not checked out yet" do
       run "1", :expect_err => true
-      expect(err).to match(/the git source #{lib_path('rack-1.0.0')} is not yet checked out. Please run `bundle install`/i)
+      expect(err).to match(/the git source #{lib_path('rack-1.0.0')} is not yet checked out. Please run `carat install`/i)
     end
 
     it "does not hit the git binary if the lockfile is available and up to date" do
-      bundle "install"
+      carat "install"
 
       break_git!
 
@@ -338,7 +338,7 @@ describe "Carat.setup" do
     end
 
     it "provides a good exception if the lockfile is unavailable" do
-      bundle "install"
+      carat "install"
 
       FileUtils.rm(bundled_app("Gemfile.lock"))
 
@@ -362,21 +362,21 @@ describe "Carat.setup" do
     end
 
     it "works even when the cache directory has been deleted" do
-      bundle "install --path vendor/bundle"
+      carat "install --path vendor/bundle"
       FileUtils.rm_rf vendored_gems('cache')
       should_be_installed "rack 1.0.0"
     end
 
     it "does not randomly change the path when specifying --path and the bundle directory becomes read only" do
-      bundle "install --path vendor/bundle"
+      carat "install --path vendor/bundle"
 
       with_read_only("**/*") do
         should_be_installed "rack 1.0.0"
       end
     end
 
-    it "finds git gem when default bundle path becomes read only" do
-      bundle "install"
+    it "finds git gem when default carat path becomes read only" do
+      carat "install"
 
       with_read_only("#{Carat.bundle_path}/**/*") do
         should_be_installed "rack 1.0.0"
@@ -395,8 +395,8 @@ describe "Carat.setup" do
         gem "rack", :git => "#{lib_path('rack-0.8')}", :branch => "master"
       G
 
-      bundle %|config local.rack #{lib_path('local-rack')}|
-      bundle :install
+      carat %|config local.rack #{lib_path('local-rack')}|
+      carat :install
       expect(out).to match(/at #{lib_path('local-rack')}/)
 
       FileUtils.rm_rf(lib_path('local-rack'))
@@ -414,8 +414,8 @@ describe "Carat.setup" do
         gem "rack", :git => "#{lib_path('rack-0.8')}", :branch => "master"
       G
 
-      bundle %|config local.rack #{lib_path('local-rack')}|
-      bundle :install
+      carat %|config local.rack #{lib_path('local-rack')}|
+      carat :install
       expect(out).to match(/at #{lib_path('local-rack')}/)
 
       gemfile <<-G
@@ -437,8 +437,8 @@ describe "Carat.setup" do
         gem "rack", :git => "#{lib_path('rack-0.8')}", :branch => "master"
       G
 
-      bundle %|config local.rack #{lib_path('local-rack')}|
-      bundle :install
+      carat %|config local.rack #{lib_path('local-rack')}|
+      carat :install
       expect(out).to match(/at #{lib_path('local-rack')}/)
 
       gemfile <<-G
@@ -465,7 +465,7 @@ describe "Carat.setup" do
         gem "rack", :git => "#{lib_path('rack-0.8')}", :ref => "master", :branch => "nonexistant"
       G
 
-      bundle %|config local.rack #{lib_path('local-rack')}|
+      carat %|config local.rack #{lib_path('local-rack')}|
       run "require 'rack'", :expect_err => true
       expect(err).to match(/is using branch master but Gemfile specifies nonexistant/)
     end
@@ -547,7 +547,7 @@ describe "Carat.setup" do
           end
         R
 
-        expect(out).to eq("You have already activated thin 1.1, but your Gemfile requires thin 1.0. Prepending `bundle exec` to your command may solve this.")
+        expect(out).to eq("You have already activated thin 1.1, but your Gemfile requires thin 1.0. Prepending `carat exec` to your command may solve this.")
       end
 
       it "version_requirement is now deprecated in rubygems 1.4.0+" do
@@ -605,7 +605,7 @@ describe "Carat.setup" do
     G
 
     ENV["GEM_HOME"] = ""
-    bundle %{exec ruby -e "require 'set'"}
+    carat %{exec ruby -e "require 'set'"}
 
     expect(err).to be_empty
   end
@@ -680,7 +680,7 @@ describe "Carat.setup" do
         gem 'foo', '1.2.3', :path => '#{relative_path}'
       G
 
-      bundle :install
+      carat :install
 
       Dir.chdir(bundled_app.parent) do
         run <<-R, :env => {"BUNDLE_GEMFILE" => bundled_app('Gemfile')}
@@ -807,7 +807,7 @@ describe "Carat.setup" do
     end
 
     it "evals each gemspec in the context of its parent directory" do
-      bundle :install
+      carat :install
       run "require 'bar'; puts BAR"
       expect(out).to eq("1.0")
     end
@@ -816,7 +816,7 @@ describe "Carat.setup" do
       update_git "bar", :gemspec => false do |s|
         s.write "bar.gemspec", "require 'foobarbaz'"
       end
-      bundle :install
+      carat :install
       expect(out).to include("was a LoadError while loading bar.gemspec")
       expect(out).to include("foobarbaz")
       expect(out).to include("bar.gemspec:1")
@@ -824,7 +824,7 @@ describe "Carat.setup" do
     end
 
     it "evals each gemspec with a binding from the top level" do
-      bundle "install"
+      carat "install"
 
       ruby <<-RUBY
         require 'carat'
@@ -845,7 +845,7 @@ describe "Carat.setup" do
         gem "carat", :path => "#{File.expand_path("..", lib)}"
       G
 
-      bundle %|exec ruby -e "require 'carat'; Carat.setup"|
+      carat %|exec ruby -e "require 'carat'; Carat.setup"|
       expect(err).to be_empty
     end
   end

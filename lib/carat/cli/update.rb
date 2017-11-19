@@ -18,7 +18,7 @@ module Carat
       else
         unless Carat.default_lockfile.exist?
           raise GemfileLockNotFound, "This Bundle hasn't been installed yet. " \
-            "Run `bundle install` to update and install the bundled gems."
+            "Run `carat install` to update and install the bundled gems."
         end
         # cycle through the requested gems, just to make sure they exist
         names = Carat.locked_gems.specs.map{ |s| s.name }

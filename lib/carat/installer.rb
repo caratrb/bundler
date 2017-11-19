@@ -28,9 +28,9 @@ module Carat
     # Secondly, it checks if Carat has been configured to be "frozen"
     # Frozen ensures that the Gemfile and the Gemfile.lock file are matching.
     # This stops a situation where a developer may update the Gemfile but may not run
-    # `bundle install`, which leads to the Gemfile.lock file not being correctly updated.
+    # `carat install`, which leads to the Gemfile.lock file not being correctly updated.
     # If this file is not correctly updated then any other developer running
-    # `bundle install` will potentially not install the correct gems.
+    # `carat install` will potentially not install the correct gems.
     #
     # Thirdly, Carat checks if there are any dependencies specified in the Gemfile using
     # Carat::Environment#dependencies. If there are no dependencies specified then
@@ -47,7 +47,7 @@ module Carat
     # earlier.
     #
     # Sixthly, a new Gemfile.lock is created from the installed gems to ensure that the next time
-    # that a user runs `bundle install` they will receive any updates from this process.
+    # that a user runs `carat install` they will receive any updates from this process.
     #
     # Finally: TODO add documentation for how the standalone process works.
     def run(options)
@@ -170,7 +170,7 @@ module Carat
 
       exists = []
       spec.executables.each do |executable|
-        next if executable == "bundle"
+        next if executable == "carat"
 
         binstub_path = "#{bin_path}/#{executable}"
         if File.exist?(binstub_path) && !options[:force]
@@ -218,7 +218,7 @@ module Carat
       ruby_command = ruby_command = Thor::Util.ruby_command
 
       spec.executables.each do |executable|
-        next if executable == "bundle"
+        next if executable == "carat"
         standalone_path = standalone_path = Pathname(Carat.settings[:path]).expand_path.relative_path_from(bin_path)
         executable_path = executable_path = Pathname(spec.full_gem_path).join(spec.bindir, executable).relative_path_from(bin_path)
         File.open "#{bin_path}/#{executable}", 'w', 0755 do |f|

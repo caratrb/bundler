@@ -35,10 +35,10 @@ module Carat
     end
 
     def default_bundle_dir
-      bundle_dir = find_directory(".bundle")
+      bundle_dir = find_directory(".carat")
       return nil unless bundle_dir
 
-      global_bundle_dir = File.join(Carat.rubygems.user_home, ".bundle")
+      global_bundle_dir = File.join(Carat.rubygems.user_home, ".carat")
       return nil if bundle_dir == global_bundle_dir
 
       Pathname.new(bundle_dir)

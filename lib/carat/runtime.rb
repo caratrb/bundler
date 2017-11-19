@@ -18,13 +18,13 @@ module Carat
       # Activate the specs
       specs.each do |spec|
         unless spec.loaded_from
-          raise GemNotFound, "#{spec.full_name} is missing. Run `bundle` to get it."
+          raise GemNotFound, "#{spec.full_name} is missing. Run `carat` to get it."
         end
 
         if activated_spec = Carat.rubygems.loaded_specs(spec.name) and activated_spec.version != spec.version
           e = Gem::LoadError.new "You have already activated #{activated_spec.name} #{activated_spec.version}, " \
                                  "but your Gemfile requires #{spec.name} #{spec.version}. Prepending " \
-                                 "`bundle exec` to your command may solve this."
+                                 "`carat exec` to your command may solve this."
           e.name = spec.name
           if e.respond_to?(:requirement=)
             e.requirement = Gem::Requirement.new(spec.version.to_s)
@@ -115,7 +115,7 @@ module Carat
 
       Dir[cache_path.join("*/.git")].each do |git_dir|
         FileUtils.rm_rf(git_dir)
-        FileUtils.touch(File.expand_path("../.bundlecache", git_dir))
+        FileUtils.touch(File.expand_path("../.caratcache", git_dir))
       end
 
       prune_cache(cache_path) unless Carat.settings[:no_prune]
@@ -246,7 +246,7 @@ module Carat
     end
 
     def prune_git_and_path_cache(resolve, cache_path)
-      cached  = Dir["#{cache_path}/*/.bundlecache"]
+      cached  = Dir["#{cache_path}/*/.caratcache"]
 
       cached = cached.delete_if do |path|
         name = File.basename(File.dirname(path))

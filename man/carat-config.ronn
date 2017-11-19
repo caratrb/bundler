@@ -1,44 +1,44 @@
-bundle-config(1) -- Set bundler configuration options
+carat-config(1) -- Set carat configuration options
 =====================================================
 
 ## SYNOPSIS
 
-`bundle config` [<name> [<value>]]
+`carat config` [<name> [<value>]]
 
 ## DESCRIPTION
 
-This command allows you to interact with bundler's configuration system.
-Carat retrieves its configuration from the local application (`app/.bundle/config`),
-environment variables, and the user's home directory (`~/.bundle/config`),
+This command allows you to interact with carat's configuration system.
+Carat retrieves its configuration from the local application (`app/.carat/config`),
+environment variables, and the user's home directory (`~/.carat/config`),
 in that order of priority.
 
-Executing `bundle config` with no parameters will print a list of all
-bundler configuration for the current bundle, and where that configuration
+Executing `carat config` with no parameters will print a list of all
+carat configuration for the current carat, and where that configuration
 was set.
 
-Executing `bundle config <name>` will print the value of that configuration
+Executing `carat config <name>` will print the value of that configuration
 setting, and where it was set.
 
-Executing `bundle config <name> <value>` will set that configuration to the
-value specified for all bundles executed as the current user. The configuration
-will be stored in `~/.bundle/config`. If <name> already is set, <name> will be
+Executing `carat config <name> <value>` will set that configuration to the
+value specified for all carats executed as the current user. The configuration
+will be stored in `~/.carat/config`. If <name> already is set, <name> will be
 overridden and user will be warned.
 
-Executing `bundle config --global <name> <value>` works the same as above.
+Executing `carat config --global <name> <value>` works the same as above.
 
-Executing `bundle config --local <name> <value>` will set that configuration to
-the local application. The configuration will be stored in `app/.bundle/config`.
+Executing `carat config --local <name> <value>` will set that configuration to
+the local application. The configuration will be stored in `app/.carat/config`.
 
-Executing `bundle config --delete <name>` will delete the configuration in both
+Executing `carat config --delete <name>` will delete the configuration in both
 local and global sources. Not compatible with --global or --local flag.
 
-Executing bundle with the `BUNDLE_IGNORE_CONFIG` environment variable set will
+Executing carat with the `BUNDLE_IGNORE_CONFIG` environment variable set will
 cause it to ignore all configuration.
 
 ## BUILD OPTIONS
 
-You can use `bundle config` to give bundler the flags to pass to the gem
-installer every time bundler tries to install a particular gem.
+You can use `carat config` to give carat the flags to pass to the gem
+installer every time carat tries to install a particular gem.
 
 A very common example, the `mysql` gem, requires Snow Leopard users to
 pass configuration flags to `gem install` to specify where to find the
@@ -49,21 +49,21 @@ pass configuration flags to `gem install` to specify where to find the
 Since the specific location of that executable can change from machine
 to machine, you can specify these flags on a per-machine basis.
 
-    bundle config build.mysql --with-mysql-config=/usr/local/mysql/bin/mysql_config
+    carat config build.mysql --with-mysql-config=/usr/local/mysql/bin/mysql_config
 
-After running this command, every time bundler needs to install the
+After running this command, every time carat needs to install the
 `mysql` gem, it will pass along the flags you specified.
 
 ## CONFIGURATION KEYS
 
-Configuration keys in bundler have two forms: the canonical form and the
+Configuration keys in carat have two forms: the canonical form and the
 environment variable form.
 
-For instance, passing the `--without` flag to [bundle install(1)][bundle-install]
+For instance, passing the `--without` flag to [carat install(1)][carat-install]
 prevents Carat from installing certain groups specified in the Gemfile(5). Carat
-persists this value in `app/.bundle/config` so that calls to `Carat.setup`
+persists this value in `app/.carat/config` so that calls to `Carat.setup`
 do not try to find gems from the `Gemfile` that you didn't install. Additionally,
-subsequent calls to [bundle install(1)][bundle-install] remember this setting and skip those
+subsequent calls to [carat install(1)][carat-install] remember this setting and skip those
 groups.
 
 The canonical form of this configuration is `"without"`. To convert the canonical
@@ -77,23 +77,23 @@ the environment variable `BUNDLE_LOCAL__RACK`.
 ## LIST OF AVAILABLE KEYS
 
 The following is a list of all configuration keys and their purpose. You can
-learn more about their operation in [bundle install(1)][bundle-install].
+learn more about their operation in [carat install(1)][carat-install].
 
 * `path` (`BUNDLE_PATH`):
   The location on disk to install gems. Defaults to `$GEM_HOME` in development
-  and `vendor/bundle` when `--deployment` is used
+  and `vendor/carat` when `--deployment` is used
 * `frozen` (`BUNDLE_FROZEN`):
   Disallow changes to the `Gemfile`. Defaults to `true` when `--deployment`
   is used.
 * `without` (`BUNDLE_WITHOUT`):
-  A `:`-separated list of groups whose gems bundler should not install
+  A `:`-separated list of groups whose gems carat should not install
 * `bin` (`BUNDLE_BIN`):
-  Install executables from gems in the bundle to the specified directory.
+  Install executables from gems in the carat to the specified directory.
   Defaults to `false`.
 * `gemfile` (`BUNDLE_GEMFILE`):
-  The name of the file that bundler should use as the `Gemfile`. This location
+  The name of the file that carat should use as the `Gemfile`. This location
   of this file also sets the root of the project, which is used to resolve
-  relative paths in the `Gemfile`, among other things. By default, bundler
+  relative paths in the `Gemfile`, among other things. By default, carat
   will search up from the current working directory until it finds a
   `Gemfile`.
 * `ssl_ca_cert` (`BUNDLE_SSL_CA_CERT`):
@@ -102,17 +102,17 @@ learn more about their operation in [bundle install(1)][bundle-install].
 * `ssl_client_cert` (`BUNDLE_SSL_CLIENT_CERT`):
   Path to a designated file containing a X.509 client certificate
   and key in PEM format.
-* `cache_path` (`BUNDLE_CACHE_PATH`): The directory that bundler will place
-  cached gems in when running <code>bundle package</code>, and that bundler
+* `cache_path` (`BUNDLE_CACHE_PATH`): The directory that carat will place
+  cached gems in when running <code>carat package</code>, and that carat
   will look in when installing gems.
 * `disable_multisource` (`BUNDLE_DISABLE_MULTISOURCE`): When set, Gemfiles
   containing multiple sources will produce errors instead of warnings. Use
-  `bundle config --delete disable_multisource` to unset.
+  `carat config --delete disable_multisource` to unset.
 
 In general, you should set these settings per-application by using the applicable
-flag to the [bundle install(1)][bundle-install] or [bundle package(1)][bundle-package] command.
+flag to the [carat install(1)][carat-install] or [carat package(1)][carat-package] command.
 
-You can set them globally either via environment variables or `bundle config`,
+You can set them globally either via environment variables or `carat config`,
 whichever is preferable for your setup. If you use both, environment variables
 will take preference over global settings.
 
@@ -122,11 +122,11 @@ Carat also allows you to work against a git repository locally
 instead of using the remote version. This can be achieved by setting
 up a local override:
 
-    bundle config local.GEM_NAME /path/to/local/git/repository
+    carat config local.GEM_NAME /path/to/local/git/repository
 
 For example, in order to use a local Rack repository, a developer could call:
 
-    bundle config local.rack ~/Work/git/rack
+    carat config local.rack ~/Work/git/rack
 
 Now instead of checking out the remote git repository, the local
 override will be used. Similar to a path source, every time the local
@@ -155,23 +155,23 @@ Carat supports overriding gem sources with mirrors. This allows you to
 configure rubygems.org as the gem source in your Gemfile while still using your
 mirror to fetch gems.
 
-    bundle config mirror.SOURCE_URL MIRROR_URL
+    carat config mirror.SOURCE_URL MIRROR_URL
 
 For example, to use a mirror of rubygems.org hosted at
 
-    bundle config mirror.http://rubygems.org http://rubygems-mirror.org
+    carat config mirror.http://rubygems.org http://rubygems-mirror.org
 
 ## CREDENTIALS FOR GEM SOURCES
 
 Carat allows you to configure credentials for any gem source, which allows
 you to avoid putting secrets into your Gemfile.
 
-    bundle config SOURCE_HOSTNAME USERNAME:PASSWORD
+    carat config SOURCE_HOSTNAME USERNAME:PASSWORD
 
 For example, to save the credentials of user `claudette` for the gem source at
 `gems.longerous.com`, you would run:
 
-    bundle config gems.longerous.com claudette:s00pers3krit
+    carat config gems.longerous.com claudette:s00pers3krit
 
 Or you can set the credentials as an environment variable like this:
 

@@ -55,12 +55,12 @@ module Spec
       File.expand_path('../../../lib', __FILE__)
     end
 
-    def bundle(cmd, options = {})
+    def carat(cmd, options = {})
       expect_err = options.delete(:expect_err)
       sudo       = "sudo" if options.delete(:sudo)
       options["no-color"] = true unless options.key?("no-color") || %w(exec conf).include?(cmd.to_s[0..3])
 
-      bundle_bin = File.expand_path('../../../bin/bundle', __FILE__)
+      carat_bin = File.expand_path('../../../bin/carat', __FILE__)
 
       requires = options.delete(:requires) || []
       requires << File.expand_path('../fakeweb/'+options.delete(:fakeweb)+'.rb', __FILE__) if options.key?(:fakeweb)
@@ -72,7 +72,7 @@ module Spec
         v == true ? " --#{k}" : " --#{k} #{v}" if v
       end.join
 
-      cmd = "#{env} #{sudo} #{Gem.ruby} -I#{lib} #{requires_str} #{bundle_bin} #{cmd}#{args}"
+      cmd = "#{env} #{sudo} #{Gem.ruby} -I#{lib} #{requires_str} #{carat_bin} #{cmd}#{args}"
       sys_exec(cmd, expect_err){|i| yield i if block_given? }
     end
 
@@ -80,7 +80,7 @@ module Spec
       expect_err = options.delete(:expect_err)
       options["no-color"] = true unless options.key?("no-color")
 
-      bundle_bin = File.expand_path('../../../bin/bundle_ruby', __FILE__)
+      carat_bin = File.expand_path('../../../bin/carat_ruby', __FILE__)
 
       requires = options.delete(:requires) || []
       requires << File.expand_path('../fakeweb/'+options.delete(:fakeweb)+'.rb', __FILE__) if options.key?(:fakeweb)
@@ -88,7 +88,7 @@ module Spec
       requires_str = requires.map{|r| "-r#{r}"}.join(" ")
 
       env = (options.delete(:env) || {}).map{|k, v| "#{k}='#{v}' "}.join
-      cmd = "#{env}#{Gem.ruby} -I#{lib} #{requires_str} #{bundle_bin}"
+      cmd = "#{env}#{Gem.ruby} -I#{lib} #{requires_str} #{carat_bin}"
 
       sys_exec(cmd, expect_err){|i| yield i if block_given? }
     end
@@ -137,7 +137,7 @@ module Spec
       @out
     end
 
-    def config(config = nil, path = bundled_app('.bundle/config'))
+    def config(config = nil, path = bundled_app('.carat/config'))
       return YAML.load_file(path) unless config
       FileUtils.mkdir_p(File.dirname(path))
       File.open(path, 'w') do |f|
@@ -147,7 +147,7 @@ module Spec
     end
 
     def global_config(config = nil)
-      config(config, home(".bundle/config"))
+      config(config, home(".carat/config"))
     end
 
     def create_file(*args)
@@ -178,7 +178,7 @@ module Spec
       gemfile(*args)
       opts = args.last.is_a?(Hash) ? args.last : {}
       opts[:retry] ||= 0
-      bundle :install, opts
+      carat :install, opts
     end
 
     def install_gems(*gems)
@@ -293,7 +293,7 @@ module Spec
     def simulate_new_machine
       system_gems []
       FileUtils.rm_rf default_bundle_path
-      FileUtils.rm_rf bundled_app('.bundle')
+      FileUtils.rm_rf bundled_app('.carat')
     end
 
     def simulate_platform(platform)

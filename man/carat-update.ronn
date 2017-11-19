@@ -1,39 +1,39 @@
-bundle-update(1) -- Update your gems to the latest available versions
+carat-update(1) -- Update your gems to the latest available versions
 =====================================================================
 
 ## SYNOPSIS
 
-`bundle update` <*gems> [--group=NAME] [--source=NAME] [--local]
+`carat update` <*gems> [--group=NAME] [--source=NAME] [--local]
 
 ## DESCRIPTION
 
 Update the gems specified (all gems, if none are specified), ignoring
 the previously installed gems specified in the `Gemfile.lock`. In
-general, you should use [bundle install(1)][bundle-install] to install the same exact
+general, you should use [carat install(1)][carat-install] to install the same exact
 gems and versions across machines.
 
-You would use `bundle update` to explicitly update the version of a
+You would use `carat update` to explicitly update the version of a
 gem.
 
 ## OPTIONS
 
 * `--group=<name>`:
   Only update the gems in the specified group. For instance, you can update all gems
-  in the development group with `bundle update --group development`. You can also
-  call `bundle update rails --group test` to update the rails gem and all gems in
+  in the development group with `carat update --group development`. You can also
+  call `carat update rails --group test` to update the rails gem and all gems in
   the test group, for example.
 
 * `--source=<name>`:
   The name of a `:git` or `:path` source used in the Gemfile(5). For
   instance, with a `:git` source of `http://github.com/rails/rails.git`,
-  you would call `bundle update --source rails`
+  you would call `carat update --source rails`
 
 * `--local`:
   Do not attempt to fetch gems remotely and use the gem cache instead.
 
 ## UPDATING ALL GEMS
 
-If you run `bundle update` with no parameters, bundler will ignore
+If you run `carat update` with no parameters, carat will ignore
 any previously installed gems and resolve all dependencies again
 based on the latest versions of all gems available in the sources.
 
@@ -44,7 +44,7 @@ Consider the following Gemfile(5):
     gem "rails", "3.0.0.rc"
     gem "nokogiri"
 
-When you run [bundle install(1)][bundle-install] the first time, bundler will resolve
+When you run [carat install(1)][carat-install] the first time, carat will resolve
 all of the dependencies, all the way down, and install what you need:
 
     Fetching gem metadata from https://rubygems.org/.........
@@ -52,7 +52,7 @@ all of the dependencies, all the way down, and install what you need:
     Installing builder 2.1.2
     Installing abstract 1.0.0
     Installing rack 1.2.8
-    Using bundler 1.7.6
+    Using carat 1.7.6
     Installing rake 10.4.0
     Installing polyglot 0.3.5
     Installing mime-types 1.25.1
@@ -77,25 +77,25 @@ all of the dependencies, all the way down, and install what you need:
     Installing nokogiri 1.6.5
 
     Bundle complete! 2 Gemfile dependencies, 26 gems total.
-    Use `bundle show [gemname]` to see where a bundled gem is installed.
+    Use `carat show [gemname]` to see where a bundled gem is installed.
 
 As you can see, even though you have just two gems in the Gemfile(5), your application
 actually needs 26 different gems in order to run. Carat remembers the exact versions
-it installed in `Gemfile.lock`. The next time you run [bundle install(1)][bundle-install], bundler skips
+it installed in `Gemfile.lock`. The next time you run [carat install(1)][carat-install], carat skips
 the dependency resolution and installs the same gems as it installed last time.
 
 After checking in the `Gemfile.lock` into version control and cloning it on another
-machine, running [bundle install(1)][bundle-install] will _still_ install the gems that you installed
+machine, running [carat install(1)][carat-install] will _still_ install the gems that you installed
 last time. You don't need to worry that a new release of `erubis` or `mail` changes
 the gems you use.
 
 However, from time to time, you might want to update the gems you are using to the
 newest versions that still match the gems in your Gemfile(5).
 
-To do this, run `bundle update`, which will ignore the `Gemfile.lock`, and resolve
+To do this, run `carat update`, which will ignore the `Gemfile.lock`, and resolve
 all the dependencies again. Keep in mind that this process can result in a significantly
 different set of the 25 gems, based on the requirements of new gems that the gem
-authors released since the last time you ran `bundle update`.
+authors released since the last time you ran `carat update`.
 
 ## UPDATING A LIST OF GEMS
 
@@ -104,7 +104,7 @@ gems that you specified locked to the versions in the `Gemfile.lock`.
 
 For instance, in the scenario above, imagine that `nokogiri` releases version `1.4.4`, and
 you want to update it _without_ updating Rails and all of its dependencies. To do this,
-run `bundle update nokogiri`.
+run `carat update nokogiri`.
 
 Carat will update `nokogiri` and any of its dependencies, but leave alone Rails and
 its dependencies.
@@ -121,7 +121,7 @@ second-level dependency. For instance, consider the case of `thin` and
     gem "rack-perftools-profiler"
 
 The `thin` gem depends on `rack >= 1.0`, while `rack-perftools-profiler` depends
-on `rack ~> 1.0`. If you run bundle install, you get:
+on `rack ~> 1.0`. If you run carat install, you get:
 
     Fetching source index for https://rubygems.org/
     Installing daemons (1.1.0)
@@ -131,31 +131,31 @@ on `rack ~> 1.0`. If you run bundle install, you get:
     Installing rack (1.2.1)
     Installing rack-perftools_profiler (0.0.2)
     Installing thin (1.2.7) with native extensions
-    Using bundler (1.0.0.rc.3)
+    Using carat (1.0.0.rc.3)
 
 In this case, the two gems have their own set of dependencies, but they share
-`rack` in common. If you run `bundle update thin`, bundler will update `daemons`,
+`rack` in common. If you run `carat update thin`, carat will update `daemons`,
 `eventmachine` and `rack`, which are dependencies of `thin`, but not `open4` or
 `perftools.rb`, which are dependencies of `rack-perftools_profiler`. Note that
-`bundle update thin` will update `rack` even though it's _also_ a dependency of
+`carat update thin` will update `rack` even though it's _also_ a dependency of
 `rack-perftools_profiler`.
 
-`In short`, when you update a gem using `bundle update`, bundler will update all
+`In short`, when you update a gem using `carat update`, carat will update all
 dependencies of that gem, including those that are also dependencies of another gem.
 
 In this scenario, updating the `thin` version manually in the Gemfile(5),
-and then running [bundle install(1)][bundle-install] will only update `daemons` and `eventmachine`,
+and then running [carat install(1)][carat-install] will only update `daemons` and `eventmachine`,
 but not `rack`. For more information, see the `CONSERVATIVE UPDATING` section
-of [bundle install(1)][bundle-install].
+of [carat install(1)][carat-install].
 
 ## RECOMMENDED WORKFLOW
 
-In general, when working with an application managed with bundler, you should
+In general, when working with an application managed with carat, you should
 use the following workflow:
 
 * After you create your Gemfile(5) for the first time, run
 
-    $ bundle install
+    $ carat install
 
 * Check the resulting `Gemfile.lock` into version control
 
@@ -163,26 +163,26 @@ use the following workflow:
 
 * When checking out this repository on another development machine, run
 
-    $ bundle install
+    $ carat install
 
 * When checking out this repository on a deployment machine, run
 
-    $ bundle install --deployment
+    $ carat install --deployment
 
 * After changing the Gemfile(5) to reflect a new or update dependency, run
 
-    $ bundle install
+    $ carat install
 
 * Make sure to check the updated `Gemfile.lock` into version control
 
     $ git add Gemfile.lock
 
-* If [bundle install(1)][bundle-install] reports a conflict, manually update the specific
+* If [carat install(1)][carat-install] reports a conflict, manually update the specific
   gems that you changed in the Gemfile(5)
 
-    $ bundle update rails thin
+    $ carat update rails thin
 
 * If you want to update all the gems to the latest possible versions that
   still match the gems listed in the Gemfile(5), run
 
-    $ bundle update
+    $ carat update
