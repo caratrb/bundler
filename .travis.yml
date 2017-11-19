@@ -13,8 +13,6 @@ env:
   - RGV=master
   # Test the latest rubygems release with all of our supported rubies
   - RGV=v2.7.2
-  # Test the oldest rubygems release we support
-  - RGV=v1.3.6
 
 matrix:
   fast_finish: true
