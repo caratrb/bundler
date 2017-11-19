@@ -1,6 +1,8 @@
-require 'fileutils'
-require 'net/https'
-require 'openssl'
+# frozen_string_literal: true
+
+require "bundler/vendored_fileutils"
+require "net/https"
+require "openssl"
 
 module Bundler
   module SSLCerts
@@ -13,7 +15,7 @@ module Bundler
 
       def initialize(rubygems_path = nil)
         if rubygems_path
-          rubygems_cert_path = File.join(rubygems_path, 'lib/rubygems/ssl_certs')
+          rubygems_cert_path = File.join(rubygems_path, "lib/rubygems/ssl_certs")
           @rubygems_certs = certificates_in(rubygems_cert_path)
         end
 
@@ -41,13 +43,13 @@ module Bundler
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_PEER
         http.cert_store = store
-        http.head('/')
+        http.head("/")
       end
 
     private
 
       def certificates_in(path)
-        Dir[File.join(path, "*.pem")].sort
+        Dir[File.join(path, "**/*.pem")].sort
       end
 
       def store
@@ -59,7 +61,6 @@ module Bundler
           store
         end
       end
-
     end
   end
 end
