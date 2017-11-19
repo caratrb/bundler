@@ -10,7 +10,7 @@
 /pkg/
 
 # output from ronn
-/lib/bundler/man/
+/lib/carat/man/
 
 # output from ci_reporter
 /spec/reports/
