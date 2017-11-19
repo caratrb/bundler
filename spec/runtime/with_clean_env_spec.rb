@@ -16,7 +16,7 @@ describe "Bundler.with_env helpers" do
 
   around do |example|
     env = Bundler::ORIGINAL_ENV.dup
-    Bundler::ORIGINAL_ENV['CARAT_PATH'] = "./Gemfile"
+    Bundler::ORIGINAL_ENV['BUNDLE_PATH'] = "./Gemfile"
     example.run
     Bundler::ORIGINAL_ENV.replace env
   end
@@ -39,7 +39,7 @@ describe "Bundler.with_env helpers" do
 
     it "should not pass any carat environment variables" do
       Bundler.with_clean_env do
-        expect(`echo $CARAT_PATH`.strip).not_to eq('./Gemfile')
+        expect(`echo $BUNDLE_PATH`.strip).not_to eq('./Gemfile')
       end
     end
 
@@ -56,7 +56,7 @@ describe "Bundler.with_env helpers" do
     end
 
     it "should not change ORIGINAL_ENV" do
-      expect(Bundler::ORIGINAL_ENV['CARAT_PATH']).to eq('./Gemfile')
+      expect(Bundler::ORIGINAL_ENV['BUNDLE_PATH']).to eq('./Gemfile')
     end
 
   end
@@ -67,14 +67,14 @@ describe "Bundler.with_env helpers" do
 
     it "should pass carat environment variables set before Bundler was run" do
       Bundler.with_original_env do
-        expect(`echo $CARAT_PATH`.strip).to eq('./Gemfile')
+        expect(`echo $BUNDLE_PATH`.strip).to eq('./Gemfile')
       end
     end
   end
 
   describe "Bundler.clean_system" do
     it "runs system inside with_clean_env" do
-      Bundler.clean_system(%{echo 'if [ "$CARAT_PATH" = "" ]; then exit 42; else exit 1; fi' | /bin/sh})
+      Bundler.clean_system(%{echo 'if [ "$BUNDLE_PATH" = "" ]; then exit 42; else exit 1; fi' | /bin/sh})
       expect($?.exitstatus).to eq(42)
     end
   end
@@ -82,7 +82,7 @@ describe "Bundler.with_env helpers" do
   describe "Bundler.clean_exec" do
     it "runs exec inside with_clean_env" do
       pid = Kernel.fork do
-        Bundler.clean_exec(%{echo 'if [ "$CARAT_PATH" = "" ]; then exit 42; else exit 1; fi' | /bin/sh})
+        Bundler.clean_exec(%{echo 'if [ "$BUNDLE_PATH" = "" ]; then exit 42; else exit 1; fi' | /bin/sh})
       end
       Process.wait(pid)
       expect($?.exitstatus).to eq(42)

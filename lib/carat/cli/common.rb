@@ -30,7 +30,7 @@ module Bundler
     end
 
     def self.ask_for_spec_from(specs)
-      if !$stdout.tty? && ENV['CARAT_SPEC_RUN'].nil?
+      if !$stdout.tty? && ENV['BUNDLE_SPEC_RUN'].nil?
         raise GemNotFound, gem_not_found_message(name, Bundler.definition.dependencies)
       end
 

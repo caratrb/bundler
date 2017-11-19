@@ -306,7 +306,7 @@ module Bundler
         exec_name = args.first
 
         if exec_name == 'bundle'
-          return ENV['CARAT_BIN_PATH']
+          return ENV['BUNDLE_BIN_PATH']
         end
 
         spec = nil

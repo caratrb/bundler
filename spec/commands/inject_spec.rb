@@ -61,7 +61,7 @@ describe "bundle inject" do
     it "restores frozen afterwards" do
       bundle "inject 'rack-obama' '> 0'"
       config = YAML.load(bundled_app(".bundle/config").read)
-      expect(config["CARAT_FROZEN"]).to eq("1")
+      expect(config["BUNDLE_FROZEN"]).to eq("1")
     end
 
     it "doesn't allow Gemfile changes" do

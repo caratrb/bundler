@@ -217,7 +217,7 @@ describe "bundle binstubs <gem>" do
     end
   end
 
-  context "when CARAT_INSTALL is specified" do
+  context "when BUNDLE_INSTALL is specified" do
     it "performs an automatic bundle install" do
       gemfile <<-G
         source "file://#{gem_repo1}"
@@ -237,7 +237,7 @@ describe "bundle binstubs <gem>" do
       G
 
       bundle "config auto_install 1"
-      bundle "binstubs rack", :env => { "CARAT_INSTALL" => 1 }
+      bundle "binstubs rack", :env => { "BUNDLE_INSTALL" => 1 }
       expect(out).not_to include('Installing rack 1.0.0')
     end
   end

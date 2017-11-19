@@ -51,7 +51,7 @@ describe "bundle install" do
     end
   end
 
-  describe "when CARAT_PATH or the global path config is set" do
+  describe "when BUNDLE_PATH or the global path config is set" do
     before :each do
       build_lib "rack", "1.0.0", :to_system => true do |s|
         s.write "lib/rack.rb", "raise 'FAIL'"
@@ -65,7 +65,7 @@ describe "bundle install" do
 
     def set_bundle_path(type, location)
       if type == :env
-        ENV["CARAT_PATH"] = location
+        ENV["BUNDLE_PATH"] = location
       elsif type == :global
         bundle "config path #{location}", "no-color" => nil
       end
@@ -81,7 +81,7 @@ describe "bundle install" do
         should_be_installed "rack 1.0.0"
       end
 
-      it "installs gems to CARAT_PATH with #{type}" do
+      it "installs gems to BUNDLE_PATH with #{type}" do
         set_bundle_path(type, bundled_app("vendor").to_s)
 
         bundle :install
@@ -90,7 +90,7 @@ describe "bundle install" do
         should_be_installed "rack 1.0.0"
       end
 
-      it "installs gems to CARAT_PATH relative to root when relative" do
+      it "installs gems to BUNDLE_PATH relative to root when relative" do
         set_bundle_path(type, "vendor")
 
         FileUtils.mkdir_p bundled_app('lol')
@@ -103,8 +103,8 @@ describe "bundle install" do
       end
     end
 
-    it "installs gems to CARAT_PATH from .bundle/config" do
-      config "CARAT_PATH" => bundled_app("vendor/bundle").to_s
+    it "installs gems to BUNDLE_PATH from .bundle/config" do
+      config "BUNDLE_PATH" => bundled_app("vendor/bundle").to_s
 
       bundle :install
 
@@ -112,7 +112,7 @@ describe "bundle install" do
       should_be_installed "rack 1.0.0"
     end
 
-    it "sets CARAT_PATH as the first argument to bundle install" do
+    it "sets BUNDLE_PATH as the first argument to bundle install" do
       bundle "install --path ./vendor/bundle"
 
       expect(vendored_gems('gems/rack-1.0.0')).to be_directory

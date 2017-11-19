@@ -167,7 +167,7 @@ describe "Bundler.setup" do
     expect(bundled_app("Gemfile.lock")).to exist
   end
 
-  it "uses CARAT_GEMFILE to locate the gemfile if present" do
+  it "uses BUNDLE_GEMFILE to locate the gemfile if present" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack"
@@ -178,14 +178,14 @@ describe "Bundler.setup" do
       gem "activesupport", "2.3.5"
     G
 
-    ENV['CARAT_GEMFILE'] = bundled_app('4realz').to_s
+    ENV['BUNDLE_GEMFILE'] = bundled_app('4realz').to_s
     bundle :install
 
     should_be_installed "activesupport 2.3.5"
   end
 
-  it "prioritizes gems in CARAT_PATH over gems in GEM_HOME" do
-    ENV['CARAT_PATH'] = bundled_app('.bundle').to_s
+  it "prioritizes gems in BUNDLE_PATH over gems in GEM_HOME" do
+    ENV['BUNDLE_PATH'] = bundled_app('.bundle').to_s
     install_gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack", "1.0.0"
@@ -659,7 +659,7 @@ describe "Bundler.setup" do
       G
 
       Dir.chdir(bundled_app.parent) do
-        run <<-R, :env => {"CARAT_GEMFILE" => bundled_app('Gemfile')}
+        run <<-R, :env => {"BUNDLE_GEMFILE" => bundled_app('Gemfile')}
           require 'foo'
         R
       end
@@ -683,7 +683,7 @@ describe "Bundler.setup" do
       bundle :install
 
       Dir.chdir(bundled_app.parent) do
-        run <<-R, :env => {"CARAT_GEMFILE" => bundled_app('Gemfile')}
+        run <<-R, :env => {"BUNDLE_GEMFILE" => bundled_app('Gemfile')}
           require 'foo'
         R
       end

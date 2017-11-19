@@ -95,7 +95,7 @@ module Bundler
   private
 
     def find_gemfile
-      given = ENV['CARAT_GEMFILE']
+      given = ENV['BUNDLE_GEMFILE']
       return given if given && !given.empty?
 
       find_file('Gemfile', 'gems.rb')
@@ -118,7 +118,7 @@ module Bundler
       current  = File.expand_path(SharedHelpers.pwd)
 
       until !File.directory?(current) || current == previous
-        if ENV['CARAT_SPEC_RUN']
+        if ENV['BUNDLE_SPEC_RUN']
           # avoid stepping above the tmp directory when testing
           return nil if File.file?(File.join(current, 'carat.gemspec'))
         end

@@ -8,7 +8,7 @@ describe Bundler::GemHelper do
   let(:app_gemspec_path) { app_path.join("#{app_name}.gemspec") }
 
   before(:each) do
-    global_config "CARAT_GEM__MIT" => "false", "CARAT_GEM__TEST" => "false", "CARAT_GEM__COC" => "false"
+    global_config "BUNDLE_GEM__MIT" => "false", "BUNDLE_GEM__TEST" => "false", "BUNDLE_GEM__COC" => "false"
     bundle "gem #{app_name}"
   end
 

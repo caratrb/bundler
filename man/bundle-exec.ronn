@@ -25,7 +25,7 @@ available on your shell's `$PATH`.
   flag is passed, exec will revert to the 1.9 behaviour of passing all file
   descriptors to the new process.
 
-## CARAT INSTALL --BINSTUBS
+## BUNDLE INSTALL --BINSTUBS
 
 If you use the `--binstubs` flag in [bundle install(1)][bundle-install], Bundler will
 automatically create a directory (which defaults to `app_root/bin`)
@@ -41,11 +41,11 @@ then executes the command you specify in full.
 
 * make sure that it's still possible to shell out to `bundle`
   from inside a command invoked by `bundle exec` (using
-  `$CARAT_BIN_PATH`)
+  `$BUNDLE_BIN_PATH`)
 * put the directory containing executables (like `rails`, `rspec`,
   `rackup`) for your bundle on `$PATH`
 * make sure that if bundler is invoked in the subshell, it uses
-  the same `Gemfile` (by setting `CARAT_GEMFILE`)
+  the same `Gemfile` (by setting `BUNDLE_GEMFILE`)
 * add `-rbundler/setup` to `$RUBYOPT`, which makes sure that
   Ruby programs invoked in the subshell can see the gems in
   the bundle

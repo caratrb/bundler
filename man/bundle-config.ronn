@@ -32,7 +32,7 @@ the local application. The configuration will be stored in `app/.bundle/config`.
 Executing `bundle config --delete <name>` will delete the configuration in both
 local and global sources. Not compatible with --global or --local flag.
 
-Executing bundle with the `CARAT_IGNORE_CONFIG` environment variable set will
+Executing bundle with the `BUNDLE_IGNORE_CONFIG` environment variable set will
 cause it to ignore all configuration.
 
 ## BUILD OPTIONS
@@ -67,45 +67,45 @@ subsequent calls to [bundle install(1)][bundle-install] remember this setting an
 groups.
 
 The canonical form of this configuration is `"without"`. To convert the canonical
-form to the environment variable form, capitalize it, and prepend `CARAT_`. The
-environment variable form of `"without"` is `CARAT_WITHOUT`.
+form to the environment variable form, capitalize it, and prepend `BUNDLE_`. The
+environment variable form of `"without"` is `BUNDLE_WITHOUT`.
 
 Any periods in the configuration keys must be replaced with two underscores when
 setting it via environment variables. The configuration key `local.rack` becomes
-the environment variable `CARAT_LOCAL__RACK`.
+the environment variable `BUNDLE_LOCAL__RACK`.
 
 ## LIST OF AVAILABLE KEYS
 
 The following is a list of all configuration keys and their purpose. You can
 learn more about their operation in [bundle install(1)][bundle-install].
 
-* `path` (`CARAT_PATH`):
+* `path` (`BUNDLE_PATH`):
   The location on disk to install gems. Defaults to `$GEM_HOME` in development
   and `vendor/bundle` when `--deployment` is used
-* `frozen` (`CARAT_FROZEN`):
+* `frozen` (`BUNDLE_FROZEN`):
   Disallow changes to the `Gemfile`. Defaults to `true` when `--deployment`
   is used.
-* `without` (`CARAT_WITHOUT`):
+* `without` (`BUNDLE_WITHOUT`):
   A `:`-separated list of groups whose gems bundler should not install
-* `bin` (`CARAT_BIN`):
+* `bin` (`BUNDLE_BIN`):
   Install executables from gems in the bundle to the specified directory.
   Defaults to `false`.
-* `gemfile` (`CARAT_GEMFILE`):
+* `gemfile` (`BUNDLE_GEMFILE`):
   The name of the file that bundler should use as the `Gemfile`. This location
   of this file also sets the root of the project, which is used to resolve
   relative paths in the `Gemfile`, among other things. By default, bundler
   will search up from the current working directory until it finds a
   `Gemfile`.
-* `ssl_ca_cert` (`CARAT_SSL_CA_CERT`):
+* `ssl_ca_cert` (`BUNDLE_SSL_CA_CERT`):
   Path to a designated CA certificate file or folder containing multiple
   certificates for trusted CAs in PEM format.
-* `ssl_client_cert` (`CARAT_SSL_CLIENT_CERT`):
+* `ssl_client_cert` (`BUNDLE_SSL_CLIENT_CERT`):
   Path to a designated file containing a X.509 client certificate
   and key in PEM format.
-* `cache_path` (`CARAT_CACHE_PATH`): The directory that bundler will place
+* `cache_path` (`BUNDLE_CACHE_PATH`): The directory that bundler will place
   cached gems in when running <code>bundle package</code>, and that bundler
   will look in when installing gems.
-* `disable_multisource` (`CARAT_DISABLE_MULTISOURCE`): When set, Gemfiles
+* `disable_multisource` (`BUNDLE_DISABLE_MULTISOURCE`): When set, Gemfiles
   containing multiple sources will produce errors instead of warnings. Use
   `bundle config --delete disable_multisource` to unset.
 
@@ -175,4 +175,4 @@ For example, to save the credentials of user `claudette` for the gem source at
 
 Or you can set the credentials as an environment variable like this:
 
-    export CARAT_GEMS__LONGEROUS__COM="claudette:s00pers3krit"
+    export BUNDLE_GEMS__LONGEROUS__COM="claudette:s00pers3krit"

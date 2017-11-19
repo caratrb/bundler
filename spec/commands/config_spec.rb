@@ -8,9 +8,9 @@ describe ".bundle/config" do
     G
   end
 
-  describe "CARAT_APP_CONFIG" do
+  describe "BUNDLE_APP_CONFIG" do
     it "can be moved with an environment variable" do
-      ENV['CARAT_APP_CONFIG'] = tmp('foo/bar').to_s
+      ENV['BUNDLE_APP_CONFIG'] = tmp('foo/bar').to_s
       bundle "install --path vendor/bundle"
 
       expect(bundled_app('.bundle')).not_to exist
@@ -22,7 +22,7 @@ describe ".bundle/config" do
       FileUtils.mkdir_p bundled_app('omg')
       Dir.chdir bundled_app('omg')
 
-      ENV['CARAT_APP_CONFIG'] = "../foo"
+      ENV['BUNDLE_APP_CONFIG'] = "../foo"
       bundle "install --path vendor/bundle"
 
       expect(bundled_app(".bundle")).not_to exist
@@ -30,9 +30,9 @@ describe ".bundle/config" do
       should_be_installed "rack 1.0.0"
     end
 
-    it "removes environment.rb from CARAT_APP_CONFIG's path" do
+    it "removes environment.rb from BUNDLE_APP_CONFIG's path" do
       FileUtils.mkdir_p(tmp('foo/bar'))
-      ENV['CARAT_APP_CONFIG'] = tmp('foo/bar').to_s
+      ENV['BUNDLE_APP_CONFIG'] = tmp('foo/bar').to_s
       bundle "install"
       FileUtils.touch tmp('foo/bar/environment.rb')
       should_be_installed "rack 1.0.0"
@@ -67,7 +67,7 @@ describe ".bundle/config" do
 
     it "has lower precedence than env" do
       begin
-        ENV["CARAT_FOO"] = "env"
+        ENV["BUNDLE_FOO"] = "env"
 
         bundle "config --global foo global"
         expect(out).to match(/You have a carat environment variable for foo set to "env"/)
@@ -75,7 +75,7 @@ describe ".bundle/config" do
         run "puts Bundler.settings[:foo]"
         expect(out).to eq("env")
       ensure
-        ENV.delete("CARAT_FOO")
+        ENV.delete("BUNDLE_FOO")
       end
     end
 
@@ -114,13 +114,13 @@ describe ".bundle/config" do
 
     it "has higher precedence than env" do
       begin
-        ENV["CARAT_FOO"] = "env"
+        ENV["BUNDLE_FOO"] = "env"
         bundle "config --local foo local"
 
         run "puts Bundler.settings[:foo]"
         expect(out).to eq("local")
       ensure
-        ENV.delete("CARAT_FOO")
+        ENV.delete("BUNDLE_FOO")
       end
     end
 
@@ -152,7 +152,7 @@ describe ".bundle/config" do
     before(:each) { bundle :install }
 
     it "can set boolean properties via the environment" do
-      ENV["CARAT_FROZEN"] = "true"
+      ENV["BUNDLE_FROZEN"] = "true"
 
       run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("true")
@@ -162,24 +162,24 @@ describe ".bundle/config" do
       run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("false")
 
-      ENV["CARAT_FROZEN"] = "false"
+      ENV["BUNDLE_FROZEN"] = "false"
 
       run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("false")
 
-      ENV["CARAT_FROZEN"] = "0"
+      ENV["BUNDLE_FROZEN"] = "0"
 
       run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("false")
 
-      ENV["CARAT_FROZEN"] = ""
+      ENV["BUNDLE_FROZEN"] = ""
 
       run "if Bundler.settings[:frozen]; puts 'true' else puts 'false' end"
       expect(out).to eq("false")
     end
 
     it "can set properties with periods via the environment" do
-      ENV["CARAT_FOO__BAR"] = "baz"
+      ENV["BUNDLE_FOO__BAR"] = "baz"
 
       run "puts Bundler.settings['foo.bar']"
       expect(out).to eq("baz")
@@ -224,7 +224,7 @@ E
     it "doesn't duplicate quotes around values", :if => (RUBY_VERSION >= "2.1") do
       bundled_app(".bundle").mkpath
       File.open(bundled_app(".bundle/config"), 'w') do |f|
-        f.write 'CARAT_FOO: "$BUILD_DIR"'
+        f.write 'BUNDLE_FOO: "$BUILD_DIR"'
       end
 
       bundle "config bar baz"
@@ -232,7 +232,7 @@ E
 
       # Starting in Ruby 2.1, YAML automatically adds double quotes
       # around some values, including $ and newlines.
-      expect(out).to include('CARAT_FOO: "$BUILD_DIR"')
+      expect(out).to include('BUNDLE_FOO: "$BUILD_DIR"')
     end
 
     it "doesn't duplicate quotes around long wrapped values" do

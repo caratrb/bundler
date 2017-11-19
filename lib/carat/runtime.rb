@@ -211,13 +211,13 @@ module Bundler
 
     def setup_environment
       begin
-        ENV["CARAT_BIN_PATH"] = Bundler.rubygems.bin_path("carat", "carat", VERSION)
+        ENV["BUNDLE_BIN_PATH"] = Bundler.rubygems.bin_path("carat", "carat", VERSION)
       rescue Gem::GemNotFoundException
-        ENV["CARAT_BIN_PATH"] = File.expand_path("../../../bin/carat", __FILE__)
+        ENV["BUNDLE_BIN_PATH"] = File.expand_path("../../../bin/carat", __FILE__)
       end
 
-      # Set CARAT_GEMFILE
-      ENV["CARAT_GEMFILE"] = default_gemfile.to_s
+      # Set BUNDLE_GEMFILE
+      ENV["BUNDLE_GEMFILE"] = default_gemfile.to_s
 
       SharedHelpers.set_bundle_environment
     end
@@ -270,7 +270,7 @@ module Bundler
 
     def setup_manpath
       # Store original MANPATH for restoration later in with_clean_env()
-      ENV['CARAT_ORIG_MANPATH'] = ENV['MANPATH']
+      ENV['BUNDLE_ORIG_MANPATH'] = ENV['MANPATH']
 
       # Add man/ subdirectories from activated bundles to MANPATH for man(1)
       manuals = $LOAD_PATH.map do |path|
