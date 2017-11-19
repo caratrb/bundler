@@ -408,7 +408,7 @@ module Carat
       @fetch_uri ||= begin
         if remote_uri.host == "rubygems.org"
           uri = remote_uri.dup
-          uri.host = "carat.rubygems.org"
+          uri.host = "bundler.rubygems.org"
           uri
         else
           remote_uri
