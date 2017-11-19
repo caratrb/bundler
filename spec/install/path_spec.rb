@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle install" do
+describe "carat install" do
 
   describe "with --path" do
     before :each do
@@ -14,8 +14,8 @@ describe "bundle install" do
       G
     end
 
-    it "does not use available system gems with bundle --path vendor/bundle" do
-      bundle "install --path vendor/bundle"
+    it "does not use available system gems with carat --path vendor/bundle" do
+      carat "install --path vendor/bundle"
       should_be_installed "rack 1.0.0"
     end
 
@@ -24,27 +24,27 @@ describe "bundle install" do
       dir.mkpath
 
       Dir.chdir(dir) do
-        bundle "install --path vendor/bundle"
+        carat "install --path vendor/bundle"
         expect(out).to include("installed into ./vendor/bundle")
       end
 
       dir.rmtree
     end
 
-    it "prints a warning to let the user know what has happened with bundle --path vendor/bundle" do
-      bundle "install --path vendor/bundle"
+    it "prints a warning to let the user know what has happened with carat --path vendor/bundle" do
+      carat "install --path vendor/bundle"
       expect(out).to include("gems are installed into ./vendor")
     end
 
     it "disallows --path vendor/bundle --system" do
-      bundle "install --path vendor/bundle --system"
+      carat "install --path vendor/bundle --system"
       expect(out).to include("Please choose.")
     end
 
-    it "remembers to disable system gems after the first time with bundle --path vendor/bundle" do
-      bundle "install --path vendor/bundle"
+    it "remembers to disable system gems after the first time with carat --path vendor/bundle" do
+      carat "install --path vendor/bundle"
       FileUtils.rm_rf bundled_app('vendor')
-      bundle "install"
+      carat "install"
 
       expect(vendored_gems('gems/rack-1.0.0')).to be_directory
       should_be_installed "rack 1.0.0"
@@ -67,14 +67,14 @@ describe "bundle install" do
       if type == :env
         ENV["BUNDLE_PATH"] = location
       elsif type == :global
-        bundle "config path #{location}", "no-color" => nil
+        carat "config path #{location}", "no-color" => nil
       end
     end
 
     [:env, :global].each do |type|
       it "installs gems to a path if one is specified" do
         set_bundle_path(type, bundled_app("vendor2").to_s)
-        bundle "install --path vendor/bundle"
+        carat "install --path vendor/bundle"
 
         expect(vendored_gems("gems/rack-1.0.0")).to be_directory
         expect(bundled_app("vendor2")).not_to be_directory
@@ -84,7 +84,7 @@ describe "bundle install" do
       it "installs gems to BUNDLE_PATH with #{type}" do
         set_bundle_path(type, bundled_app("vendor").to_s)
 
-        bundle :install
+        carat :install
 
         expect(bundled_app('vendor/gems/rack-1.0.0')).to be_directory
         should_be_installed "rack 1.0.0"
@@ -95,7 +95,7 @@ describe "bundle install" do
 
         FileUtils.mkdir_p bundled_app('lol')
         Dir.chdir(bundled_app('lol')) do
-          bundle :install
+          carat :install
         end
 
         expect(bundled_app('vendor/gems/rack-1.0.0')).to be_directory
@@ -103,17 +103,17 @@ describe "bundle install" do
       end
     end
 
-    it "installs gems to BUNDLE_PATH from .bundle/config" do
+    it "installs gems to BUNDLE_PATH from .carat/config" do
       config "BUNDLE_PATH" => bundled_app("vendor/bundle").to_s
 
-      bundle :install
+      carat :install
 
       expect(vendored_gems('gems/rack-1.0.0')).to be_directory
       should_be_installed "rack 1.0.0"
     end
 
-    it "sets BUNDLE_PATH as the first argument to bundle install" do
-      bundle "install --path ./vendor/bundle"
+    it "sets BUNDLE_PATH as the first argument to carat install" do
+      carat "install --path ./vendor/bundle"
 
       expect(vendored_gems('gems/rack-1.0.0')).to be_directory
       should_be_installed "rack 1.0.0"
@@ -122,7 +122,7 @@ describe "bundle install" do
     it "disables system gems when passing a path to install" do
       # This is so that vendored gems can be distributed to others
       build_gem "rack", "1.1.0", :to_system => true
-      bundle "install --path ./vendor/bundle"
+      carat "install --path ./vendor/bundle"
 
       expect(vendored_gems('gems/rack-1.0.0')).to be_directory
       should_be_installed "rack 1.0.0"
@@ -132,7 +132,7 @@ describe "bundle install" do
   describe "to a dead symlink" do
     before do
       in_app_root do
-        `ln -s /tmp/idontexist bundle`
+        `ln -s /tmp/idontexist carat`
       end
     end
 
@@ -142,7 +142,7 @@ describe "bundle install" do
         gem "rack"
       G
 
-      bundle "install --path bundle"
+      carat "install --path carat"
       expect(out).to match(/invalid symlink/)
     end
   end

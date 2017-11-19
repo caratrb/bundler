@@ -8,15 +8,15 @@ describe "Gem::Specification#match_platform" do
 
   context "when platform is a string" do
     it "matches when platform is a string" do
-      lazy_spec = Bundler::LazySpecification.new("lol", "1.0", "universal-mingw32")
+      lazy_spec = Carat::LazySpecification.new("lol", "1.0", "universal-mingw32")
       expect(lazy_spec.match_platform(pl('x86-mingw32'))).to eq(true)
       expect(lazy_spec.match_platform(pl('x64-mingw32'))).to eq(true)
     end
   end
 end
 
-describe "Bundler::GemHelpers#generic" do
-  include Bundler::GemHelpers
+describe "Carat::GemHelpers#generic" do
+  include Carat::GemHelpers
 
   it "converts non-windows platforms into ruby" do
     expect(generic(pl('x86-darwin-10'))).to eq(pl('ruby'))

@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle install with groups" do
+describe "carat install with groups" do
 
   describe "installing with no options" do
     before :each do
@@ -40,7 +40,7 @@ describe "bundle install with groups" do
       expect(err).to eq("ZOMG LOAD ERROR")
     end
 
-    it "sets up everything if Bundler.setup is used with no groups" do
+    it "sets up everything if Carat.setup is used with no groups" do
       output = run("require 'rack'; puts RACK")
       expect(output).to eq('1.0.0')
 
@@ -53,7 +53,7 @@ describe "bundle install with groups" do
 
     it "removes old groups when new groups are set up" do
       load_error_run <<-RUBY, 'thin', :emo
-        Bundler.setup(:default)
+        Carat.setup(:default)
         require 'thin'
         puts THIN
       RUBY
@@ -63,8 +63,8 @@ describe "bundle install with groups" do
 
     it "sets up old groups when they have previously been removed" do
       output = run <<-RUBY, :emo
-        Bundler.setup(:default)
-        Bundler.setup(:default, :emo)
+        Carat.setup(:default)
+        Carat.setup(:default, :emo)
         require 'thin'; puts THIN
       RUBY
       expect(output).to eq('1.0')
@@ -84,29 +84,29 @@ describe "bundle install with groups" do
       end
 
       it "installs gems in the default group" do
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
         should_be_installed "rack 1.0.0", :groups => [:default]
       end
 
       it "does not install gems from the excluded group" do
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
         should_not_be_installed "activesupport 2.3.5", :groups => [:default]
       end
 
       it "does not install gems from the previously excluded group" do
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
         should_not_be_installed "activesupport 2.3.5"
-        bundle :install
+        carat :install
         should_not_be_installed "activesupport 2.3.5"
       end
 
       it "does not say it installed gems from the excluded group" do
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
         expect(out).not_to include("activesupport")
       end
 
-      it "allows Bundler.setup for specific groups" do
-        bundle :install, :without => "emo"
+      it "allows Carat.setup for specific groups" do
+        carat :install, :without => "emo"
         run("require 'rack'; puts RACK", :default)
         expect(out).to eq('1.0.0')
       end
@@ -120,15 +120,15 @@ describe "bundle install with groups" do
           end
         G
 
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
         should_be_installed "activesupport 2.3.2", :groups => [:default]
       end
 
       it "still works on a different machine and excludes gems" do
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
 
         simulate_new_machine
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
 
         should_be_installed "rack 1.0.0", :groups => [:default]
         should_not_be_installed "activesupport 2.3.5", :groups => [:default]
@@ -137,7 +137,7 @@ describe "bundle install with groups" do
       it "still works when BUNDLE_WITHOUT is set" do
         ENV["BUNDLE_WITHOUT"] = "emo"
 
-        bundle :install
+        carat :install
         expect(out).not_to include("activesupport")
 
         should_be_installed "rack 1.0.0", :groups => [:default]
@@ -147,16 +147,16 @@ describe "bundle install with groups" do
       end
 
       it "clears without when passed an empty list" do
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
 
-        bundle 'install --without ""'
+        carat 'install --without ""'
         should_be_installed "activesupport 2.3.5"
       end
 
       it "doesn't clear without when nothing is passed" do
-        bundle :install, :without => "emo"
+        carat :install, :without => "emo"
 
-        bundle :install
+        carat :install
         should_not_be_installed "activesupport 2.3.5"
       end
     end
@@ -173,12 +173,12 @@ describe "bundle install with groups" do
       end
 
       it "installs gems in the default group" do
-        bundle :install, :without => "emo lolercoaster"
+        carat :install, :without => "emo lolercoaster"
         should_be_installed "rack 1.0.0"
       end
 
       it "installs the gem if any of its groups are installed" do
-        bundle "install --without emo"
+        carat "install --without emo"
         should_be_installed "rack 1.0.0", "activesupport 2.3.5"
       end
 
@@ -199,22 +199,22 @@ describe "bundle install with groups" do
         end
 
         it "installs the gem w/ option --without emo" do
-          bundle "install --without emo"
+          carat "install --without emo"
           should_be_installed "activesupport 2.3.5"
         end
 
         it "installs the gem w/ option --without lolercoaster" do
-          bundle "install --without lolercoaster"
+          carat "install --without lolercoaster"
           should_be_installed "activesupport 2.3.5"
         end
 
         it "does not install the gem w/ option --without emo lolercoaster" do
-          bundle "install --without emo lolercoaster"
+          carat "install --without emo lolercoaster"
           should_not_be_installed "activesupport 2.3.5"
         end
 
         it "does not install the gem w/ option --without 'emo lolercoaster'" do
-          bundle "install --without 'emo lolercoaster'"
+          carat "install --without 'emo lolercoaster'"
           should_not_be_installed "activesupport 2.3.5"
         end
       end
@@ -234,12 +234,12 @@ describe "bundle install with groups" do
       end
 
       it "installs gems in the default group" do
-        bundle :install, :without => "emo lolercoaster"
+        carat :install, :without => "emo lolercoaster"
         should_be_installed "rack 1.0.0"
       end
 
       it "installs the gem if any of its groups are installed" do
-        bundle "install --without emo"
+        carat "install --without emo"
         should_be_installed "rack 1.0.0", "activesupport 2.3.5"
       end
 
@@ -255,9 +255,9 @@ describe "bundle install with groups" do
       G
 
       ruby <<-R
-        require "bundler"
-        Bundler.setup :default
-        Bundler.require :default
+        require "carat"
+        Carat.setup :default
+        Carat.require :default
         puts RACK
         begin
           require "activesupport"
@@ -292,7 +292,7 @@ describe "bundle install with groups" do
       should_not_be_installed "rack_middleware 1.0"
       simulate_new_machine
 
-      bundle :install
+      carat :install
 
       should_be_installed "rack 0.9.1"
       should_be_installed "rack_middleware 1.0"
@@ -300,7 +300,7 @@ describe "bundle install with groups" do
 
     it "does not hit the remote a second time" do
       FileUtils.rm_rf gem_repo2
-      bundle "install --without rack"
+      carat "install --without rack"
       expect(err).to be_empty
     end
   end

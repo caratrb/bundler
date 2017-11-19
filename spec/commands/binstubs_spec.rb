@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle binstubs <gem>" do
+describe "carat binstubs <gem>" do
   context "when the gem exists in the lockfile" do
     it "sets up the binstub" do
       install_gemfile <<-G
@@ -8,7 +8,7 @@ describe "bundle binstubs <gem>" do
         gem "rack"
       G
 
-      bundle "binstubs rack"
+      carat "binstubs rack"
 
       expect(bundled_app("bin/rackup")).to exist
     end
@@ -20,7 +20,7 @@ describe "bundle binstubs <gem>" do
         gem "rails"
       G
 
-      bundle "binstubs rails"
+      carat "binstubs rails"
 
       expect(bundled_app("bin/rackup")).not_to exist
       expect(bundled_app("bin/rails")).to exist
@@ -33,7 +33,7 @@ describe "bundle binstubs <gem>" do
         gem "rails"
       G
 
-      bundle "binstubs rails rack"
+      carat "binstubs rails rack"
 
       expect(bundled_app("bin/rackup")).to exist
       expect(bundled_app("bin/rails")).to exist
@@ -45,20 +45,20 @@ describe "bundle binstubs <gem>" do
         gem "rack"
       G
 
-      bundle "binstubs"
+      carat "binstubs"
       expect(exitstatus).to eq(1) if exitstatus
-      expect(out).to eq("`bundle binstubs` needs at least one gem to run.")
+      expect(out).to eq("`carat binstubs` needs at least one gem to run.")
     end
 
-    it "does not bundle the bundler binary" do
+    it "does not carat the carat binary" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
       G
 
-      bundle "binstubs bundler"
+      carat "binstubs carat"
 
-      expect(bundled_app("bin/bundle")).not_to exist
-      expect(out).to eq("Sorry, Bundler can only be run via Rubygems.")
+      expect(bundled_app("bin/carat")).not_to exist
+      expect(out).to eq("Sorry, Carat can only be run via Rubygems.")
     end
 
     it "installs binstubs from git gems" do
@@ -71,7 +71,7 @@ describe "bundle binstubs <gem>" do
         gem "foo", :git => "#{lib_path('foo')}"
       G
 
-      bundle "binstubs foo"
+      carat "binstubs foo"
 
       expect(bundled_app("bin/foo")).to exist
     end
@@ -86,7 +86,7 @@ describe "bundle binstubs <gem>" do
         gem "foo", :path => "#{lib_path('foo')}"
       G
 
-      bundle "binstubs foo"
+      carat "binstubs foo"
 
       expect(bundled_app("bin/foo")).to exist
     end
@@ -98,7 +98,7 @@ describe "bundle binstubs <gem>" do
           gem "rack"
         G
 
-        bundle "binstubs rack"
+        carat "binstubs rack"
         binary = bundled_app("bin/rackup")
         expect(File.stat(binary).mode.to_s(8)).to eq("100775")
       end
@@ -111,7 +111,7 @@ describe "bundle binstubs <gem>" do
         source "file://#{gem_repo1}"
       G
 
-      bundle "binstubs doesnt_exist"
+      carat "binstubs doesnt_exist"
 
       expect(exitstatus).to eq(7) if exitstatus
       expect(out).to eq("Could not find gem 'doesnt_exist'.")
@@ -125,20 +125,20 @@ describe "bundle binstubs <gem>" do
         gem "rack"
       G
 
-      bundle "binstubs rack --path exec"
+      carat "binstubs rack --path exec"
 
       expect(bundled_app("exec/rackup")).to exist
     end
 
-    it "setting is saved for bundle install" do
+    it "setting is saved for carat install" do
       install_gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack"
         gem "rails"
       G
 
-      bundle "binstubs rack --path exec"
-      bundle :install
+      carat "binstubs rack --path exec"
+      carat :install
 
       expect(bundled_app("exec/rails")).to exist
     end
@@ -156,7 +156,7 @@ describe "bundle binstubs <gem>" do
         gem "rack"
       G
 
-      bundle "binstubs rack"
+      carat "binstubs rack"
 
       expect(bundled_app("bin/rackup")).to exist
       expect(File.read(bundled_app("bin/rackup"))).to eq("OMG")
@@ -176,7 +176,7 @@ describe "bundle binstubs <gem>" do
           gem "rack"
         G
 
-        bundle "binstubs rack --force"
+        carat "binstubs rack --force"
 
         expect(bundled_app("bin/rackup")).to exist
         expect(File.read(bundled_app("bin/rackup"))).not_to eq("OMG")
@@ -191,7 +191,7 @@ describe "bundle binstubs <gem>" do
         gem "rack-obama"
       G
 
-      bundle "binstubs rack-obama"
+      carat "binstubs rack-obama"
       expect(out).to include('rack-obama has no executables')
       expect(out).to include('rack has: rackup')
     end
@@ -202,7 +202,7 @@ describe "bundle binstubs <gem>" do
         gem "actionpack"
       G
 
-      bundle "binstubs actionpack"
+      carat "binstubs actionpack"
       expect(out).to include('no executables for the gem actionpack')
     end
 
@@ -212,20 +212,20 @@ describe "bundle binstubs <gem>" do
         gem "with_development_dependency"
       G
 
-      bundle "binstubs with_development_dependency"
+      carat "binstubs with_development_dependency"
       expect(out).to include('no executables for the gem with_development_dependency')
     end
   end
 
   context "when BUNDLE_INSTALL is specified" do
-    it "performs an automatic bundle install" do
+    it "performs an automatic carat install" do
       gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack"
       G
 
-      bundle "config auto_install 1"
-      bundle "binstubs rack"
+      carat "config auto_install 1"
+      carat "binstubs rack"
       expect(out).to include('Installing rack 1.0.0')
       should_be_installed "rack 1.0.0"
     end
@@ -236,8 +236,8 @@ describe "bundle binstubs <gem>" do
         gem "rack"
       G
 
-      bundle "config auto_install 1"
-      bundle "binstubs rack", :env => { "BUNDLE_INSTALL" => 1 }
+      carat "config auto_install 1"
+      carat "binstubs rack", :env => { "BUNDLE_INSTALL" => 1 }
       expect(out).not_to include('Installing rack 1.0.0')
     end
   end

@@ -1,0 +1,56 @@
+#!/usr/bin/env ruby
+
+Signal.trap("INT") { exit 1 }
+
+require 'carat/ruby_version'
+require 'carat/ruby_dsl'
+require 'carat/shared_helpers'
+
+module Carat
+  class GemfileError < RuntimeError; end
+  class Dsl
+    include RubyDsl
+
+    attr_accessor :ruby_version
+
+    def initialize
+      @ruby_version = nil
+    end
+
+    def eval_gemfile(gemfile, contents = nil)
+      contents ||= File.open(gemfile, "rb") { |f| f.read }
+      instance_eval(contents, gemfile.to_s, 1)
+    rescue SyntaxError => e
+      bt = e.message.split("\n")[1..-1]
+      raise GemfileError, ["Gemfile syntax error:", *bt].join("\n")
+    rescue ScriptError, RegexpError, NameError, ArgumentError => e
+      e.backtrace[0] = "#{e.backtrace[0]}: #{e.message} (#{e.class})"
+      STDERR.puts e.backtrace.join("\n       ")
+      raise GemfileError, "There was an error in your Gemfile," \
+        " and Carat cannot continue."
+    end
+
+    def source(source, options = {})
+    end
+
+    def gem(name, *args)
+    end
+
+    def group(*args, &blk)
+    end
+  end
+end
+
+dsl = Carat::Dsl.new
+begin
+  dsl.eval_gemfile(Carat::SharedHelpers.default_gemfile)
+  ruby_version = dsl.ruby_version
+  if ruby_version
+    puts ruby_version
+  else
+    puts "No ruby version specified"
+  end
+rescue Carat::GemfileError => e
+  puts e.message
+  exit(-1)
+end

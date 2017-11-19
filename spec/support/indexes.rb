@@ -2,7 +2,7 @@ module Spec
   module Indexes
     def dep(name, reqs = nil)
       @deps ||= []
-      @deps << Bundler::Dependency.new(name, reqs)
+      @deps << Carat::Dependency.new(name, reqs)
     end
 
     def platform(*args)
@@ -17,10 +17,10 @@ module Spec
       deps = []
       @deps.each do |d|
         @platforms.each do |p|
-          deps << Bundler::DepProxy.new(d, p)
+          deps << Carat::DepProxy.new(d, p)
         end
       end
-      Bundler::Resolver.resolve(deps, @index)
+      Carat::Resolver.resolve(deps, @index)
     end
 
     def should_resolve_as(specs)
@@ -41,7 +41,7 @@ module Spec
       begin
         got = resolve
         flunk "The resolve succeeded with: #{got.map { |s| s.full_name }.sort.inspect}"
-      rescue Bundler::VersionConflict => e
+      rescue Carat::VersionConflict => e
         expect(Array(names).sort).to eq(e.conflicts.sort)
       end
     end

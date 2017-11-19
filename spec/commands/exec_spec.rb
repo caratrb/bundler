@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle exec" do
+describe "carat exec" do
   before :each do
     system_gems "rack-1.0.0", "rack-0.9.1"
   end
@@ -10,16 +10,16 @@ describe "bundle exec" do
       gem "rack", "0.9.1"
     G
 
-    bundle "exec rackup"
+    carat "exec rackup"
     expect(out).to eq("0.9.1")
   end
 
-  it "works when the bins are in ~/.bundle" do
+  it "works when the bins are in ~/.carat" do
     install_gemfile <<-G
       gem "rack"
     G
 
-    bundle "exec rackup"
+    carat "exec rackup"
     expect(out).to eq("1.0.0")
   end
 
@@ -28,39 +28,39 @@ describe "bundle exec" do
       gem "rack"
     G
 
-    bundle "exec 'cd #{tmp('gems')} && rackup'"
+    carat "exec 'cd #{tmp('gems')} && rackup'"
 
     expect(out).to eq("1.0.0")
   end
 
   it "works when exec'ing something else" do
     install_gemfile 'gem "rack"'
-    bundle "exec echo exec"
+    carat "exec echo exec"
     expect(out).to eq("exec")
   end
 
   it "works when exec'ing to ruby" do
     install_gemfile 'gem "rack"'
-    bundle "exec ruby -e 'puts %{hi}'"
+    carat "exec ruby -e 'puts %{hi}'"
     expect(out).to eq("hi")
   end
 
   it "accepts --verbose" do
     install_gemfile 'gem "rack"'
-    bundle "exec --verbose echo foobar"
+    carat "exec --verbose echo foobar"
     expect(out).to eq("foobar")
   end
 
   it "passes --verbose to command if it is given after the command" do
     install_gemfile 'gem "rack"'
-    bundle "exec echo --verbose"
+    carat "exec echo --verbose"
     expect(out).to eq("--verbose")
   end
 
   it "handles --keep-file-descriptors" do
     require 'tempfile'
 
-    bundle_bin = File.expand_path('../../../bin/bundle', __FILE__)
+    carat_bin = File.expand_path('../../../bin/carat', __FILE__)
 
     command = Tempfile.new("io-test")
     command.sync = true
@@ -70,7 +70,7 @@ describe "bundle exec" do
       else
         require 'tempfile'
         io = Tempfile.new("io-test-fd")
-        args = %W[#{Gem.ruby} -I#{lib} #{bundle_bin} exec --keep-file-descriptors #{Gem.ruby} #{command.path} \#{io.to_i}]
+        args = %W[#{Gem.ruby} -I#{lib} #{carat_bin} exec --keep-file-descriptors #{Gem.ruby} #{command.path} \#{io.to_i}]
         args << { io.to_i => io } if RUBY_VERSION >= "2.0"
         exec(*args)
       end
@@ -90,7 +90,7 @@ describe "bundle exec" do
 
   it "accepts --keep-file-descriptors" do
     install_gemfile ''
-    bundle "exec --keep-file-descriptors echo foobar"
+    carat "exec --keep-file-descriptors echo foobar"
 
     expect(err).to eq("")
   end
@@ -103,7 +103,7 @@ describe "bundle exec" do
     end
     File.chmod(0744, "--verbose")
     ENV['PATH'] = "."
-    bundle "exec -- --verbose"
+    carat "exec -- --verbose"
     expect(out).to eq("foobar")
   end
 
@@ -127,13 +127,13 @@ describe "bundle exec" do
       G
     end
 
-    bundle "exec rackup"
+    carat "exec rackup"
 
     expect(out).to eq("0.9.1")
     expect(err).to match("deprecated")
 
     Dir.chdir bundled_app2 do
-      bundle "exec rackup"
+      carat "exec rackup"
       expect(out).to eq("1.0.0")
     end
   end
@@ -148,7 +148,7 @@ describe "bundle exec" do
       end
     G
 
-    bundle "exec rackup"
+    carat "exec rackup"
 
     expect(out).to eq("0.9.1")
     should_not_be_installed "rack_middleware 1.0"
@@ -160,12 +160,12 @@ describe "bundle exec" do
     G
 
     rubyopt = ENV['RUBYOPT']
-    rubyopt = "-rbundler/setup #{rubyopt}"
+    rubyopt = "-rcarat/setup #{rubyopt}"
 
-    bundle "exec 'echo $RUBYOPT'"
+    carat "exec 'echo $RUBYOPT'"
     expect(out).to have_rubyopts(rubyopt)
 
-    bundle "exec 'echo $RUBYOPT'", :env => {"RUBYOPT" => rubyopt}
+    carat "exec 'echo $RUBYOPT'", :env => {"RUBYOPT" => rubyopt}
     expect(out).to have_rubyopts(rubyopt)
   end
 
@@ -175,13 +175,13 @@ describe "bundle exec" do
     G
 
     rubylib = ENV['RUBYLIB']
-    rubylib = "#{rubylib}".split(File::PATH_SEPARATOR).unshift "#{bundler_path}"
+    rubylib = "#{rubylib}".split(File::PATH_SEPARATOR).unshift "#{carat_path}"
     rubylib = rubylib.uniq.join(File::PATH_SEPARATOR)
 
-    bundle "exec 'echo $RUBYLIB'"
+    carat "exec 'echo $RUBYLIB'"
     expect(out).to eq(rubylib)
 
-    bundle "exec 'echo $RUBYLIB'", :env => {"RUBYLIB" => rubylib}
+    carat "exec 'echo $RUBYLIB'", :env => {"RUBYLIB" => rubylib}
     expect(out).to eq(rubylib)
   end
 
@@ -190,10 +190,10 @@ describe "bundle exec" do
       gem "rack"
     G
 
-    bundle "exec foobarbaz"
+    carat "exec foobarbaz"
     expect(exitstatus).to eq(127) if exitstatus
-    expect(out).to include("bundler: command not found: foobarbaz")
-    expect(out).to include("Install missing gem executables with `bundle install`")
+    expect(out).to include("carat: command not found: foobarbaz")
+    expect(out).to include("Install missing gem executables with `carat install`")
   end
 
   it "errors nicely when the argument is not executable" do
@@ -201,10 +201,10 @@ describe "bundle exec" do
       gem "rack"
     G
 
-    bundle "exec touch foo"
-    bundle "exec ./foo"
+    carat "exec touch foo"
+    carat "exec ./foo"
     expect(exitstatus).to eq(126) if exitstatus
-    expect(out).to include("bundler: not executable: ./foo")
+    expect(out).to include("carat: not executable: ./foo")
   end
 
   it "errors nicely when no arguments are passed" do
@@ -212,9 +212,9 @@ describe "bundle exec" do
       gem "rack"
     G
 
-    bundle "exec"
+    carat "exec"
     expect(exitstatus).to eq(128) if exitstatus
-    expect(out).to include("bundler: exec needs a command to run")
+    expect(out).to include("carat: exec needs a command to run")
   end
 
   describe "with gem executables" do
@@ -226,13 +226,13 @@ describe "bundle exec" do
       end
 
       it "works when unlocked" do
-        bundle "exec 'cd #{tmp('gems')} && rackup'"
+        carat "exec 'cd #{tmp('gems')} && rackup'"
         expect(out).to eq("1.0.0")
       end
 
       it "works when locked" do
         should_be_locked
-        bundle "exec 'cd #{tmp('gems')} && rackup'"
+        carat "exec 'cd #{tmp('gems')} && rackup'"
         expect(out).to eq("1.0.0")
       end
     end
@@ -249,14 +249,14 @@ describe "bundle exec" do
       end
 
       it "works when unlocked" do
-        bundle "exec fizz"
+        carat "exec fizz"
         expect(out).to eq("1.0")
       end
 
       it "works when locked" do
         should_be_locked
 
-        bundle "exec fizz"
+        carat "exec fizz"
         expect(out).to eq("1.0")
       end
     end
@@ -273,13 +273,13 @@ describe "bundle exec" do
       end
 
       it "works when unlocked" do
-        bundle "exec fizz_git"
+        carat "exec fizz_git"
         expect(out).to eq("1.0")
       end
 
       it "works when locked" do
         should_be_locked
-        bundle "exec fizz_git"
+        carat "exec fizz_git"
         expect(out).to eq("1.0")
       end
     end
@@ -296,27 +296,27 @@ describe "bundle exec" do
       end
 
       it "works when unlocked" do
-        bundle "exec fizz_no_gemspec"
+        carat "exec fizz_no_gemspec"
         expect(out).to eq("1.0")
       end
 
       it "works when locked" do
         should_be_locked
-        bundle "exec fizz_no_gemspec"
+        carat "exec fizz_no_gemspec"
         expect(out).to eq("1.0")
       end
     end
   end
 
-  it "performs an automatic bundle install" do
+  it "performs an automatic carat install" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack", "0.9.1"
       gem "foo"
     G
 
-    bundle "config auto_install 1"
-    bundle "exec rackup"
+    carat "config auto_install 1"
+    carat "exec rackup"
     expect(out).to include("Installing foo 1.0")
   end
 end

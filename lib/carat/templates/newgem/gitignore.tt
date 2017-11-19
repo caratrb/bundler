@@ -1,0 +1,16 @@
+/.carat/
+/.yardoc
+/Gemfile.lock
+/_yardoc/
+/coverage/
+/doc/
+/pkg/
+/spec/reports/
+/tmp/
+<%- if config[:ext] -%>
+*.carat
+*.so
+*.o
+*.a
+mkmf.log
+<%- end -%>

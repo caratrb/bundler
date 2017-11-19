@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "bundle install" do
+describe "carat install" do
 
   describe "when system_bindir is set" do
     # On OS X, Gem.bindir defaults to /usr/bin, so system_bindir is useful if
@@ -15,7 +15,7 @@ describe "bundle install" do
       G
 
       config "BUNDLE_SYSTEM_BINDIR" => system_gem_path('altbin').to_s
-      bundle :install
+      carat :install
       should_be_installed "rack 1.0.0"
       expect(system_gem_path("altbin/rackup")).to exist
     end

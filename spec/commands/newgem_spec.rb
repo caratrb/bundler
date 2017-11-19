@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle gem" do
+describe "carat gem" do
 
   def reset!
     super
@@ -18,7 +18,7 @@ describe "bundle gem" do
 
   before do
     @git_name = `git config --global user.name`.chomp
-    `git config --global user.name "Bundler User"`
+    `git config --global user.name "Carat User"`
     @git_email = `git config --global user.email`.chomp
     `git config --global user.email user@example.com`
   end
@@ -31,7 +31,7 @@ describe "bundle gem" do
   shared_examples_for "git config is present" do
     context "git config user.{name,email} present" do
       it "sets gemspec author to git user.name if available" do
-        expect(generated_gem.gemspec.authors.first).to eq("Bundler User")
+        expect(generated_gem.gemspec.authors.first).to eq("Carat User")
       end
 
       it "sets gemspec email to git user.email if available" do
@@ -54,7 +54,7 @@ describe "bundle gem" do
     system_gems ["rake-10.0.2"]
 
     in_app_root
-    bundle "gem newgem --bin"
+    carat "gem newgem --bin"
 
     process_file(bundled_app('newgem', "newgem.gemspec")) do |line|
       # Simulate replacing TODOs with real values
@@ -74,7 +74,7 @@ describe "bundle gem" do
     end
 
     Dir.chdir(bundled_app('newgem')) do
-      bundle "exec rake build"
+      carat "exec rake build"
     end
 
     expect(exitstatus).to be_zero if exitstatus
@@ -91,7 +91,7 @@ describe "bundle gem" do
     it "resolves ." do
       create_temporary_dir('tmp')
 
-      bundle 'gem .'
+      carat 'gem .'
 
       expect(bundled_app("tmp/lib/tmp.rb")).to exist
     end
@@ -99,7 +99,7 @@ describe "bundle gem" do
     it "resolves .." do
       create_temporary_dir('temp/empty_dir')
 
-      bundle 'gem ..'
+      carat 'gem ..'
 
       expect(bundled_app("temp/lib/temp.rb")).to exist
     end
@@ -107,7 +107,7 @@ describe "bundle gem" do
     it "resolves relative directory" do
       create_temporary_dir('tmp/empty/tmp')
 
-      bundle 'gem ../../empty'
+      carat 'gem ../../empty'
 
       expect(bundled_app("tmp/empty/lib/empty.rb")).to exist
     end
@@ -122,13 +122,13 @@ describe "bundle gem" do
     let(:gem_name) { 'test_gem' }
 
     before do
-      bundle "gem #{gem_name}"
+      carat "gem #{gem_name}"
       remove_push_guard(gem_name)
       # reset gemspec cache for each test because of commit 3d4163a
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
-    let(:generated_gem) { Bundler::GemHelper.new(bundled_app(gem_name).to_s) }
+    let(:generated_gem) { Carat::GemHelper.new(bundled_app(gem_name).to_s) }
 
     it "generates a gem skeleton" do
       expect(bundled_app("test_gem/test_gem.gemspec")).to exist
@@ -161,7 +161,7 @@ describe "bundle gem" do
         `git config --global --unset user.email`
         reset!
         in_app_root
-        bundle "gem #{gem_name}"
+        carat "gem #{gem_name}"
         remove_push_guard(gem_name)
       end
 
@@ -199,7 +199,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name} --bin"
+        carat "gem #{gem_name} --bin"
       end
 
       it "builds bin skeleton" do
@@ -215,7 +215,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name}"
+        carat "gem #{gem_name}"
       end
 
       it "doesn't create any spec/test file" do
@@ -231,7 +231,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name} --test=rspec"
+        carat "gem #{gem_name} --test=rspec"
       end
 
       it "builds spec skeleton" do
@@ -253,8 +253,8 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "config gem.test rspec"
-        bundle "gem #{gem_name}"
+        carat "config gem.test rspec"
+        carat "gem #{gem_name}"
       end
 
       it "builds spec skeleton" do
@@ -268,8 +268,8 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "config gem.test rspec"
-        bundle "gem #{gem_name} --test=minitest"
+        carat "config gem.test rspec"
+        carat "gem #{gem_name} --test=minitest"
       end
 
       it "builds spec skeleton" do
@@ -282,7 +282,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name} --test=minitest"
+        carat "gem #{gem_name} --test=minitest"
       end
 
       it "builds spec skeleton" do
@@ -307,7 +307,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name} --test"
+        carat "gem #{gem_name} --test"
       end
 
       it "defaults to rspec" do
@@ -324,7 +324,7 @@ describe "bundle gem" do
       it "opens the generated gemspec in the user's text editor" do
         reset!
         in_app_root
-        output = bundle "gem #{gem_name} --edit=echo"
+        output = carat "gem #{gem_name} --edit=echo"
         gemspec_path = File.join(Dir.pwd, gem_name, "#{gem_name}.gemspec")
         expect(output).to include("echo \"#{gemspec_path}\"")
       end
@@ -335,10 +335,10 @@ describe "bundle gem" do
     let(:gem_name) { 'test-gem' }
 
     before do
-      bundle "gem #{gem_name} --mit"
+      carat "gem #{gem_name} --mit"
       remove_push_guard(gem_name)
       # reset gemspec cache for each test because of commit 3d4163a
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
     it "generates a gem skeleton with MIT license" do
@@ -349,7 +349,7 @@ describe "bundle gem" do
       expect(bundled_app("test-gem/lib/test/gem.rb")).to exist
       expect(bundled_app("test-gem/lib/test/gem/version.rb")).to exist
 
-      skel = Bundler::GemHelper.new(bundled_app(gem_name).to_s)
+      skel = Carat::GemHelper.new(bundled_app(gem_name).to_s)
       expect(skel.gemspec.license).to eq("MIT")
     end
   end
@@ -358,9 +358,9 @@ describe "bundle gem" do
     let(:gem_name) { 'test-gem' }
 
     before do
-      bundle "gem #{gem_name} --coc"
+      carat "gem #{gem_name} --coc"
       # reset gemspec cache for each test because of commit 3d4163a
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
     it "generates a gem skeleton with Code of Conduct" do
@@ -377,13 +377,13 @@ describe "bundle gem" do
     let(:gem_name) { 'test-gem' }
 
     before do
-      bundle "gem #{gem_name}"
+      carat "gem #{gem_name}"
       remove_push_guard(gem_name)
       # reset gemspec cache for each test because of commit 3d4163a
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
-    let(:generated_gem) { Bundler::GemHelper.new(bundled_app(gem_name).to_s) }
+    let(:generated_gem) { Carat::GemHelper.new(bundled_app(gem_name).to_s) }
 
     it "generates a gem skeleton" do
       expect(bundled_app("test-gem/test-gem.gemspec")).to exist
@@ -411,7 +411,7 @@ describe "bundle gem" do
         `git config --global --unset user.email`
         reset!
         in_app_root
-        bundle "gem #{gem_name}"
+        carat "gem #{gem_name}"
         remove_push_guard(gem_name)
       end
 
@@ -444,7 +444,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name} --bin"
+        carat "gem #{gem_name} --bin"
       end
 
       it "builds bin skeleton" do
@@ -460,7 +460,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name}"
+        carat "gem #{gem_name}"
       end
 
       it "doesn't create any spec/test file" do
@@ -476,7 +476,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name} --test=rspec"
+        carat "gem #{gem_name} --test=rspec"
       end
 
       it "builds spec skeleton" do
@@ -495,7 +495,7 @@ describe "bundle gem" do
 
       it "creates a default rake task to run the specs" do
         rakefile = strip_whitespace <<-RAKEFILE
-          require "bundler/gem_tasks"
+          require "carat/gem_tasks"
           require "rspec/core/rake_task"
 
           RSpec::Core::RakeTask.new(:spec)
@@ -511,7 +511,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name} --test=minitest"
+        carat "gem #{gem_name} --test=minitest"
       end
 
       it "builds spec skeleton" do
@@ -533,7 +533,7 @@ describe "bundle gem" do
 
       it "creates a default rake task to run the test suite" do
         rakefile = strip_whitespace <<-RAKEFILE
-          require "bundler/gem_tasks"
+          require "carat/gem_tasks"
           require "rake/testtask"
 
           Rake::TestTask.new(:test) do |t|
@@ -551,7 +551,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem #{gem_name} --test"
+        carat "gem #{gem_name} --test"
       end
 
       it "defaults to rspec" do
@@ -564,7 +564,7 @@ describe "bundle gem" do
       before do
         reset!
         in_app_root
-        bundle "gem test_gem --ext"
+        carat "gem test_gem --ext"
       end
 
       it "builds ext skeleton" do
@@ -579,7 +579,7 @@ describe "bundle gem" do
 
       it "depends on compile task for build" do
         rakefile = strip_whitespace <<-RAKEFILE
-          require "bundler/gem_tasks"
+          require "carat/gem_tasks"
           require "rake/extensiontask"
 
           task :build => :compile
@@ -596,8 +596,8 @@ describe "bundle gem" do
 
   describe "uncommon gem names" do
     it "can deal with two dashes" do
-      bundle "gem a--a"
-      Bundler.clear_gemspec_cache
+      carat "gem a--a"
+      Carat.clear_gemspec_cache
 
       expect(bundled_app("a--a/a--a.gemspec")).to exist
     end
@@ -605,10 +605,10 @@ describe "bundle gem" do
 
   describe "#ensure_safe_gem_name" do
     before do
-      bundle "gem #{subject}"
+      carat "gem #{subject}"
     end
     after do
-      Bundler.clear_gemspec_cache
+      Carat.clear_gemspec_cache
     end
 
     context "with an existing const name" do
@@ -640,7 +640,7 @@ describe "bundle gem" do
     it "asks about test framework" do
       global_config "BUNDLE_GEM__MIT" => "false", "BUNDLE_GEM__COC" => "false"
 
-      bundle "gem foobar" do |input|
+      carat "gem foobar" do |input|
         input.puts "rspec"
       end
 
@@ -650,9 +650,9 @@ describe "bundle gem" do
     it "asks about MIT license" do
       global_config "BUNDLE_GEM__TEST" => "false", "BUNDLE_GEM__COC" => "false"
 
-      bundle :config
+      carat :config
 
-      bundle "gem foobar" do |input|
+      carat "gem foobar" do |input|
         input.puts "yes"
       end
 
@@ -663,7 +663,7 @@ describe "bundle gem" do
       global_config "BUNDLE_GEM__MIT" => "false", "BUNDLE_GEM__TEST" => "false"
 
 
-      bundle "gem foobar" do |input|
+      carat "gem foobar" do |input|
         input.puts "yes"
       end
 

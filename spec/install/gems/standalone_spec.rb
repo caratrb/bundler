@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle install --standalone" do
+describe "carat install --standalone" do
   describe "with simple gems" do
     before do
       install_gemfile <<-G, :standalone => true
@@ -9,18 +9,18 @@ describe "bundle install --standalone" do
       G
     end
 
-    it "still makes the gems available to normal bundler" do
+    it "still makes the gems available to normal carat" do
       should_be_installed "actionpack 2.3.2", "rails 2.3.2"
     end
 
-    it "generates a bundle/bundler/setup.rb" do
-      expect(bundled_app("bundle/bundler/setup.rb")).to exist
+    it "generates a bundle/carat/setup.rb" do
+      expect(bundled_app("bundle/carat/setup.rb")).to exist
     end
 
-    it "makes the gems available without bundler" do
+    it "makes the gems available without carat" do
       ruby <<-RUBY, :no_lib => true
         $:.unshift File.expand_path("bundle")
-        require "bundler/setup"
+        require "carat/setup"
 
         require "actionpack"
         puts ACTIONPACK
@@ -35,7 +35,7 @@ describe "bundle install --standalone" do
 
       ruby <<-RUBY, :no_lib => true
         $:.unshift File.expand_path("bundle")
-        require "bundler/setup"
+        require "carat/setup"
 
         require "actionpack"
         puts ACTIONPACK
@@ -56,18 +56,18 @@ describe "bundle install --standalone" do
       G
     end
 
-    it "still makes the gems available to normal bundler" do
+    it "still makes the gems available to normal carat" do
       should_be_installed "actionpack 2.3.2", "rails 2.3.2", "devise 1.0"
     end
 
-    it "generates a bundle/bundler/setup.rb" do
-      expect(bundled_app("bundle/bundler/setup.rb")).to exist
+    it "generates a bundle/carat/setup.rb" do
+      expect(bundled_app("bundle/carat/setup.rb")).to exist
     end
 
-    it "makes the gems available without bundler" do
+    it "makes the gems available without carat" do
       ruby <<-RUBY, :no_lib => true
         $:.unshift File.expand_path("bundle")
-        require "bundler/setup"
+        require "carat/setup"
 
         require "devise"
         require "actionpack"
@@ -94,10 +94,10 @@ describe "bundle install --standalone" do
       G
     end
 
-    it "makes the gems available without bundler" do
+    it "makes the gems available without carat" do
       ruby <<-RUBY, :no_lib => true
         $:.unshift File.expand_path("bundle")
-        require "bundler/setup"
+        require "carat/setup"
 
         require "actionpack"
         require "spec"
@@ -111,11 +111,11 @@ describe "bundle install --standalone" do
     end
 
     it "allows creating a standalone file with limited groups" do
-      bundle "install --standalone default"
+      carat "install --standalone default"
 
       load_error_ruby <<-RUBY, 'spec', :no_lib => true
         $:.unshift File.expand_path("bundle")
-        require "bundler/setup"
+        require "carat/setup"
 
         require "actionpack"
         puts ACTIONPACK
@@ -127,11 +127,11 @@ describe "bundle install --standalone" do
     end
 
     it "allows --without to limit the groups used in a standalone" do
-      bundle "install --standalone --without test"
+      carat "install --standalone --without test"
 
       load_error_ruby <<-RUBY, 'spec', :no_lib => true
         $:.unshift File.expand_path("bundle")
-        require "bundler/setup"
+        require "carat/setup"
 
         require "actionpack"
         puts ACTIONPACK
@@ -143,11 +143,11 @@ describe "bundle install --standalone" do
     end
 
     it "allows --path to change the location of the standalone bundle" do
-      bundle "install --standalone --path path/to/bundle"
+      carat "install --standalone --path path/to/bundle"
 
       ruby <<-RUBY, :no_lib => true, :expect_err => false
         $:.unshift File.expand_path("path/to/bundle")
-        require "bundler/setup"
+        require "carat/setup"
 
         require "actionpack"
         puts ACTIONPACK
@@ -157,12 +157,12 @@ describe "bundle install --standalone" do
     end
 
     it "allows remembered --without to limit the groups used in a standalone" do
-      bundle "install --without test"
-      bundle "install --standalone"
+      carat "install --without test"
+      carat "install --standalone"
 
       load_error_ruby <<-RUBY, 'spec', :no_lib => true
         $:.unshift File.expand_path("bundle")
-        require "bundler/setup"
+        require "carat/setup"
 
         require "actionpack"
         puts ACTIONPACK
@@ -186,29 +186,29 @@ describe "bundle install --standalone" do
       end
 
       it "should run without errors" do
-        bundle "install --standalone", :artifice => "endpoint"
+        carat "install --standalone", :artifice => "endpoint"
 
         expect(exitstatus).to eq(0) if exitstatus
       end
 
-      it "still makes the gems available to normal bundler" do
-        bundle "install --standalone", :artifice => "endpoint"
+      it "still makes the gems available to normal carat" do
+        carat "install --standalone", :artifice => "endpoint"
 
         should_be_installed "actionpack 2.3.2", "rails 2.3.2"
       end
 
-      it "generates a bundle/bundler/setup.rb" do
-        bundle "install --standalone", :artifice => "endpoint"
+      it "generates a bundle/carat/setup.rb" do
+        carat "install --standalone", :artifice => "endpoint"
 
-        expect(bundled_app("bundle/bundler/setup.rb")).to exist
+        expect(bundled_app("bundle/carat/setup.rb")).to exist
       end
 
-      it "makes the gems available without bundler" do
-        bundle "install --standalone", :artifice => "endpoint"
+      it "makes the gems available without carat" do
+        carat "install --standalone", :artifice => "endpoint"
 
         ruby <<-RUBY, :no_lib => true
           $:.unshift File.expand_path("bundle")
-          require "bundler/setup"
+          require "carat/setup"
 
           require "actionpack"
           puts ACTIONPACK
@@ -218,14 +218,14 @@ describe "bundle install --standalone" do
       end
 
       it "works on a different system" do
-        bundle "install --standalone", :artifice => "endpoint"
+        carat "install --standalone", :artifice => "endpoint"
 
         FileUtils.mv(bundled_app, "#{bundled_app}2")
         Dir.chdir("#{bundled_app}2")
 
         ruby <<-RUBY, :no_lib => true
           $:.unshift File.expand_path("bundle")
-          require "bundler/setup"
+          require "carat/setup"
 
           require "actionpack"
           puts ACTIONPACK

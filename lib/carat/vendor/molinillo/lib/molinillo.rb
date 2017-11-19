@@ -1,0 +1,5 @@
+require 'carat/vendor/molinillo/lib/molinillo/gem_metadata'
+require 'carat/vendor/molinillo/lib/molinillo/errors'
+require 'carat/vendor/molinillo/lib/molinillo/resolver'
+require 'carat/vendor/molinillo/lib/molinillo/modules/ui'
+require 'carat/vendor/molinillo/lib/molinillo/modules/specification_provider'

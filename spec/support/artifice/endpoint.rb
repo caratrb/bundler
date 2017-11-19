@@ -1,5 +1,5 @@
 require File.expand_path("../../path.rb", __FILE__)
-require File.expand_path("../../../../lib/bundler/deprecate", __FILE__)
+require File.expand_path("../../../../lib/carat/deprecate", __FILE__)
 include Spec::Path
 
 # Set up pretend http gem server with FakeWeb
@@ -18,8 +18,8 @@ class Endpoint < Sinatra::Base
       return [] if gem_names.nil? || gem_names.empty?
 
       require 'rubygems'
-      require 'bundler'
-      Bundler::Deprecate.skip_during do
+      require 'carat'
+      Carat::Deprecate.skip_during do
         Marshal.load(File.open(gem_repo.join("specs.4.8")).read).map do |name, version, platform|
           spec = load_spec(name, version, platform, gem_repo)
           if gem_names.include?(spec.name)

@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle cache" do
+describe "carat cache" do
 
   describe "when there are only gemsources" do
     before :each do
@@ -9,7 +9,7 @@ describe "bundle cache" do
       G
 
       system_gems "rack-1.0.0"
-      bundle :cache
+      carat :cache
     end
 
     it "copies the .gem file to vendor/cache" do
@@ -29,7 +29,7 @@ describe "bundle cache" do
 
     it "uses the cache as a source when installing gems with --local" do
       system_gems []
-      bundle "install --local"
+      carat "install --local"
 
       should_be_installed("rack 1.0.0")
     end
@@ -46,7 +46,7 @@ describe "bundle cache" do
       should_be_installed("rack 1.0.0")
     end
 
-    it "does not reinstall gems from the cache if they exist in the bundle" do
+    it "does not reinstall gems from the cache if they exist in the carat" do
       system_gems "rack-1.0.0"
 
       gemfile <<-G
@@ -57,7 +57,7 @@ describe "bundle cache" do
         s.write "lib/rack.rb", "RACK = 'FAIL'"
       end
 
-      bundle "install --local"
+      carat "install --local"
       should_be_installed("rack 1.0.0")
     end
 
@@ -68,7 +68,7 @@ describe "bundle cache" do
         gem "rack"
       G
 
-      bundle "cache"
+      carat "cache"
 
       expect(bundled_app("Gemfile.lock")).to exist
     end
@@ -99,7 +99,7 @@ describe "bundle cache" do
         gem 'rack', '1.0.0'
       G
 
-      bundle :cache
+      carat :cache
       expect(bundled_app("vendor/cache/rack-1.0.0.gem")).to exist
       expect(bundled_app("vendor/cache/builtin_gem-1.0.2.gem")).to exist
     end
@@ -114,7 +114,7 @@ describe "bundle cache" do
         gem 'builtin_gem_2', '1.0.2'
       G
 
-      bundle "install --local"
+      carat "install --local"
       should_be_installed("builtin_gem_2 1.0.2")
     end
   end
@@ -134,10 +134,10 @@ describe "bundle cache" do
     end
 
     it "still works" do
-      bundle :cache
+      carat :cache
 
       system_gems []
-      bundle "install --local"
+      carat "install --local"
 
       should_be_installed("rack 1.0.0", "foo 1.0")
     end
@@ -145,7 +145,7 @@ describe "bundle cache" do
     it "should not explode if the lockfile is not present" do
       FileUtils.rm(bundled_app("Gemfile.lock"))
 
-      bundle :cache
+      carat :cache
 
       expect(bundled_app("Gemfile.lock")).to exist
     end
@@ -159,7 +159,7 @@ describe "bundle cache" do
         gem "rack"
         gem "actionpack"
       G
-      bundle :cache
+      carat :cache
       expect(cached_gem("rack-1.0.0")).to exist
       expect(cached_gem("actionpack-2.3.2")).to exist
       expect(cached_gem("activesupport-2.3.2")).to exist
@@ -167,14 +167,14 @@ describe "bundle cache" do
 
     it "re-caches during install" do
       cached_gem("rack-1.0.0").rmtree
-      bundle :install
+      carat :install
       expect(out).to include("Updating files in vendor/cache")
       expect(cached_gem("rack-1.0.0")).to exist
     end
 
     it "adds and removes when gems are updated" do
       update_repo2
-      bundle 'update'
+      carat 'update'
       expect(cached_gem("rack-1.2")).to exist
       expect(cached_gem("rack-1.0.0")).not_to exist
     end
@@ -219,7 +219,7 @@ describe "bundle cache" do
           gem "platform_specific"
         G
 
-        bundle :cache
+        carat :cache
         expect(cached_gem("platform_specific-1.0-java")).to exist
       end
 
@@ -240,14 +240,14 @@ describe "bundle cache" do
         :rubygems_version => "1.3.2"
       simulate_new_machine
 
-      bundle :install
+      carat :install
       expect(cached_gem("rack-1.0.0")).to exist
     end
 
     it "handles directories and non .gem files in the cache" do
       bundled_app("vendor/cache/foo").mkdir
       File.open(bundled_app("vendor/cache/bar"), 'w'){|f| f.write("not a gem") }
-      bundle :cache
+      carat :cache
     end
 
     it "does not say that it is removing gems when it isn't actually doing so" do
@@ -255,8 +255,8 @@ describe "bundle cache" do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      bundle "cache"
-      bundle "install"
+      carat "cache"
+      carat "install"
       expect(out).not_to match(/removing/i)
     end
 
@@ -265,19 +265,19 @@ describe "bundle cache" do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      bundle "cache"
+      carat "cache"
       expect(out).not_to match(/\-\-all/)
     end
 
-    it "should install gems with the name bundler in them (that aren't bundler)" do
-      build_gem "foo-bundler", "1.0",
+    it "should install gems with the name carat in them (that aren't carat)" do
+      build_gem "foo-carat", "1.0",
         :path => bundled_app('vendor/cache')
 
       install_gemfile <<-G
-        gem "foo-bundler"
+        gem "foo-carat"
       G
 
-      should_be_installed "foo-bundler 1.0"
+      should_be_installed "foo-carat 1.0"
     end
   end
 

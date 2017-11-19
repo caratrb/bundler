@@ -10,14 +10,14 @@ describe "real world edgecases", :realworld => true do
     expect(err).to eq("")
   end
 
-  # https://github.com/bundler/bundler/issues/1202
-  it "bundle cache works with rubygems 1.3.7 and pre gems", :ruby => "1.8" do
+  # https://github.com/carat/carat/issues/1202
+  it "carat cache works with rubygems 1.3.7 and pre gems", :ruby => "1.8" do
     install_gemfile <<-G
       source :rubygems
       gem "rack",          "1.3.0.beta2"
       gem "will_paginate", "3.0.pre2"
     G
-    bundle :cache
+    carat :cache
     expect(out).not_to include("Removing outdated .gem files from vendor/cache")
   end
 
@@ -56,7 +56,7 @@ describe "real world edgecases", :realworld => true do
     expect(out).to include("activesupport 3.2.22.5")
   end
 
-  # https://github.com/bundler/bundler/issues/1500
+  # https://github.com/carat/carat/issues/1500
   it "does not fail install because of gem plugins" do
     realworld_system_gems("open_gem --version 1.4.2", "rake --version 0.9.2")
     gemfile <<-G
@@ -65,7 +65,7 @@ describe "real world edgecases", :realworld => true do
       gem 'rack', '1.0.1'
     G
 
-    bundle "install --path vendor/bundle", :expect_err => true
+    carat "install --path vendor/bundle", :expect_err => true
     expect(err).not_to include("Could not find rake")
     expect(err).to be_empty
   end
@@ -192,7 +192,7 @@ describe "real world edgecases", :realworld => true do
         activesupport!
     L
 
-    bundle :install
+    carat :install
     expect(exitstatus).to eq(0) if exitstatus
   end
 end

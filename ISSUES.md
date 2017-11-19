@@ -29,13 +29,13 @@ using works with the versions of Ruby and Rubygems that you are using.
 If the instructions don't work, or you can't find any instructions, you can try these troubleshooting steps:
 
     # remove user-specific gems and git repos
-    rm -rf ~/.bundle/ ~/.gem/bundler/ ~/.gems/cache/bundler/
+    rm -rf ~/.carat/ ~/.gem/bundler/ ~/.gems/cache/bundler/
 
     # remove system-wide git repos and git checkouts
     rm -rf $GEM_HOME/bundler/ $GEM_HOME/cache/bundler/
 
     # remove project-specific settings
-    rm -rf .bundle/
+    rm -rf .carat/
 
     # remove project-specific cached gems and repos
     rm -rf vendor/cache/
@@ -91,6 +91,6 @@ If you are using Rails 2.3, please also include:
 
 If you have either `rubygems-bundler` or `open_gem` installed, please try removing them and then following the troubleshooting steps above before opening a new ticket.
 
-[Create a gist](https://gist.github.com) containing all of that information, then visit the [Bundler issue tracker](https://github.com/bundler/bundler/issues) and [create a ticket](https://github.com/bundler/bundler/issues/new) describing your problem and linking to your gist.
+[Create a gist](https://gist.github.com) containing all of that information, then visit the [Bundler issue tracker](https://github.com/caratrb/carat/issues) and [create a ticket](https://github.com/caratrb/carat/issues/new) describing your problem and linking to your gist.
 
 Thanks for reporting issues and helping make Bundler better!

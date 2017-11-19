@@ -10,7 +10,7 @@ describe "gemcutter's dependency API" do
       gem "rack"
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
     expect(out).to include("Fetching gem metadata from #{source_uri}")
     should_be_installed "rack 1.0.0"
   end
@@ -21,7 +21,7 @@ describe "gemcutter's dependency API" do
       gem " sinatra"
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
     expect(out).to include("' sinatra' is not a valid gem name because it contains whitespace.")
   end
 
@@ -31,7 +31,7 @@ describe "gemcutter's dependency API" do
       gem "rails"
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
     expect(out).to include("Fetching gem metadata from #{source_uri}/...")
     should_be_installed(
       "rails 2.3.2",
@@ -48,7 +48,7 @@ describe "gemcutter's dependency API" do
       gem "net-sftp"
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
     should_be_installed "net-sftp 1.1.1"
   end
 
@@ -57,9 +57,9 @@ describe "gemcutter's dependency API" do
       source "#{source_uri}"
       gem "rack"
     G
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
 
-    bundle "install --deployment", :artifice => "endpoint"
+    carat "install --deployment", :artifice => "endpoint"
     expect(out).to include("Fetching gem metadata from #{source_uri}")
     should_be_installed "rack 1.0.0"
   end
@@ -77,7 +77,7 @@ describe "gemcutter's dependency API" do
       end
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
 
     should_be_installed("rails 2.3.2")
   end
@@ -93,9 +93,9 @@ describe "gemcutter's dependency API" do
       gem 'foo', :git => "file:///#{lib_path('foo-1.0')}"
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
 
-    bundle "install --deployment", :artifice => "endpoint"
+    carat "install --deployment", :artifice => "endpoint"
 
     should_be_installed("rails 2.3.2")
   end
@@ -107,8 +107,8 @@ describe "gemcutter's dependency API" do
       gem 'foo', :git => "file:///#{lib_path('foo-1.0')}"
     G
 
-    bundle "install", :artifice => "endpoint"
-    bundle "install --deployment", :artifice => "endpoint"
+    carat "install", :artifice => "endpoint"
+    carat "install --deployment", :artifice => "endpoint"
 
     expect(exitstatus).to eq(0) if exitstatus
     should_be_installed("foo 1.0")
@@ -122,7 +122,7 @@ describe "gemcutter's dependency API" do
       gem "rcov"
     G
 
-    bundle :install, :fakeweb => "windows"
+    carat :install, :fakeweb => "windows"
     expect(out).to include("Fetching source index from #{source_uri}")
     should_be_installed "rcov 1.0.0"
   end
@@ -138,7 +138,7 @@ describe "gemcutter's dependency API" do
       gem "rack"
       gem "rails"
     G
-    bundle :install, :artifice => "endpoint_fallback"
+    carat :install, :artifice => "endpoint_fallback"
     expect(out).to include("Fetching source index from #{source_uri}")
 
     should_be_installed(
@@ -158,7 +158,7 @@ describe "gemcutter's dependency API" do
       gem "rack"
     G
 
-    bundle :install, :verbose => true, :artifice => "endpoint_marshal_fail"
+    carat :install, :verbose => true, :artifice => "endpoint_marshal_fail"
     expect(out).to include("could not fetch from the dependency API, trying the full index")
     should_be_installed "rack 1.0.0"
   end
@@ -169,7 +169,7 @@ describe "gemcutter's dependency API" do
       gem "rack"
     G
 
-    bundle :install, :verbose => true, :artifice => "endpoint_api_forbidden"
+    carat :install, :verbose => true, :artifice => "endpoint_api_forbidden"
     expect(out).to include("Fetching source index from #{source_uri}")
     should_be_installed "rack 1.0.0"
   end
@@ -180,7 +180,7 @@ describe "gemcutter's dependency API" do
       gem "rack"
     G
 
-    bundle :install, :artifice => "endpoint_host_redirect"
+    carat :install, :artifice => "endpoint_host_redirect"
     should_be_installed "rack 1.0.0"
   end
 
@@ -203,18 +203,18 @@ describe "gemcutter's dependency API" do
       H
     end
 
-    bundle :install, :artifice => "endpoint_host_redirect", :requires => [lib_path("disable_net_http_persistent.rb")]
+    carat :install, :artifice => "endpoint_host_redirect", :requires => [lib_path("disable_net_http_persistent.rb")]
     expect(out).to_not match(/Too many redirects/)
     should_be_installed "rack 1.0.0"
   end
 
-  it "timeouts when Bundler::Fetcher redirects too much" do
+  it "timeouts when Carat::Fetcher redirects too much" do
     gemfile <<-G
       source "#{source_uri}"
       gem "rack"
     G
 
-    bundle :install, :artifice => "endpoint_redirect"
+    carat :install, :artifice => "endpoint_redirect"
     expect(out).to match(/Too many redirects/)
   end
 
@@ -225,7 +225,7 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle "install --full-index", :artifice => "endpoint"
+      carat "install --full-index", :artifice => "endpoint"
       expect(out).to include("Fetching source index from #{source_uri}")
       should_be_installed "rack 1.0.0"
     end
@@ -236,7 +236,7 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle "update --full-index", :artifice => "endpoint"
+      carat "update --full-index", :artifice => "endpoint"
       expect(out).to include("Fetching source index from #{source_uri}")
       should_be_installed "rack 1.0.0"
     end
@@ -256,7 +256,7 @@ describe "gemcutter's dependency API" do
       gem "back_deps"
     G
 
-    bundle :install, :artifice => "endpoint_extra"
+    carat :install, :artifice => "endpoint_extra"
     should_be_installed "back_deps 1.0"
   end
 
@@ -265,7 +265,7 @@ describe "gemcutter's dependency API" do
       source "#{source_uri}"
       gem "rack", "1.0.0"
     G
-    bundle :install, :artifice => "endpoint_extra_api"
+    carat :install, :artifice => "endpoint_extra_api"
 
     build_repo4 do
       build_gem "rack", "1.2" do |s|
@@ -278,14 +278,14 @@ describe "gemcutter's dependency API" do
       source "#{source_uri}/extra"
       gem "rack", "1.2"
     G
-    bundle :install, :artifice => "endpoint_extra_api"
+    carat :install, :artifice => "endpoint_extra_api"
     should_be_installed "rack 1.2"
   end
 
   it "considers all possible versions of dependencies from all api gem sources" do
     # In this scenario, the gem "somegem" only exists in repo4.  It depends on specific version of activesupport that
     # exists only in repo1.  There happens also be a version of activesupport in repo4, but not the one that version 1.0.0
-    # of somegem wants. This test makes sure that bundler actually finds version 1.2.3 of active support in the other
+    # of somegem wants. This test makes sure that carat actually finds version 1.2.3 of active support in the other
     # repo and installs it.
     build_repo4 do
       build_gem "activesupport", "1.2.0"
@@ -300,7 +300,7 @@ describe "gemcutter's dependency API" do
       gem 'somegem', '1.0.0'
     G
 
-    bundle :install, :artifice => "endpoint_extra_api"
+    carat :install, :artifice => "endpoint_extra_api"
 
     should_be_installed "somegem 1.0.0"
     should_be_installed "activesupport 1.2.3"
@@ -320,7 +320,7 @@ describe "gemcutter's dependency API" do
       gem "back_deps"
     G
 
-    bundle :install, :artifice => "endpoint_extra"
+    carat :install, :artifice => "endpoint_extra"
 
     expect(out).to include("Fetching gem metadata from http://localgemserver.test/..")
     expect(out).to include("Fetching source index from http://localgemserver.test/extra")
@@ -333,7 +333,7 @@ describe "gemcutter's dependency API" do
       end
       build_gem "missing"
       # need to hit the limit
-      1.upto(Bundler::Source::Rubygems::API_REQUEST_LIMIT) do |i|
+      1.upto(Carat::Source::Rubygems::API_REQUEST_LIMIT) do |i|
         build_gem "gem#{i}"
       end
 
@@ -346,7 +346,7 @@ describe "gemcutter's dependency API" do
       gem "back_deps"
     G
 
-    bundle :install, :artifice => "endpoint_extra_missing"
+    carat :install, :artifice => "endpoint_extra_missing"
     should_be_installed "back_deps 1.0"
   end
 
@@ -357,7 +357,7 @@ describe "gemcutter's dependency API" do
       gem 'foo'
     G
 
-    bundle :install, :artifice => "endpoint_api_missing"
+    carat :install, :artifice => "endpoint_api_missing"
     should_be_installed "foo 1.0"
   end
 
@@ -375,20 +375,20 @@ describe "gemcutter's dependency API" do
       gem "back_deps"
     G
 
-    bundle :install, :artifice => "endpoint_extra"
+    carat :install, :artifice => "endpoint_extra"
 
-    bundle "install --deployment", :artifice => "endpoint_extra"
+    carat "install --deployment", :artifice => "endpoint_extra"
     should_be_installed "back_deps 1.0"
   end
 
-  it "does not refetch if the only unmet dependency is bundler" do
+  it "does not refetch if the only unmet dependency is carat" do
     gemfile <<-G
       source "#{source_uri}"
 
-      gem "bundler_dep"
+      gem "carat_dep"
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
     expect(out).to include("Fetching gem metadata from #{source_uri}")
   end
 
@@ -400,7 +400,7 @@ describe "gemcutter's dependency API" do
       source "#{source_uri}"
       gem "rails"
     G
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
     should_be_installed "rails 2.3.2"
   end
 
@@ -410,7 +410,7 @@ describe "gemcutter's dependency API" do
       gem "rack"
     G
 
-    bundle "install --binstubs", :artifice => "endpoint"
+    carat "install --binstubs", :artifice => "endpoint"
 
     gembin "rackup"
     expect(out).to eq("1.0.0")
@@ -422,18 +422,18 @@ describe "gemcutter's dependency API" do
       gem "rack"
     G
 
-    bundle "install --path vendor/bundle", :artifice => "endpoint"
+    carat "install --path vendor/bundle", :artifice => "endpoint"
 
     expect(vendored_gems("bin/rackup")).to exist
   end
 
-  it "installs the bins when using --path and uses bundle clean" do
+  it "installs the bins when using --path and uses carat clean" do
     gemfile <<-G
       source "#{source_uri}"
       gem "rack"
     G
 
-    bundle "install --path vendor/bundle --no-clean", :artifice => "endpoint"
+    carat "install --path vendor/bundle --no-clean", :artifice => "endpoint"
 
     expect(vendored_gems("bin/rackup")).to exist
   end
@@ -444,7 +444,7 @@ describe "gemcutter's dependency API" do
       gem 'rack-obama'
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
     expect(out).to include("Post-install message from rack:")
   end
 
@@ -454,7 +454,7 @@ describe "gemcutter's dependency API" do
       gem 'rack_middleware'
     G
 
-    bundle :install, :artifice => "endpoint"
+    carat :install, :artifice => "endpoint"
     expect(out).to include("Post-install message from rack:")
     expect(out).to include("Rack's post install message")
   end
@@ -476,7 +476,7 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle :install, :artifice => "endpoint_basic_authentication"
+      carat :install, :artifice => "endpoint_basic_authentication"
       expect(out).not_to include("#{user}:#{password}")
       should_be_installed "rack 1.0.0"
     end
@@ -487,7 +487,7 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle :install, :artifice => "endopint_marshal_fail_basic_authentication"
+      carat :install, :artifice => "endopint_marshal_fail_basic_authentication"
       expect(out).not_to include("#{user}:#{password}")
       should_be_installed "rack 1.0.0"
     end
@@ -498,7 +498,7 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle :install, :artifice => "endpoint_500"
+      carat :install, :artifice => "endpoint_500"
       expect(out).not_to include("#{user}:#{password}")
     end
 
@@ -509,7 +509,7 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle :install, :artifice => "endpoint_basic_authentication"
+      carat :install, :artifice => "endpoint_basic_authentication"
       expect(out).to include("Warning: the gem 'rack' was found in multiple sources.")
       expect(out).not_to include("#{user}:#{password}")
       should_be_installed "rack 1.0.0"
@@ -521,11 +521,11 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle :install, :artifice => "endpoint_creds_diff_host"
+      carat :install, :artifice => "endpoint_creds_diff_host"
       should_be_installed "rack 1.0.0"
     end
 
-    describe "with authentication details in bundle config" do
+    describe "with authentication details in carat config" do
       before do
         gemfile <<-G
           source "#{source_uri}"
@@ -533,28 +533,28 @@ describe "gemcutter's dependency API" do
         G
       end
 
-      it "reads authentication details by host name from bundle config" do
-        bundle "config #{source_hostname} #{user}:#{password}"
+      it "reads authentication details by host name from carat config" do
+        carat "config #{source_hostname} #{user}:#{password}"
 
-        bundle :install, :artifice => "endpoint_strict_basic_authentication"
+        carat :install, :artifice => "endpoint_strict_basic_authentication"
 
         expect(out).to include("Fetching gem metadata from #{source_uri}")
         should_be_installed "rack 1.0.0"
       end
 
-      it "reads authentication details by full url from bundle config" do
+      it "reads authentication details by full url from carat config" do
         # The trailing slash is necessary here; Fetcher canonicalizes the URI.
-        bundle "config #{source_uri}/ #{user}:#{password}"
+        carat "config #{source_uri}/ #{user}:#{password}"
 
-        bundle :install, :artifice => "endpoint_strict_basic_authentication"
+        carat :install, :artifice => "endpoint_strict_basic_authentication"
 
         expect(out).to include("Fetching gem metadata from #{source_uri}")
         should_be_installed "rack 1.0.0"
       end
 
       it "should use the API" do
-        bundle "config #{source_hostname} #{user}:#{password}"
-        bundle :install, :artifice => "endpoint_strict_basic_authentication"
+        carat "config #{source_hostname} #{user}:#{password}"
+        carat :install, :artifice => "endpoint_strict_basic_authentication"
         expect(out).to include("Fetching gem metadata from #{source_uri}")
         should_be_installed "rack 1.0.0"
       end
@@ -565,21 +565,21 @@ describe "gemcutter's dependency API" do
           gem "rack"
         G
 
-        bundle "config #{source_hostname} otheruser:wrong"
+        carat "config #{source_hostname} otheruser:wrong"
 
-        bundle :install, :artifice => "endpoint_strict_basic_authentication"
+        carat :install, :artifice => "endpoint_strict_basic_authentication"
         should_be_installed "rack 1.0.0"
       end
 
       it "shows instructions if auth is not provided for the source" do
-        bundle :install, :artifice => "endpoint_strict_basic_authentication"
-        expect(out).to include("bundle config #{source_hostname} username:password")
+        carat :install, :artifice => "endpoint_strict_basic_authentication"
+        expect(out).to include("carat config #{source_hostname} username:password")
       end
 
       it "fails if authentication has already been provided, but failed" do
-        bundle "config #{source_hostname} #{user}:wrong"
+        carat "config #{source_hostname} #{user}:wrong"
 
-        bundle :install, :artifice => "endpoint_strict_basic_authentication"
+        carat :install, :artifice => "endpoint_strict_basic_authentication"
         expect(out).to include("Bad username or password")
       end
     end
@@ -593,7 +593,7 @@ describe "gemcutter's dependency API" do
           gem "rack"
         G
 
-        bundle :install, :artifice => "endpoint_basic_authentication"
+        carat :install, :artifice => "endpoint_basic_authentication"
         should_be_installed "rack 1.0.0"
       end
     end
@@ -618,7 +618,7 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle :install, :env => {"RUBYOPT" => "-I#{bundled_app("broken_ssl")}"}
+      carat :install, :env => {"RUBYOPT" => "-I#{bundled_app("broken_ssl")}"}
       expect(out).to include("OpenSSL")
     end
   end
@@ -638,7 +638,7 @@ describe "gemcutter's dependency API" do
         gem "rack"
       G
 
-      bundle :install
+      carat :install
       expect(out).to match(/could not verify the SSL certificate/i)
     end
   end
@@ -660,7 +660,7 @@ describe "gemcutter's dependency API" do
         gem 'rack'
       G
 
-      bundle "install", :artifice => "endpoint_marshal_fail"
+      carat "install", :artifice => "endpoint_marshal_fail"
 
       expect(exitstatus).to eq(0) if exitstatus
     end

@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle install with explicit source paths" do
+describe "carat install with explicit source paths" do
   it "fetches gems" do
     build_lib "foo"
 
@@ -58,7 +58,7 @@ describe "bundle install with explicit source paths" do
     expect(out).to match("user #{username} doesn't exist")
   end
 
-  it "expands paths relative to Bundler.root" do
+  it "expands paths relative to Carat.root" do
     build_lib "foo", :path => bundled_app("foo-1.0")
 
     install_gemfile <<-G
@@ -78,7 +78,7 @@ describe "bundle install with explicit source paths" do
       gem 'foo', :path => File.expand_path("../foo-1.0", __FILE__)
     G
 
-    bundle "install --frozen"
+    carat "install --frozen"
     expect(exitstatus).to eq(0) if exitstatus
   end
 
@@ -152,7 +152,7 @@ describe "bundle install with explicit source paths" do
     File.open(lib_path("foo/Gemfile"), "w") {|f| f.puts gemfile }
 
     Dir.chdir(lib_path("foo")) do
-      bundle "install"
+      carat "install"
       should_be_installed "foo 1.0"
       should_be_installed "rack 1.0"
     end
@@ -186,7 +186,7 @@ describe "bundle install with explicit source paths" do
 
     build_gem "rack", "1.0.1", :to_system => true
 
-    bundle "install"
+    carat "install"
 
     should_be_installed "foo 1.0"
     should_be_installed "rack 1.0"
@@ -207,7 +207,7 @@ describe "bundle install with explicit source paths" do
 
     build_gem "rack", "1.0.1", :to_system => true
 
-    bundle "install"
+    carat "install"
 
     should_be_installed "foo 1.0"
     should_be_installed "rack 1.0"
@@ -250,7 +250,7 @@ describe "bundle install with explicit source paths" do
       gem 'foo'
     G
 
-    bundle "exec foobar"
+    carat "exec foobar"
     expect(out).to eq("1.0")
   end
 
@@ -327,7 +327,7 @@ describe "bundle install with explicit source paths" do
       gem "foo", :path => "#{lib_path('foo-1.0')}"
     G
 
-    bundle "exec foo"
+    carat "exec foo"
     expect(out).to eq("1.0")
   end
 
@@ -348,7 +348,7 @@ describe "bundle install with explicit source paths" do
         s.add_dependency "bar"
       end
 
-      bundle "install"
+      carat "install"
 
       should_be_installed "foo 2.0", "bar 1.0"
     end
@@ -356,7 +356,7 @@ describe "bundle install with explicit source paths" do
     it "unlocks all gems when a child dependency gem is updated" do
       build_lib "bar", "2.0", :path => lib_path("foo/bar")
 
-      bundle "install"
+      carat "install"
 
       should_be_installed "foo 1.0", "bar 2.0"
     end
@@ -377,7 +377,7 @@ describe "bundle install with explicit source paths" do
         s.add_dependency "rack"
       end
 
-      bundle "install"
+      carat "install"
 
       should_be_installed "rack 1.0.0"
     end
@@ -445,7 +445,7 @@ describe "bundle install with explicit source paths" do
       File.open(lib_path("private_lib/Gemfile"), "w") {|f| f.puts gemfile }
 
       Dir.chdir(lib_path("private_lib")) do
-        bundle :install, :env => {"DEBUG" => 1}, :artifice => "endpoint"
+        carat :install, :env => {"DEBUG" => 1}, :artifice => "endpoint"
         expect(out).to match(/^HTTP GET http:\/\/localgemserver\.test\/api\/v1\/dependencies\?gems=rack$/)
         expect(out).not_to match(/^HTTP GET.*private_lib/)
         should_be_installed "private_lib 2.2"
@@ -470,7 +470,7 @@ describe "bundle install with explicit source paths" do
         H
       end
 
-      bundle :install, :expect_err => true,
+      carat :install, :expect_err => true,
         :requires => [lib_path('install_hooks.rb')]
       expect(err).to eq("Ran pre-install hook: foo-1.0")
     end
@@ -490,7 +490,7 @@ describe "bundle install with explicit source paths" do
         H
       end
 
-      bundle :install, :expect_err => true,
+      carat :install, :expect_err => true,
         :requires => [lib_path('install_hooks.rb')]
       expect(err).to eq("Ran post-install hook: foo-1.0")
     end
@@ -510,7 +510,7 @@ describe "bundle install with explicit source paths" do
         H
       end
 
-      bundle :install, :expect_err => true,
+      carat :install, :expect_err => true,
         :requires => [lib_path('install_hooks.rb')]
       expect(out).to include("failed for foo-1.0")
     end

@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle outdated" do
+describe "carat outdated" do
   before :each do
     build_repo2 do
       build_git "foo", :path => lib_path("foo")
@@ -25,7 +25,7 @@ describe "bundle outdated" do
         update_git "zebra", :path => lib_path("zebra")
       end
 
-      bundle "outdated"
+      carat "outdated"
 
       expect(out).to include("activesupport (3.0 > 2.3.5) Gemfile specifies \"= 2.3.5\"")
       expect(out).to include("weakling (0.2 > 0.0.3) Gemfile specifies \"~> 0.0.1\"")
@@ -42,13 +42,13 @@ describe "bundle outdated" do
         update_git "foo", :path => lib_path("foo")
       end
 
-      bundle "outdated"
+      carat "outdated"
 
       expect(exitstatus).to_not be_zero if exitstatus
     end
 
     it "returns success exit status if no outdated gems present" do
-      bundle "outdated"
+      carat "outdated"
 
       expect(exitstatus).to be_zero if exitstatus
     end
@@ -58,7 +58,7 @@ describe "bundle outdated" do
     it "doesn't hit repo2" do
       FileUtils.rm_rf(gem_repo2)
 
-      bundle "outdated --local"
+      carat "outdated --local"
       expect(out).not_to match(/Fetching/)
     end
   end
@@ -70,7 +70,7 @@ describe "bundle outdated" do
         update_git "foo", :path => lib_path("foo")
       end
 
-      bundle "outdated foo"
+      carat "outdated foo"
       expect(out).not_to include("activesupport (3.0 > 2.3.5)")
       expect(out).to include("foo (1.0")
     end
@@ -83,7 +83,7 @@ describe "bundle outdated" do
           build_gem "activesupport", "3.0.0.beta"
         end
 
-        bundle "outdated"
+        carat "outdated"
         expect(out).not_to include("activesupport (3.0.0.beta > 2.3.5)")
       end
     end
@@ -94,7 +94,7 @@ describe "bundle outdated" do
           build_gem "activesupport", "3.0.0.beta"
         end
 
-        bundle "outdated --pre"
+        carat "outdated --pre"
         expect(out).to include("activesupport (3.0.0.beta > 2.3.5) Gemfile specifies \"= 2.3.5\"")
       end
     end
@@ -111,7 +111,7 @@ describe "bundle outdated" do
           gem "activesupport", "3.0.0.beta.1"
         G
 
-        bundle "outdated"
+        carat "outdated"
         expect(out).to include("activesupport (3.0.0.beta.2 > 3.0.0.beta.1) Gemfile specifies \"= 3.0.0.beta.1\"")
       end
     end
@@ -124,7 +124,7 @@ describe "bundle outdated" do
         build_gem "weakling", "0.0.5"
       end
 
-      bundle "outdated --strict"
+      carat "outdated --strict"
 
       expect(out).to_not include("activesupport (3.0 > 2.3.5) Gemfile specifies \"= 2.3.5\"")
       expect(out).to include("weakling (0.0.5 > 0.0.3) Gemfile specifies \"~> 0.0.1\"")
@@ -136,7 +136,7 @@ describe "bundle outdated" do
         gem "rack_middleware", "1.0"
       G
 
-      bundle "outdated --strict"
+      carat "outdated --strict"
 
       expect(out).to_not include("rack (1.2 > 0.9.1)")
     end
@@ -144,25 +144,25 @@ describe "bundle outdated" do
 
   describe "with invalid gem name" do
     it "returns could not find gem name" do
-      bundle "outdated invalid_gem_name"
+      carat "outdated invalid_gem_name"
       expect(out).to include("Could not find gem 'invalid_gem_name'.")
     end
 
     it "returns non-zero exit code" do
-      bundle "outdated invalid_gem_name"
+      carat "outdated invalid_gem_name"
       expect(exitstatus).to_not be_zero if exitstatus
     end
   end
 
-  it "performs an automatic bundle install" do
+  it "performs an automatic carat install" do
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack", "0.9.1"
       gem "foo"
     G
 
-    bundle "config auto_install 1"
-    bundle :outdated
+    carat "config auto_install 1"
+    carat :outdated
     expect(out).to include("Installing foo 1.0")
   end
 end

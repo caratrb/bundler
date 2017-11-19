@@ -1,4 +1,4 @@
-require 'bundler/shared_helpers'
+require 'carat/shared_helpers'
 
 module Spec
   module Builders
@@ -162,19 +162,19 @@ module Spec
           s.add_c_extension
         end
 
-        build_gem "bundler", "0.9" do |s|
-          s.executables = "bundle"
-          s.write "bin/bundle", "puts 'FAIL'"
+        build_gem "carat", "0.9" do |s|
+          s.executables = "carat"
+          s.write "bin/carat", "puts 'FAIL'"
         end
 
-        # The bundler 0.8 gem has a rubygems plugin that always loads :(
-        build_gem "bundler", "0.8.1" do |s|
-          s.write "lib/bundler/omg.rb", ""
-          s.write "lib/rubygems_plugin.rb", "require 'bundler/omg' ; puts 'FAIL'"
+        # The carat 0.8 gem has a rubygems plugin that always loads :(
+        build_gem "carat", "0.8.1" do |s|
+          s.write "lib/carat/omg.rb", ""
+          s.write "lib/rubygems_plugin.rb", "require 'carat/omg' ; puts 'FAIL'"
         end
 
-        build_gem "bundler_dep" do |s|
-          s.add_dependency "bundler"
+        build_gem "carat_dep" do |s|
+          s.add_dependency "carat"
         end
 
         # The yard gem iterates over Gem.source_index looking for plugins
@@ -318,7 +318,7 @@ module Spec
     end
 
     def build_index(&block)
-      index = Bundler::Index.new
+      index = Carat::Index.new
       IndexBuilder.run(index, &block) if block_given?
       index
     end
@@ -335,7 +335,7 @@ module Spec
     end
 
     def build_dep(name, requirements = Gem::Requirement.default, type = :runtime)
-      Bundler::Dependency.new(name, :version => requirements)
+      Carat::Dependency.new(name, :version => requirements)
     end
 
     def build_lib(name, *args, &blk)
@@ -551,7 +551,7 @@ module Spec
 
     class GitUpdater < LibBuilder
       def silently(str)
-        `#{str} 2>#{Bundler::NULL}`
+        `#{str} 2>#{Carat::NULL}`
       end
 
       def _build(options)
@@ -603,7 +603,7 @@ module Spec
     private
 
       def git(cmd)
-        Bundler::SharedHelpers.with_clean_git_env do
+        Carat::SharedHelpers.with_clean_git_env do
           Dir.chdir(@path) { `git #{cmd}`.strip }
         end
       end
@@ -622,7 +622,7 @@ module Spec
             @spec.authors = ["that guy"]
           end
 
-          Bundler.rubygems.build(@spec, opts[:skip_validation])
+          Carat.rubygems.build(@spec, opts[:skip_validation])
           if opts[:to_system]
             `gem install --ignore-dependencies #{@spec.full_name}.gem`
           else

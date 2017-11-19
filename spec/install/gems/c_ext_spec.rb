@@ -37,12 +37,12 @@ describe "installing a gem with C extensions" do
       gem "c_extension"
     G
 
-    bundle "config build.c_extension --with-c_extension=hello"
-    bundle "install"
+    carat "config build.c_extension --with-c_extension=hello"
+    carat "install"
 
     expect(out).not_to include("extconf.rb failed")
 
-    run "Bundler.require; puts CExtension.new.its_true"
+    run "Carat.require; puts CExtension.new.its_true"
     expect(out).to eq("true")
   end
 end

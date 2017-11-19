@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "require 'bundler/gem_tasks'" do
+describe "require 'carat/gem_tasks'" do
   before :each do
     bundled_app("foo.gemspec").open("w") do |f|
       f.write <<-GEMSPEC
@@ -11,8 +11,8 @@ describe "require 'bundler/gem_tasks'" do
     end
     bundled_app("Rakefile").open("w") do |f|
       f.write <<-RAKEFILE
-        $:.unshift("#{bundler_path}")
-        require "bundler/gem_tasks"
+        $:.unshift("#{carat_path}")
+        require "carat/gem_tasks"
       RAKEFILE
     end
   end

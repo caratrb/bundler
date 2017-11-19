@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "bundle install" do
+describe "carat install" do
 
   describe "when a gem has a YAML gemspec" do
     before :each do
@@ -14,7 +14,7 @@ describe "bundle install" do
         source "file://#{gem_repo2}"
         gem "yaml_spec"
       G
-      bundle :install
+      carat :install
       expect(err).to be_empty
     end
 
@@ -43,7 +43,7 @@ describe "bundle install" do
       end
       f.write spec.to_ruby
     end
-    bundle :install, :artifice => 'endpoint_marshal_fail' # force gemspec load
+    carat :install, :artifice => 'endpoint_marshal_fail' # force gemspec load
     should_be_installed "activesupport 2.3.2"
   end
 

@@ -1,13 +1,13 @@
 require "spec_helper"
 
-describe "bundle check" do
+describe "carat check" do
   it "returns success when the Gemfile is satisfied" do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rails"
     G
 
-    bundle :check
+    carat :check
     expect(exitstatus).to eq(0) if exitstatus
     expect(out).to eq("The Gemfile's dependencies are satisfied")
   end
@@ -19,7 +19,7 @@ describe "bundle check" do
     G
 
     Dir.chdir tmp
-    bundle "check --gemfile bundled_app/Gemfile"
+    carat "check --gemfile bundled_app/Gemfile"
     expect(out).to eq("The Gemfile's dependencies are satisfied")
   end
 
@@ -31,7 +31,7 @@ describe "bundle check" do
 
     FileUtils.rm("Gemfile.lock")
 
-    bundle "check"
+    carat "check"
 
     expect(bundled_app("Gemfile.lock")).to exist
   end
@@ -44,7 +44,7 @@ describe "bundle check" do
 
     FileUtils.rm("Gemfile.lock")
 
-    bundle "check --dry-run"
+    carat "check --dry-run"
 
     expect(bundled_app("Gemfile.lock")).not_to exist
   end
@@ -57,8 +57,8 @@ describe "bundle check" do
       gem "rails"
     G
 
-    bundle :check
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    carat :check
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
   it "prints a generic error if a Gemfile.lock does not exist and a toplevel dependency does not exist" do
@@ -67,9 +67,9 @@ describe "bundle check" do
       gem "rails"
     G
 
-    bundle :check
+    carat :check
     expect(exitstatus).to be > 0 if exitstatus
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
   it "prints a generic message if you changed your lockfile" do
@@ -88,8 +88,8 @@ describe "bundle check" do
       gem "rails_fail"
     G
 
-    bundle :check
-    expect(out).to include("Bundler can't satisfy your Gemfile's dependencies.")
+    carat :check
+    expect(out).to include("Carat can't satisfy your Gemfile's dependencies.")
   end
 
   it "remembers --without option from install" do
@@ -100,8 +100,8 @@ describe "bundle check" do
       end
     G
 
-    bundle "install --without foo"
-    bundle "check"
+    carat "install --without foo"
+    carat "check"
     expect(exitstatus).to eq(0) if exitstatus
     expect(out).to include("The Gemfile's dependencies are satisfied")
   end
@@ -112,14 +112,14 @@ describe "bundle check" do
       gem "rack", :group => :foo
     G
 
-    bundle "install --without foo"
+    carat "install --without foo"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
       gem "rack"
     G
 
-    bundle "check"
+    carat "check"
     expect(out).to include("* rack (1.0.0)")
     expect(exitstatus).to eq(1) if exitstatus
   end
@@ -151,7 +151,7 @@ describe "bundle check" do
         activesupport
     G
 
-    bundle :check
+    carat :check
     expect(out).to eq("The Gemfile's dependencies are satisfied")
   end
 
@@ -182,18 +182,18 @@ describe "bundle check" do
         activesupport
     G
 
-    bundle :check
+    carat :check
     expect(out).to eq("The Gemfile's dependencies are satisfied")
   end
 
   it "outputs an error when the default Gemfile is not found" do
-    bundle :check
+    carat :check
     expect(exitstatus).to eq(10) if exitstatus
     expect(out).to include("Could not locate Gemfile")
   end
 
   it "does not output fatal error message" do
-    bundle :check
+    carat :check
     expect(exitstatus).to eq(10) if exitstatus
     expect(out).not_to include("Unfortunately, a fatal error has occurred. ")
   end
@@ -205,10 +205,10 @@ describe "bundle check" do
     G
 
     simulate_new_machine
-    bundle "check"
+    carat "check"
     last_out = out
     3.times do |i|
-      bundle :check
+      carat :check
       expect(out).to eq(last_out)
       expect(err).to be_empty
     end
@@ -220,11 +220,11 @@ describe "bundle check" do
       gem "foo"
     G
 
-    bundle "install"
-    bundle "install --deployment"
+    carat "install"
+    carat "install --deployment"
     FileUtils.rm(bundled_app("Gemfile.lock"))
 
-    bundle :check
+    carat :check
     expect(exitstatus).not_to eq(0) if exitstatus
   end
 
@@ -234,20 +234,20 @@ describe "bundle check" do
         source "file://#{gem_repo1}"
         gem "rails"
       G
-      bundle "install --path vendor/bundle"
+      carat "install --path vendor/bundle"
 
-      FileUtils.rm_rf(bundled_app(".bundle"))
+      FileUtils.rm_rf(bundled_app(".carat"))
     end
 
     it "returns success" do
-      bundle "check --path vendor/bundle"
+      carat "check --path vendor/bundle"
       expect(exitstatus).to eq(0) if exitstatus
       expect(out).to eq("The Gemfile's dependencies are satisfied")
     end
 
-    it "should write to .bundle/config" do
-      bundle "check --path vendor/bundle"
-      bundle "check"
+    it "should write to .carat/config" do
+      carat "check --path vendor/bundle"
+      carat "check"
       expect(exitstatus).to eq(0) if exitstatus
     end
   end
@@ -262,15 +262,15 @@ describe "bundle check" do
     end
 
     it "returns success when the Gemfile is satisfied" do
-      bundle :install
-      bundle :check
+      carat :install
+      carat :check
       expect(exitstatus).to eq(0) if exitstatus
       expect(out).to eq("The Gemfile's dependencies are satisfied")
     end
 
     it "shows what is missing with the current Gemfile if it is not satisfied" do
       simulate_new_machine
-      bundle :check
+      carat :check
       expect(out).to match(/The following gems are missing/)
       expect(out).to include("* rack (1.0")
     end

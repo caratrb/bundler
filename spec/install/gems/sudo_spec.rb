@@ -45,7 +45,7 @@ describe "when using sudo", :sudo => true do
           gem "rake"
           gem "another_implicit_rake_dep"
       G
-      bundle "install"
+      carat "install"
       expect(system_gem_path("gems/another_implicit_rake_dep-1.0")).to exist
     end
 
@@ -112,7 +112,7 @@ describe "when using sudo", :sudo => true do
 
     it "cleans up the tmpdirs generated" do
       require 'tmpdir'
-      Dir.glob("#{Dir.tmpdir}/bundler*").each do |tmpdir|
+      Dir.glob("#{Dir.tmpdir}/carat*").each do |tmpdir|
         FileUtils.remove_entry_secure(tmpdir)
       end
 
@@ -120,7 +120,7 @@ describe "when using sudo", :sudo => true do
         source "file://#{gem_repo1}"
         gem "rack"
       G
-      tmpdirs = Dir.glob("#{Dir.tmpdir}/bundler*")
+      tmpdirs = Dir.glob("#{Dir.tmpdir}/carat*")
 
       expect(tmpdirs).to be_empty
     end
@@ -137,7 +137,7 @@ describe "when using sudo", :sudo => true do
         gem "rack", '1.0'
       G
 
-      bundle :install, :env => {'GEM_HOME' => gem_home.to_s, 'GEM_PATH' => nil}
+      carat :install, :env => {'GEM_HOME' => gem_home.to_s, 'GEM_PATH' => nil}
       expect(gem_home.join('bin/rackup')).to exist
       should_be_installed "rack 1.0", :env => {'GEM_HOME' => gem_home.to_s, 'GEM_PATH' => nil}
     end
@@ -146,8 +146,8 @@ describe "when using sudo", :sudo => true do
   describe "and root runs install" do
     it "warns against that" do
       gemfile %|source "file://#{gem_repo1}"|
-      bundle :install, :sudo => true
-      expect(out).to include("Don't run Bundler as root.")
+      carat :install, :sudo => true
+      expect(out).to include("Don't run Carat as root.")
     end
   end
 

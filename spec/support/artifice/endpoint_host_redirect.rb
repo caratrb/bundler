@@ -4,7 +4,7 @@ Artifice.deactivate
 
 class EndpointHostRedirect < Endpoint
   get "/fetch/actual/gem/:id", :host_name => 'localgemserver.test' do
-    redirect "http://bundler.localgemserver.test#{request.path_info}"
+    redirect "http://carat.localgemserver.test#{request.path_info}"
   end
 
   get "/api/v1/dependencies" do

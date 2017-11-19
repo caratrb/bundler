@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "bundle clean" do
+describe "carat clean" do
   def should_have_gems(*gems)
     gems.each do |g|
       expect(vendored_gems("gems/#{g}")).to exist
@@ -25,16 +25,16 @@ describe "bundle clean" do
       gem "foo"
     G
 
-    bundle "install --path vendor/bundle --no-clean"
+    carat "install --path vendor/bundle --no-clean"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
 
       gem "thin"
     G
-    bundle "install"
+    carat "install"
 
-    bundle :clean
+    carat :clean
 
     expect(out).to eq("Removing foo (1.0)")
 
@@ -52,7 +52,7 @@ describe "bundle clean" do
       gem "foo"
     G
 
-    bundle "install --path vendor/bundle --no-clean"
+    carat "install --path vendor/bundle --no-clean"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -60,9 +60,9 @@ describe "bundle clean" do
       gem "rack", "1.0.0"
       gem "foo"
     G
-    bundle "install"
+    carat "install"
 
-    bundle :clean
+    carat :clean
 
     expect(out).to eq("Removing rack (0.9.1)")
 
@@ -80,7 +80,7 @@ describe "bundle clean" do
       gem "foo"
     G
 
-    bundle "install --path vendor/bundle --no-clean"
+    carat "install --path vendor/bundle --no-clean"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -88,9 +88,9 @@ describe "bundle clean" do
       gem "rack", "0.9.1"
       gem "foo"
     G
-    bundle "install"
+    carat "install"
 
-    bundle :clean
+    carat :clean
 
     expect(out).to eq("Removing rack (1.0.0)")
 
@@ -111,9 +111,9 @@ describe "bundle clean" do
       end
     G
 
-    bundle "install --path vendor/bundle"
-    bundle "install --without test_group"
-    bundle :clean
+    carat "install --path vendor/bundle"
+    carat "install --without test_group"
+    carat :clean
 
     expect(out).to eq("Removing rack (1.0.0)")
 
@@ -137,12 +137,12 @@ describe "bundle clean" do
       end
     G
 
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
-    bundle :clean
+    carat :clean
 
     digest = Digest::SHA1.hexdigest(git_path.to_s)
-    expect(vendored_gems("cache/bundler/git/foo-1.0-#{digest}")).to exist
+    expect(vendored_gems("cache/carat/git/foo-1.0-#{digest}")).to exist
   end
 
   it "removes unused git gems" do
@@ -159,23 +159,23 @@ describe "bundle clean" do
       end
     G
 
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
 
       gem "rack", "1.0.0"
     G
-    bundle "install"
+    carat "install"
 
-    bundle :clean
+    carat :clean
 
     expect(out).to eq("Removing foo (#{revision[0..11]})")
 
     expect(vendored_gems("gems/rack-1.0.0")).to exist
-    expect(vendored_gems("bundler/gems/foo-#{revision[0..11]}")).not_to exist
+    expect(vendored_gems("carat/gems/foo-#{revision[0..11]}")).not_to exist
     digest = Digest::SHA1.hexdigest(git_path.to_s)
-    expect(vendored_gems("cache/bundler/git/foo-#{digest}")).not_to exist
+    expect(vendored_gems("cache/carat/git/foo-#{digest}")).not_to exist
 
     expect(vendored_gems("specifications/rack-1.0.0.gemspec")).to exist
 
@@ -195,19 +195,19 @@ describe "bundle clean" do
       end
     G
 
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
     update_git "foo", :path => lib_path("foo-bar")
     revision2 = revision_for(lib_path("foo-bar"))
 
-    bundle "update"
-    bundle :clean
+    carat "update"
+    carat :clean
 
     expect(out).to eq("Removing foo-bar (#{revision[0..11]})")
 
     expect(vendored_gems("gems/rack-1.0.0")).to exist
-    expect(vendored_gems("bundler/gems/foo-bar-#{revision[0..11]}")).not_to exist
-    expect(vendored_gems("bundler/gems/foo-bar-#{revision2[0..11]}")).to exist
+    expect(vendored_gems("carat/gems/foo-bar-#{revision[0..11]}")).not_to exist
+    expect(vendored_gems("carat/gems/foo-bar-#{revision2[0..11]}")).to exist
 
     expect(vendored_gems("specifications/rack-1.0.0.gemspec")).to exist
 
@@ -225,11 +225,11 @@ describe "bundle clean" do
       gem "activesupport", :git => "#{lib_path('rails')}", :ref => '#{revision}'
     G
 
-    bundle "install --path vendor/bundle"
-    bundle :clean
+    carat "install --path vendor/bundle"
+    carat :clean
     expect(out).to eq("")
 
-    expect(vendored_gems("bundler/gems/rails-#{revision[0..11]}")).to exist
+    expect(vendored_gems("carat/gems/rails-#{revision[0..11]}")).to exist
   end
 
   it "does not remove git sources that are in without groups" do
@@ -247,14 +247,14 @@ describe "bundle clean" do
         end
       end
     G
-    bundle "install --path vendor/bundle --without test"
+    carat "install --path vendor/bundle --without test"
 
-    bundle :clean
+    carat :clean
 
     expect(out).to eq("")
-    expect(vendored_gems("bundler/gems/foo-#{revision[0..11]}")).to exist
+    expect(vendored_gems("carat/gems/foo-#{revision[0..11]}")).to exist
     digest = Digest::SHA1.hexdigest(git_path.to_s)
-    expect(vendored_gems("cache/bundler/git/foo-#{digest}")).to_not exist
+    expect(vendored_gems("cache/carat/git/foo-#{digest}")).to_not exist
   end
 
   it "does not blow up when using without groups" do
@@ -268,9 +268,9 @@ describe "bundle clean" do
       end
     G
 
-    bundle "install --path vendor/bundle --without development"
+    carat "install --path vendor/bundle --without development"
 
-    bundle :clean
+    carat :clean
     expect(exitstatus).to eq(0) if exitstatus
   end
 
@@ -281,13 +281,13 @@ describe "bundle clean" do
       gem "rack", "1.0.0"
     G
 
-    bundle :clean
+    carat :clean
 
     expect(exitstatus).to eq(1) if exitstatus
     expect(out).to include("--force")
   end
 
-  # handling bundle clean upgrade path from the pre's
+  # handling carat clean upgrade path from the pre's
   it "removes .gem/.gemspec file even if there's no corresponding gem dir" do
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -296,20 +296,20 @@ describe "bundle clean" do
       gem "foo"
     G
 
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
 
       gem "foo"
     G
-    bundle "install"
+    carat "install"
 
     FileUtils.rm(vendored_gems("bin/rackup"))
     FileUtils.rm_rf(vendored_gems("gems/thin-1.0"))
     FileUtils.rm_rf(vendored_gems("gems/rack-1.0.0"))
 
-    bundle :clean
+    carat :clean
 
     should_not_have_gems 'thin-1.0', 'rack-1.0'
     should_have_gems 'foo-1.0'
@@ -324,14 +324,14 @@ describe "bundle clean" do
       gem "thin"
       gem "rack"
     G
-    bundle :install
+    carat :install
 
     gemfile <<-G
       source "file://#{gem_repo1}"
 
       gem "rack"
     G
-    bundle :install
+    carat :install
 
     sys_exec "gem list"
     expect(out).to include("rack (1.0.0)")
@@ -345,14 +345,14 @@ describe "bundle clean" do
       gem "thin"
       gem "rack"
     G
-    bundle "install --path vendor/bundle --clean"
+    carat "install --path vendor/bundle --clean"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
 
       gem "rack"
     G
-    bundle "install"
+    carat "install"
 
     should_have_gems 'rack-1.0.0'
     should_not_have_gems 'thin-1.0'
@@ -366,13 +366,13 @@ describe "bundle clean" do
 
       gem "foo"
     G
-    bundle "install --path vendor/bundle --clean"
+    carat "install --path vendor/bundle --clean"
 
     update_repo2 do
       build_gem 'foo', '1.0.1'
     end
 
-    bundle "update"
+    carat "update"
 
     should_have_gems 'foo-1.0.1'
     should_not_have_gems 'foo-1.0'
@@ -385,14 +385,14 @@ describe "bundle clean" do
       gem "thin"
       gem "rack"
     G
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
 
       gem "rack"
     G
-    bundle "install"
+    carat "install"
 
     should_have_gems 'rack-1.0.0', 'thin-1.0'
   end
@@ -405,13 +405,13 @@ describe "bundle clean" do
 
       gem "foo"
     G
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
     update_repo2 do
       build_gem 'foo', '1.0.1'
     end
 
-    bundle :update
+    carat :update
     should_have_gems 'foo-1.0', 'foo-1.0.1'
   end
 
@@ -423,12 +423,12 @@ describe "bundle clean" do
 
       gem "foo"
     G
-    bundle "install"
+    carat "install"
 
     update_repo2 do
       build_gem 'foo', '1.0.1'
     end
-    bundle :update
+    carat :update
 
     sys_exec "gem list"
     expect(out).to include("foo (1.0.1, 1.0)")
@@ -441,15 +441,15 @@ describe "bundle clean" do
       gem "foo"
       gem "rack"
     G
-    bundle :install
+    carat :install
 
     gemfile <<-G
       source "file://#{gem_repo1}"
 
       gem "rack"
     G
-    bundle :install
-    bundle "clean --force"
+    carat :install
+    carat "clean --force"
 
     expect(out).to eq("Removing foo (1.0)")
     sys_exec "gem list"
@@ -467,7 +467,7 @@ describe "bundle clean" do
       gem "foo", :git => "#{lib_path('foo-1.0')}"
     G
 
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
     # mimic 7 length git revisions in Gemfile.lock
     gemfile_lock = File.read(bundled_app('Gemfile.lock')).split("\n")
@@ -478,13 +478,13 @@ describe "bundle clean" do
       file.print gemfile_lock.join("\n")
     end
 
-    bundle "install --path vendor/bundle"
+    carat "install --path vendor/bundle"
 
-    bundle :clean
+    carat :clean
 
     expect(out).not_to include("Removing foo (1.0 #{revision[0..6]})")
 
-    expect(vendored_gems("bundler/gems/foo-1.0-#{revision[0..6]}")).to exist
+    expect(vendored_gems("carat/gems/foo-1.0-#{revision[0..6]}")).to exist
   end
 
   it "when using --force on system gems, it doesn't remove binaries" do
@@ -501,9 +501,9 @@ describe "bundle clean" do
 
       gem "bindir"
     G
-    bundle :install
+    carat :install
 
-    bundle "clean --force"
+    carat "clean --force"
 
     sys_exec "foo"
 
@@ -526,8 +526,8 @@ describe "bundle clean" do
       gem "bar", "1.0", :path => "#{relative_path}"
     G
 
-    bundle "install --path vendor/bundle"
-    bundle :clean
+    carat "install --path vendor/bundle"
+    carat :clean
 
     expect(exitstatus).to eq(0) if exitstatus
   end
@@ -540,7 +540,7 @@ describe "bundle clean" do
       gem "foo"
     G
 
-    bundle "install --path vendor/bundle --no-clean"
+    carat "install --path vendor/bundle --no-clean"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -548,9 +548,9 @@ describe "bundle clean" do
       gem "thin"
     G
 
-    bundle :install
+    carat :install
 
-    bundle "clean --dry-run"
+    carat "clean --dry-run"
 
     expect(out).not_to eq("Removing foo (1.0)")
     expect(out).to eq("Would have removed foo (1.0)")
@@ -568,8 +568,8 @@ describe "bundle clean" do
       gem "foo"
     G
 
-    bundle "install --path vendor/bundle --no-clean"
-    bundle "config dry_run false"
+    carat "install --path vendor/bundle --no-clean"
+    carat "config dry_run false"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -577,9 +577,9 @@ describe "bundle clean" do
       gem "thin"
     G
 
-    bundle :install
+    carat :install
 
-    bundle "clean"
+    carat "clean"
 
     expect(out).to eq("Removing foo (1.0)")
     expect(out).not_to eq("Would have removed foo (1.0)")
@@ -590,7 +590,7 @@ describe "bundle clean" do
     expect(vendored_gems("bin/rackup")).to exist
   end
 
-  it "performs an automatic bundle install" do
+  it "performs an automatic carat install" do
     gemfile <<-G
       source "file://#{gem_repo1}"
 
@@ -598,7 +598,7 @@ describe "bundle clean" do
       gem "foo"
     G
 
-    bundle "install --path vendor/bundle --no-clean"
+    carat "install --path vendor/bundle --no-clean"
 
     gemfile <<-G
       source "file://#{gem_repo1}"
@@ -607,8 +607,8 @@ describe "bundle clean" do
       gem "weakling"
     G
 
-    bundle "config auto_install 1"
-    bundle :clean
+    carat "config auto_install 1"
+    carat :clean
     expect(out).to include('Installing weakling 0.0.3')
     should_have_gems 'thin-1.0', 'rack-1.0.0', 'weakling-0.0.3'
     should_not_have_gems 'foo-1.0'

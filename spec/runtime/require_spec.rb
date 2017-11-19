@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe "Bundler.require" do
+describe "Carat.require" do
   before :each do
     build_lib "one", "1.0.0" do |s|
       s.write "lib/baz.rb", "puts 'baz'"
@@ -52,36 +52,36 @@ describe "Bundler.require" do
 
   it "requires the gems" do
     # default group
-    run "Bundler.require"
+    run "Carat.require"
     expect(out).to eq("two")
 
     # specific group
-    run "Bundler.require(:bar)"
+    run "Carat.require(:bar)"
     expect(out).to eq("baz\nqux")
 
     # default and specific group
-    run "Bundler.require(:default, :bar)"
+    run "Carat.require(:default, :bar)"
     expect(out).to eq("baz\nqux\ntwo")
 
     # specific group given as a string
-    run "Bundler.require('bar')"
+    run "Carat.require('bar')"
     expect(out).to eq("baz\nqux")
 
     # specific group declared as a string
-    run "Bundler.require(:string)"
+    run "Carat.require(:string)"
     expect(out).to eq("six")
 
     # required in resolver order instead of gemfile order
-    run("Bundler.require(:not)")
+    run("Carat.require(:not)")
     expect(out.split("\n").sort).to eq(['seven', 'three'])
 
     # test require: true
-    run "Bundler.require(:require_true)"
+    run "Carat.require(:require_true)"
     expect(out).to eq("eight")
   end
 
   it "allows requiring gems with non standard names explicitly" do
-    run "Bundler.require ; require 'mofive'"
+    run "Carat.require ; require 'mofive'"
     expect(out).to eq("two\nfive")
   end
 
@@ -92,7 +92,7 @@ describe "Bundler.require" do
     G
 
     load_error_run <<-R, 'fail'
-      Bundler.require
+      Carat.require
     R
 
     expect(err).to eq("ZOMG LOAD ERROR")
@@ -110,7 +110,7 @@ describe "Bundler.require" do
 
     cmd = <<-RUBY
       begin
-        Bundler.require
+        Carat.require
       rescue LoadError => e
         $stderr.puts "ZOMG LOAD ERROR: \#{e.message}"
       end
@@ -134,7 +134,7 @@ describe "Bundler.require" do
         gem 'jquery-rails'
       G
 
-      run "Bundler.require"
+      run "Carat.require"
       expect(out).to eq("jquery/rails")
     end
 
@@ -148,8 +148,8 @@ describe "Bundler.require" do
       G
 
       cmd = <<-RUBY
-        require 'bundler'
-        Bundler.require
+        require 'carat'
+        Carat.require
       RUBY
       ruby(cmd, :expect_err => true)
 
@@ -163,7 +163,7 @@ describe "Bundler.require" do
       G
 
       load_error_run <<-R, 'jquery-rails'
-        Bundler.require
+        Carat.require
       R
       expect(err).to eq("ZOMG LOAD ERROR")
     end
@@ -180,7 +180,7 @@ describe "Bundler.require" do
 
       cmd = <<-RUBY
         begin
-          Bundler.require
+          Carat.require
         rescue LoadError => e
           $stderr.puts "ZOMG LOAD ERROR" if e.message.include?("Could not open library 'libfuuu-1.0'")
         end
@@ -203,7 +203,7 @@ describe "Bundler.require" do
 
       cmd = <<-RUBY
         begin
-          Bundler.require
+          Carat.require
         rescue LoadError => e
           $stderr.puts "ZOMG LOAD ERROR: \#{e.message}"
         end
@@ -214,15 +214,15 @@ describe "Bundler.require" do
     end
   end
 
-  describe "using bundle exec" do
+  describe "using carat exec" do
     it "requires the locked gems" do
-      bundle "exec ruby -e 'Bundler.require'"
+      carat "exec ruby -e 'Carat.require'"
       expect(out).to eq("two")
 
-      bundle "exec ruby -e 'Bundler.require(:bar)'"
+      carat "exec ruby -e 'Carat.require(:bar)'"
       expect(out).to eq("baz\nqux")
 
-      bundle "exec ruby -e 'Bundler.require(:default, :bar)'"
+      carat "exec ruby -e 'Carat.require(:default, :bar)'"
       expect(out).to eq("baz\nqux\ntwo")
     end
   end
@@ -259,7 +259,7 @@ describe "Bundler.require" do
         gem "one"
       G
 
-      run "Bundler.require"
+      run "Carat.require"
       expect(out).to eq("two\nmodule_two\none")
     end
 
@@ -276,18 +276,18 @@ describe "Bundler.require" do
         G
       end
 
-      it "requires both with Bundler.require(both)" do
-        run "Bundler.require(:one, :two)"
+      it "requires both with Carat.require(both)" do
+        run "Carat.require(:one, :two)"
         expect(out).to eq("ONE\nTWO")
       end
 
-      it "requires one with Bundler.require(:one)" do
-        run "Bundler.require(:one)"
+      it "requires one with Carat.require(:one)" do
+        run "Carat.require(:one)"
         expect(out).to eq("ONE")
       end
 
-      it "requires :two with Bundler.require(:two)" do
-        run "Bundler.require(:two)"
+      it "requires :two with Carat.require(:two)" do
+        run "Carat.require(:two)"
         expect(out).to eq("TWO")
       end
     end
@@ -299,7 +299,7 @@ describe "Bundler.require" do
         gem "two"
       G
 
-      run "Bundler.require"
+      run "Carat.require"
       expect(out).to eq("two_not_loaded\none\ntwo")
     end
 
@@ -314,7 +314,7 @@ describe "Bundler.require" do
         G
 
         load_error_run <<-R, 'no_such_file_omg'
-          Bundler.require
+          Carat.require
         R
         expect(err).to eq('ZOMG LOAD ERROR')
       end
@@ -322,7 +322,7 @@ describe "Bundler.require" do
   end
 end
 
-describe "Bundler.require with platform specific dependencies" do
+describe "Carat.require with platform specific dependencies" do
   it "does not require the gems that are pinned to other platforms" do
     install_gemfile <<-G
       source "file://#{gem_repo1}"
@@ -334,7 +334,7 @@ describe "Bundler.require with platform specific dependencies" do
       gem "rack", "1.0.0"
     G
 
-    run "Bundler.require", :expect_err => true
+    run "Carat.require", :expect_err => true
     expect(err).to be_empty
   end
 
@@ -347,7 +347,7 @@ describe "Bundler.require with platform specific dependencies" do
       end
     G
 
-    run "Bundler.require; puts RACK", :expect_err => true
+    run "Carat.require; puts RACK", :expect_err => true
 
     expect(out).to eq("1.0.0")
     expect(err).to be_empty

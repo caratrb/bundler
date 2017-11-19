@@ -1,6 +1,6 @@
 module Spec
   module Platforms
-    include Bundler::GemHelpers
+    include Carat::GemHelpers
 
     def rb
       Gem::Platform::RUBY
@@ -55,11 +55,11 @@ module Spec
     end
 
     def local_ruby_engine
-      ENV["BUNDLER_SPEC_RUBY_ENGINE"] || (defined?(RUBY_ENGINE) ? RUBY_ENGINE : "ruby")
+      ENV["CARAT_SPEC_RUBY_ENGINE"] || (defined?(RUBY_ENGINE) ? RUBY_ENGINE : "ruby")
     end
 
     def local_engine_version
-      return ENV["BUNDLER_SPEC_RUBY_ENGINE_VERSION"] if ENV["BUNDLER_SPEC_RUBY_ENGINE_VERSION"]
+      return ENV["CARAT_SPEC_RUBY_ENGINE_VERSION"] if ENV["CARAT_SPEC_RUBY_ENGINE_VERSION"]
 
       case local_ruby_engine
       when "ruby"
@@ -69,7 +69,7 @@ module Spec
       when "jruby"
         JRUBY_VERSION
       else
-        raise BundlerError, "That RUBY_ENGINE is not recognized"
+        raise CaratError, "That RUBY_ENGINE is not recognized"
         nil
       end
     end
