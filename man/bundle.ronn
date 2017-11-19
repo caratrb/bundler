@@ -21,7 +21,7 @@ started, and Gemfile(5) for more information on the `Gemfile` format.
 * `--verbose`:
   Prints out additional logging information
 
-## BUNDLE COMMANDS
+## CARAT COMMANDS
 
 We divide `bundle` subcommands into primary commands and utilities.
 

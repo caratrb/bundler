@@ -28,9 +28,9 @@ describe "Bundler.load" do
       expect(Bundler.load.gems).to have_gem("rack-1.0.0", "carat-#{Bundler::VERSION}")
     end
 
-    it "ignores blank BUNDLE_GEMFILEs" do
+    it "ignores blank CARAT_GEMFILEs" do
       expect {
-        ENV['BUNDLE_GEMFILE'] = ""
+        ENV['CARAT_GEMFILE'] = ""
         Bundler.load
       }.not_to raise_error()
     end
@@ -62,7 +62,7 @@ describe "Bundler.load" do
 
     it "raises an exception if a specified gemfile is not found" do
       expect {
-        ENV['BUNDLE_GEMFILE'] = "omg.rb"
+        ENV['CARAT_GEMFILE'] = "omg.rb"
         Bundler.load
       }.to raise_error(Bundler::GemfileNotFound, /omg\.rb/)
     end

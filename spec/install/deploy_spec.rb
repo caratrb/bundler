@@ -129,7 +129,7 @@ describe "install with --deployment or --frozen" do
         gem "rack-obama"
       G
 
-      ENV['BUNDLE_FROZEN'] = '1'
+      ENV['CARAT_FROZEN'] = '1'
       bundle "install"
       expect(out).to include("deployment mode")
       expect(out).to include("You have added to the Gemfile")
@@ -145,7 +145,7 @@ describe "install with --deployment or --frozen" do
         gem "rack-obama"
       G
 
-      ENV['BUNDLE_FROZEN'] = "false"
+      ENV['CARAT_FROZEN'] = "false"
       bundle "install"
       expect(out).not_to include("deployment mode")
       expect(out).not_to include("You have added to the Gemfile")

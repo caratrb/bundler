@@ -4,7 +4,7 @@ describe "bundle gem" do
 
   def reset!
     super
-    global_config "BUNDLE_GEM__MIT" => "false", "BUNDLE_GEM__TEST" => "false", "BUNDLE_GEM__COC" => "false"
+    global_config "CARAT_GEM__MIT" => "false", "CARAT_GEM__TEST" => "false", "CARAT_GEM__COC" => "false"
   end
 
   def remove_push_guard(gem_name)
@@ -638,7 +638,7 @@ describe "bundle gem" do
     end
 
     it "asks about test framework" do
-      global_config "BUNDLE_GEM__MIT" => "false", "BUNDLE_GEM__COC" => "false"
+      global_config "CARAT_GEM__MIT" => "false", "CARAT_GEM__COC" => "false"
 
       bundle "gem foobar" do |input|
         input.puts "rspec"
@@ -648,7 +648,7 @@ describe "bundle gem" do
     end
 
     it "asks about MIT license" do
-      global_config "BUNDLE_GEM__TEST" => "false", "BUNDLE_GEM__COC" => "false"
+      global_config "CARAT_GEM__TEST" => "false", "CARAT_GEM__COC" => "false"
 
       bundle :config
 
@@ -660,7 +660,7 @@ describe "bundle gem" do
     end
 
     it "asks about CoC" do
-      global_config "BUNDLE_GEM__MIT" => "false", "BUNDLE_GEM__TEST" => "false"
+      global_config "CARAT_GEM__MIT" => "false", "CARAT_GEM__TEST" => "false"
 
 
       bundle "gem foobar" do |input|

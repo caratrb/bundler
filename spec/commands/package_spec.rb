@@ -10,7 +10,7 @@ describe "bundle package" do
 
       bundle "package --gemfile=NotGemfile"
 
-      ENV['BUNDLE_GEMFILE'] = "NotGemfile"
+      ENV['CARAT_GEMFILE'] = "NotGemfile"
       should_be_installed "rack 1.0.0"
     end
   end

@@ -1,8 +1,8 @@
 require "spec_helper"
 
 describe "when using sudo", :sudo => true do
-  describe "and BUNDLE_PATH is writable" do
-    context "but BUNDLE_PATH/build_info is not writable" do
+  describe "and CARAT_PATH is writable" do
+    context "but CARAT_PATH/build_info is not writable" do
       before do
         subdir = system_gem_path('cache')
         subdir.mkpath
@@ -50,12 +50,12 @@ describe "when using sudo", :sudo => true do
     end
 
 
-    it "installs when BUNDLE_PATH is owned by root" do
+    it "installs when CARAT_PATH is owned by root" do
       bundle_path = tmp("owned_by_root")
       FileUtils.mkdir_p bundle_path
       sudo "chown -R root #{bundle_path}"
 
-      ENV['BUNDLE_PATH'] = bundle_path.to_s
+      ENV['CARAT_PATH'] = bundle_path.to_s
       install_gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack", '1.0'
@@ -66,13 +66,13 @@ describe "when using sudo", :sudo => true do
       should_be_installed "rack 1.0"
     end
 
-    it "installs when BUNDLE_PATH does not exist" do
+    it "installs when CARAT_PATH does not exist" do
       root_path = tmp("owned_by_root")
       FileUtils.mkdir_p root_path
       sudo "chown -R root #{root_path}"
       bundle_path = root_path.join("does_not_exist")
 
-      ENV['BUNDLE_PATH'] = bundle_path.to_s
+      ENV['CARAT_PATH'] = bundle_path.to_s
       install_gemfile <<-G
         source "file://#{gem_repo1}"
         gem "rack", '1.0'
@@ -95,7 +95,7 @@ describe "when using sudo", :sudo => true do
     end
   end
 
-  describe "and BUNDLE_PATH is not writable" do
+  describe "and CARAT_PATH is not writable" do
     before do
       sudo "chmod ugo-w #{default_bundle_path}"
     end

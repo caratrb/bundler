@@ -134,8 +134,8 @@ describe "bundle install with groups" do
         should_not_be_installed "activesupport 2.3.5", :groups => [:default]
       end
 
-      it "still works when BUNDLE_WITHOUT is set" do
-        ENV["BUNDLE_WITHOUT"] = "emo"
+      it "still works when CARAT_WITHOUT is set" do
+        ENV["CARAT_WITHOUT"] = "emo"
 
         bundle :install
         expect(out).not_to include("activesupport")
@@ -143,7 +143,7 @@ describe "bundle install with groups" do
         should_be_installed "rack 1.0.0", :groups => [:default]
         should_not_be_installed "activesupport 2.3.5", :groups => [:default]
 
-        ENV["BUNDLE_WITHOUT"] = nil
+        ENV["CARAT_WITHOUT"] = nil
       end
 
       it "clears without when passed an empty list" do

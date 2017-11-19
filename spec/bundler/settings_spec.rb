@@ -50,21 +50,21 @@ describe Bundler::Settings do
     end
   end
 
-  describe "BUNDLE_ keys format" do
+  describe "CARAT_ keys format" do
     let(:settings) { described_class.new(bundled_app('.bundle')) }
 
     it "converts older keys without double dashes" do
-      config("BUNDLE_MY__PERSONAL.RACK" => "~/Work/git/rack")
+      config("CARAT_MY__PERSONAL.RACK" => "~/Work/git/rack")
       expect(settings["my.personal.rack"]).to eq("~/Work/git/rack")
     end
 
     it "converts older keys without trailing slashes and double dashes" do
-      config("BUNDLE_MIRROR__HTTPS://RUBYGEMS.ORG" => "http://rubygems-mirror.org")
+      config("CARAT_MIRROR__HTTPS://RUBYGEMS.ORG" => "http://rubygems-mirror.org")
       expect(settings["mirror.https://rubygems.org/"]).to eq("http://rubygems-mirror.org")
     end
 
     it "reads newer keys format properly" do
-      config("BUNDLE_MIRROR__HTTPS://RUBYGEMS__ORG/" => "http://rubygems-mirror.org")
+      config("CARAT_MIRROR__HTTPS://RUBYGEMS__ORG/" => "http://rubygems-mirror.org")
       expect(settings["mirror.https://rubygems.org/"]).to eq("http://rubygems-mirror.org")
     end
   end

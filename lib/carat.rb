@@ -201,8 +201,8 @@ module Bundler
     end
 
     def app_config_path
-      ENV['BUNDLE_APP_CONFIG'] ?
-        Pathname.new(ENV['BUNDLE_APP_CONFIG']).expand_path(root) :
+      ENV['CARAT_APP_CONFIG'] ?
+        Pathname.new(ENV['CARAT_APP_CONFIG']).expand_path(root) :
         root.join('.bundle')
     end
 
@@ -236,8 +236,8 @@ module Bundler
 
     def with_clean_env
       with_original_env do
-        ENV['MANPATH'] = ENV['BUNDLE_ORIG_MANPATH']
-        ENV.delete_if { |k,_| k[0,7] == 'BUNDLE_' }
+        ENV['MANPATH'] = ENV['CARAT_ORIG_MANPATH']
+        ENV.delete_if { |k,_| k[0,7] == 'CARAT_' }
         if ENV.has_key? 'RUBYOPT'
           ENV['RUBYOPT'] = ENV['RUBYOPT'].sub '-rcarat/setup', ''
           ENV['RUBYOPT'] = ENV['RUBYOPT'].sub "-I#{File.expand_path('..', __FILE__)}", ''

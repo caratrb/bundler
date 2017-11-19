@@ -38,7 +38,7 @@ $show_err = true
 Spec::Rubygems.setup
 FileUtils.rm_rf(Spec::Path.gem_repo1)
 ENV['RUBYOPT'] = "#{ENV['RUBYOPT']} -r#{Spec::Path.root}/spec/support/hax.rb"
-ENV['BUNDLE_SPEC_RUN'] = "true"
+ENV['CARAT_SPEC_RUN'] = "true"
 
 # Don't wrap output in tests
 ENV['THOR_COLUMNS'] = '10000'
@@ -103,10 +103,10 @@ RSpec.configure do |config|
     ENV['PATH']                  = original_path
     ENV['GEM_HOME']              = original_gem_home
     ENV['GEM_PATH']              = original_gem_home
-    ENV['BUNDLE_PATH']           = nil
-    ENV['BUNDLE_GEMFILE']        = nil
-    ENV['BUNDLE_FROZEN']         = nil
-    ENV['BUNDLE_APP_CONFIG']     = nil
+    ENV['CARAT_PATH']           = nil
+    ENV['CARAT_GEMFILE']        = nil
+    ENV['CARAT_FROZEN']         = nil
+    ENV['CARAT_APP_CONFIG']     = nil
     ENV['CARAT_TEST']          = nil
     ENV['CARAT_SPEC_PLATFORM'] = nil
     ENV['CARAT_SPEC_VERSION']  = nil

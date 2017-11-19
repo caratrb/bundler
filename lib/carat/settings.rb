@@ -37,12 +37,12 @@ module Bundler
     end
 
     def all
-      env_keys = ENV.keys.select { |k| k =~ /BUNDLE_.*/ }
+      env_keys = ENV.keys.select { |k| k =~ /CARAT_.*/ }
 
       keys = @global_config.keys | @local_config.keys | env_keys
 
       keys.map do |key|
-        key.sub(/^BUNDLE_/, '').gsub(/__/, ".").downcase
+        key.sub(/^CARAT_/, '').gsub(/__/, ".").downcase
       end
     end
 
@@ -103,7 +103,7 @@ module Bundler
       self[:without] ? self[:without].split(":").map { |w| w.to_sym } : []
     end
 
-    # @local_config["BUNDLE_PATH"] should be prioritized over ENV["BUNDLE_PATH"]
+    # @local_config["CARAT_PATH"] should be prioritized over ENV["CARAT_PATH"]
     def path
       key  = key_for(:path)
       path = ENV[key] || @global_config[key]
@@ -121,7 +121,7 @@ module Bundler
     end
 
     def ignore_config?
-      ENV['BUNDLE_IGNORE_CONFIG']
+      ENV['CARAT_IGNORE_CONFIG']
     end
 
     def app_cache_path
@@ -138,7 +138,7 @@ module Bundler
         key = normalize_uri(key).to_s
       end
       key = key.to_s.gsub(".", "__").upcase
-      "BUNDLE_#{key}"
+      "CARAT_#{key}"
     end
 
     def is_bool(key)
@@ -164,7 +164,7 @@ module Bundler
     end
 
     def global_config_file
-      file = ENV["BUNDLE_CONFIG"] || File.join(Bundler.rubygems.user_home, ".bundle/config")
+      file = ENV["CARAT_CONFIG"] || File.join(Bundler.rubygems.user_home, ".bundle/config")
       Pathname.new(file)
     end
 
@@ -175,7 +175,7 @@ module Bundler
     def load_config(config_file)
       valid_file = config_file && config_file.exist? && !config_file.size.zero?
       if !ignore_config? && valid_file
-        config_regex = /^(BUNDLE_.+): (['"]?)(.*(?:\n(?!BUNDLE).+)?)\2$/
+        config_regex = /^(CARAT_.+): (['"]?)(.*(?:\n(?!CARAT).+)?)\2$/
         config_pairs = config_file.read.scan(config_regex).map do |m|
           key, _, value = m
           [convert_to_backward_compatible_key(key), value.gsub(/\s+/, " ").tr('"', "'")]
